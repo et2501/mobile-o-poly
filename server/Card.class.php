@@ -1,5 +1,5 @@
 <?php
-//haha
+//hahaadf
 //Card Class represents a card which can be drawn during a game
 
 require_once('Location.class.php');
