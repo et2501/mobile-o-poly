@@ -10,9 +10,14 @@ class Location
 	private $accu; //float accuracy 
 	
 	
-	//Generates a JSON Object of this class
-	//returns the finished JSON Object
+	//Generates a JSON Object of this instance
+	//RETURN VALUE: JSON OBJECT
 	public function generateJSON()
+	{
+	}
+	
+	//saves this instance into the database
+	public function saveToDB()
 	{
 	}
 	

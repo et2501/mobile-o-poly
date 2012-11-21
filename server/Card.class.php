@@ -3,7 +3,7 @@
 //Card Class represents a card which can be drawn during a game
 
 require_once('Location.class.php');
-require_cone('Type.class.php');
+require_once('Type.class.php');
 
 class Card
 {	//Attributes
@@ -16,24 +16,36 @@ class Card
 	private $alreadyTriggered;	//bool - was the card already in use or not?
 	private $timeToGo; //THOMAS FRAGEN!!
 	
-	//GETTERS and SETTERS ??
+	//GETTERS and SETTERS if required
 	
 	
-	//FUNCTIONS
-	
-	//returns the time in seconds - int
+	//calculates the time from Location to Location
+	//RETURN VALUE: int - time in seconds
 	public function calculateTimeForDistance()
 	{
 	}
 	
-	//Generates a JSON Object of this class
-	//returns the finished JSON Object
+	//Generates a JSON Object of this instance
+	//RETURN VALUE: JSON OBJECT
 	public function generateJSON()
 	{
 	}
 	
-	//returns an instance of Card
-	public function generateSelectedCard()
+	//chooses a certain amount of cards for the game and saves them into database
+	//RETURN VALUE: array of Card objects
+	public static function generateSelectedCards()
+	{
+	}
+	
+	//saves this instance into the database
+	public function saveSelectedCardToDB()
+	{	
+	}
+	
+	//loads one card from the selected_cards table
+	//PARAMETER: int $selectedCardID - id of the card to be fetched
+	//RETURN VALUE: Card object
+	public static function loadSelectedCardFromDB($selectedCardID)
 	{
 	}
 }
