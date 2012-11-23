@@ -11,7 +11,30 @@ class Trophy
 	private $trophyID; //string - Trophy ID
 	private $triggeredAt; //????
 	
-	//GETTESR and SETTERS (Setters if needed?)
+	//GETTERS and SETTERS (Setters if needed?)
+	
+	
+	//RETURN VALUE: JSON OBJECT
+	public function generateJSON($type)
+	{
+	}
+	
+	//RETURN VALUE: TrophyList
+	public static function getUserTrophies($UserID)
+	{
+	}
+	
+	
+	//RETURN VALUE: TrophyList
+	public static function getTrophies()
+	{
+	}
+	
+	
+	public function saveAchievedTrophyToDB()
+	{
+	}
+	
 	
 }
 
