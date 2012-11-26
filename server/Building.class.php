@@ -53,7 +53,7 @@ class Building
 	
 	
 	//RETURN VALUE: Building
-	public static function loadSelectedBuildingFromDB($gameID)
+	public static function loadSelectedBuildingFromDB($buildingID)
 	{
 	}
 	
