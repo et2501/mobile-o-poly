@@ -5,19 +5,17 @@
 
 class Type
 {	//Attributes
-	private $typeID; 
-	private $name;
-	private $color;
-	private $icon;
+	public $typeID; 
+	public $name;
+	public $color;
+	public $icon;
 	
-	//GETTERS and SETTERS (setters if needed?)
-	
-	
-	
-	//creates a JSON out of this instance
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON()
-	{
+	//AUTOR: BIBI
+	//creates an array out of this instance
+	//RETURN VALUE: Array of the instance
+	public function generateArray()
+	{	$ret = array('typeID'=>$this->typeID,'name'=>$this->name,'color'=>$this->color,'iconURL'=>$this->icon);
+		return $ret;
 	}
 	
 	

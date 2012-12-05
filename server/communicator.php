@@ -16,5 +16,12 @@ EADERS']}");
 // The JSON standard MIME header.
 header('Content-type: application/json');
 
+if(isset($_POST['json']))
+{	$json_data = $_POST['json'];
+
+	$data = Main::allocateJSON($json_data['type'],$json_data['object']);
+	
+	echo json_encode($data);
+}
 
 ?>
