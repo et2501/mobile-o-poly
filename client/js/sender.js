@@ -37,6 +37,23 @@ function sendReqPlaygrounds()
 	send(send_obj);
 }
 
+//AUTOR:BIBI
+//REQUEST NEW GAME
+function sendReqnewGame(gamename,playgroundID,userID,mode,timetoplay)
+{	send_obj =
+	{	"type":"createGame",
+    	"object": {
+        "playgroundID": playgroundID,
+        "gameName": gamename,
+		"userID": userID,
+		"mode": mode,
+		"timetoplay": timetoplay
+    	}
+	};
+	
+	send(send_obj);
+}
+
 //AUTOR: BIBI
 //SEND FUNCTION
 //SENDS THE JSON OBJ TO THE COMMUNICATOR ON THE SERVER AND HANDLES THE RESPONSE DATA
@@ -48,23 +65,26 @@ function send(obj) {
 		dataType:'json',
 		success : function(data) {       
 				  switch(data['type'])
-				  {		case 'User': 		if(!data['loggedInUser']['error'])
-				  							{	usr_obj = {
-													"password": data['loggedInUser']['password'],
-       												"username": data['loggedInUser']['username'],
-       												"userID": data['loggedInUser']['userID']
-												};
-												
-												localStorage.setItem('user',JSON.stringify(usr_obj));
-												localStorage.setItem('trophytypes',JSON.stringify(data['loggedInUser']['trophies']));
-												window.location.href = "menu.html";
-											}
-											else
-												alert(data['loggedInUser']['error']);
-				  							break;
-						case 'Playground': 	localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
-											listPlaygrounds(data['playgrounds']);
-											break;
+				  {		case 'user': 				if(!data['loggedInUser']['error'])
+				  									{	usr_obj = {
+															"password": data['loggedInUser']['password'],
+       														"username": data['loggedInUser']['username'],
+       														"userID": data['loggedInUser']['userID']
+														};
+														
+														localStorage.setItem('user',JSON.stringify(usr_obj));
+														localStorage.setItem('trophytypes',JSON.stringify(data['loggedInUser']['trophies']));
+														window.location.href = "menu.html";
+													}
+													else
+														alert(data['loggedInUser']['error']);
+				  										break;
+						case 'playground': 				localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
+														listPlaygrounds(data['playgrounds']);
+														break;
+						case 'createdGame':				alert("test");
+														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+														break;
 				  }
 		},
 		error : function(xhr, type) { 

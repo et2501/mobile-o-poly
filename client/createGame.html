@@ -22,7 +22,16 @@
     	Modus auswählen für:
         <div id="lbl_playground_name"></div>
         <br />
-        <div id="table_modus"></div>
+        <div id="table_mode">
+        	<form id="form_timetoplay">
+            <table>
+            <tr><td>ICONSPACE</td><td><input type="radio" name="mode" value="Monopol" />Monopol</td></tr>
+            <tr><td>ICONSPACE</td><td><input type="radio" name="mode" value="Wirtschaft" />Wirtschaft</td></tr>
+            <tr><td>ICONSPACE</td><td><input type="radio" name="mode" value="Zeit" />Zeit</td></tr>
+            <tr id="tr_timetoplay"><td colspan="2">Zeit: <input type="text" name="txt_timetoplay" id="txt_timetoplay" maxlength="11"/></td></tr>
+            </table>
+            </form>
+        </div>
         <br />
         <input type="button" value="weiter" name="btn_next_2" id="btn_next_2" /><br />
         <input type="button" value="zurück" name="btn_back" id="btn_back" />

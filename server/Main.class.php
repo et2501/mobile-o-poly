@@ -85,20 +85,24 @@ class Main
 		{	//AUTOR: BIBI
 			case 'register':					$ret = Main::register($obj['email'],$obj['password'],$obj['username']); //call register function
 												if($ret != "OK")
-													$data = array('type'=>'User','loggedInUser'=>array('error'=>$ret));
+													$data = array('type'=>'user','loggedInUser'=>array('error'=>$ret));
 												else
 													$data = Main::allocateJSON('login',$obj);
 												break;
 			//AUTOR: BIBI
 			case 'login':						$ret = Main::login($obj['email'],$obj['password']);
 												if(!is_numeric($ret))
-													$data = array('type'=>'User','loggedInUser'=>array('error'=>$ret));
+													$data = array('type'=>'user','loggedInUser'=>array('error'=>$ret));
 												else
-													$data = array('type'=>'User','loggedInUser'=>array('password'=>$obj['password'],'username'=>($obj['username']!=null?$obj['username']:User::getNickname($ret)),'userID'=>$ret,'trophies'=>Main::getTrophies()));
+													$data = array('type'=>'user','loggedInUser'=>array('password'=>$obj['password'],'username'=>($obj['username']!=null?$obj['username']:User::getNickname($ret)),'userID'=>$ret,'trophies'=>Main::getTrophies()));
 												
 												break;
 			//AUTOR: BIBI
-			case 'loadAllPlaygrounds':			$data = array('type'=>'Playground', 'playgrounds' =>Playground::getPlaygrounds());
+			case 'loadAllPlaygrounds':			$data = array('type'=>'playground', 'playgrounds' =>Playground::getPlaygrounds());
+												break;
+			//AUTOR: BIBI
+			case 'createGame':					$game = new Game();
+												$data = array('type'=>'createdGame','currentGame'=>$game->createNewGame($obj['playgroundID'],$obj['userID'],$obj['gameName'],$obj['mode'],$obj['timetoplay']));
 												break;
 		}
 		

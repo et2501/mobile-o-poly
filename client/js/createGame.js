@@ -1,3 +1,8 @@
+var gamename;
+var time_to_play;
+var selected_playground;
+var selected_mode;
+
 //AUTOR: BIBI
 $(document).ready(function(e) {
 	//first of all look if there is a loggedInUser!!!
@@ -5,7 +10,18 @@ $(document).ready(function(e) {
 		window.location.href = "index.html";
 	
 	$('#sec_createGame_2').hide();
+	$('#tr_timetoplay').hide();
+	$("[name=mode]").removeAttr("checked");
+	
 	var user = JSON.parse(localStorage.getItem('user'));
+	
+	//show time textfield if time mode is chosen
+	$("input:radio").change(function()
+		{	if($("input:radio[name='mode']:checked").val() == 'Zeit')
+				$('#tr_timetoplay').show();
+			else
+				$('#tr_timetoplay').hide();
+		});
 	
 	$('#lbl_menu_nickname').html(user.username);
 	
@@ -16,16 +32,41 @@ $(document).ready(function(e) {
 	
 	$('#btn_next_1').on('click',function()
 		{	//save the selected index and the name in global variables
-			var groupname = $('#txt_crga_groupname').attr('value');
-			var selected_playground = (isNaN(parseInt($("input:radio[name='playgrounds']:checked").val()))?null:parseInt($("input:radio[name='playgrounds']:checked").val()));
+			gamename = $('#txt_crga_groupname').attr('value');
+			selected_playground = (isNaN(parseInt($("input:radio[name='playgrounds']:checked").val()))?null:parseInt($("input:radio[name='playgrounds']:checked").val()));
 			
-			if(groupname&&selected_playground!=null)
+			if(gamename&&selected_playground!=null)
 			{	$('#sec_createGame_1').hide();
 				$('#sec_createGame_2').show();
 				$('#lbl_playground_name').html(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].name);
 			}
 			else
 				alert("Bitte ein Spielfeld auswählen und einen Namen eingeben!");
+		});
+	
+	$('#btn_next_2').on('click',function()
+		{	selected_mode = $("input:radio[name='mode']:checked").val();
+			if(selected_mode == 'Zeit')
+				time_to_play = $('#txt_timetoplay').attr('value');
+			else
+				time_to_play = 0;
+			
+			$("#form_timetoplay").validate({
+				rules: {
+					txt_timetoplay: {
+						digits: true				
+					}
+				}
+			});
+			
+			if($('#form_timetoplay').valid())
+				if(selected_mode&&(selected_mode=='Zeit'?time_to_play:true))
+				{	$('#txt_timetoplay').val('');
+					$('#txt_crga_groupname').val('');
+					sendReqnewGame(gamename,JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].playgroundID,user.userID,selected_mode,time_to_play);
+				}
+				else
+					alert('Bitte einen Modus auswählen und wenn nötig Zeit eingeben!');
 		});
 	
 	$('#btn_back').on('click',function()

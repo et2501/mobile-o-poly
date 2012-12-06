@@ -16,7 +16,7 @@ class Building
 	private $location; //Location
 	private $upgradeLevel; //int
 	private $buildingID; //int
-	private $newField; //int
+	private $gameID; //int
 	
 	//GETTERS and SETTERS (Setters if needed?)
 	
@@ -43,18 +43,52 @@ class Building
 	//RETURN VALUE: array
 	public function generateArray($type)
 	{	if($type=='normal')
-			$data = array('name'=>$this->name,'picture'=>$this->picture,'location'=>$this->location->generateArray());
+			$data = array('name'=>$this->name,'buildingImageURL'=>$this->picture,'location'=>$this->location->generateArray());
 		return $data;
 	}
 	
-	
+	//AUTOR: BIBI
+	//saves the instance into the database
 	public function saveSelectedBuildingToDB()
-	{
+	{	$con = db_connect();
+	
+		$statement = $con->prepare('Insert into selected_building (building,game,buy_value,fee,number,level) values (?,?,?,?,?,?)');
+		$statement->execute(array($this->buildingID,$this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel));
+		
+		$con = null;
 	}
 	
+	//AUTOR: BIBI
+	//gets a playground ID and loads all Buildings of this playground into the selectedBuilding table
+	//generates the number value the fee the buyValue the upgradeLevel 
+	//PARAMETER - playground of which all the buildings should be taken
 	//RETURN VALUE: BuildingList
-	public static function generateBuildings()
-	{
+	public static function generateSelectedBuildings($pg,$game)
+	{	$buildings = Building::getBuildings($pg); //get all buildings of the playground
+		
+		$rnd = array();
+		
+		//create the random number array for the buildings to each get an own number (for the dices)
+		for($i=0;$i<count($buildings);$i++)
+			$rnd[] = $i+1;
+			
+		shuffle($rnd);
+		
+		$counter = 0;
+		
+		foreach($buildings as $building)
+		{	$building->upgradeLevel = 0;
+			$building->gameID = $game;	
+			$building->number = $rnd[$counter];
+			$building->buyValue = 1500; //ATTENTION --->> should be calculated on base of the number given!!!!!!! 
+			$building->fee = round($this->buyValue*10/100); //with uprgrade lvl 0 --> fee is 10% of buyvalue
+			
+			$building->saveSelectedBuildingToDB();
+			
+			$counter ++;
+		}
+		
+		return $buildings;
 	}
 	
 	

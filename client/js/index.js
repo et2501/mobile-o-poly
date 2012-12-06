@@ -15,9 +15,9 @@ $(document).ready(function(e) {
 	$('#btn_reg_cancel').on('click',function()
 		{	$('#sec_register').hide();
 			$('#sec_login').show();
-			mail = $('#txt_reg_mail').val('');
-			pass = $('#txt_reg_pass').val('');
-			firstname = $('#txt_reg_nickname').val('');
+			$('#txt_reg_mail').val('');
+			$('#txt_reg_pass').val('');
+			$('#txt_reg_nickname').val('');
 		});
 	
 	//REGISTER
