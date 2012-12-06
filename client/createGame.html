@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<title> Mobile-o-poly</title>
@@ -7,15 +8,24 @@
     <script type="text/javascript" src="js/createGame.js"></script>
 </head>
 <body>
+	<div id="lbl_menu_nickname"></div><br />
+    <input type="button" value="Logout" name="btn_logout" id="btn_logout"/><br /><br />
 	<section id="sec_createGame_1">
-    	<div id="lbl_menu_nickname"></div><br />
-        <input type="button" value="Logout" name="btn_logout" id="btn_logout"/><br /><br />
-        Gruppenname: <br />
+        Spielname: <br />
         <input type="text" id="txt_crga_groupname" name="txt_crga_groupname" maxlength="45" /><br /><br />
         Spielfeld auswählen:
         <div id="table_playgrounds"></div>
         <br /><br />
-        <input type="button" value="weiter" name="btn_next" id="btn_next" />
+        <input type="button" value="weiter" name="btn_next_1" id="btn_next_1" />
 	</section>
+    <section id="sec_createGame_2">
+    	Modus auswählen für:
+        <div id="lbl_playground_name"></div>
+        <br />
+        <div id="table_modus"></div>
+        <br />
+        <input type="button" value="weiter" name="btn_next_2" id="btn_next_2" /><br />
+        <input type="button" value="zurück" name="btn_back" id="btn_back" />
+    </section>
 </body>
 </html>

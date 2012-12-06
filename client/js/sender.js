@@ -62,9 +62,8 @@ function send(obj) {
 											else
 												alert(data['loggedInUser']['error']);
 				  							break;
-						case 'Playground': 	alert('test');
-											localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
-											//auflistung der playgrounds!!
+						case 'Playground': 	localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
+											listPlaygrounds(data['playgrounds']);
 											break;
 				  }
 		},
