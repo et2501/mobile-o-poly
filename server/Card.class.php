@@ -25,9 +25,9 @@ class Card
 	{
 	}
 	
-	//Generates a JSON Object of this instance
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON()
+	//Generates an array Object of this instance
+	//RETURN VALUE: array
+	public function generateArray()
 	{
 	}
 	

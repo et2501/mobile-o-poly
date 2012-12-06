@@ -1,6 +1,8 @@
 <?php
 
 //class Playground represents one Playground to play on
+require_once('Building.class.php');
+require_once('database.php');
 
 class Playground
 {	//Attributes
@@ -13,30 +15,72 @@ class Playground
 	
 	//GETTERS and SETTERS if needed
 	
+	//AUTOR: BIBI
 	//fetches all Playgrounds out of the database and returns them in an array
 	//RETURN VALUE: array of Playgrounds
 	public static function getPlaygrounds()
-	{
+	{	$ret = array();
+	
+		$con = db_connect();
+		
+		$result = $con->query('Select * from playground');
+		
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	$pg = new Playground();
+			$pg->fillIntoObject($row);
+			$ret[] = $pg->generateArray();
+		}
+		
+		$con = null;
+		return $ret;
 	}
 	
-	//creates a JSON out of this instance
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON()
-	{
+	//AUTOR: BIBI
+	//creates an array out of this instance
+	//RETURN VALUE: array 
+	public function generateArray()
+	{	$buildings = array();
+		
+		foreach($this->buildingList as $build)
+			$buildings[] = $build->generateArray('normal');
+		
+		
+		$data = array('name'=>$this->name,'moneyToGo'=>$this->moneyToGo,'startingMoney'=>$this->startingMoney,'playgroundID'=>$this->playgroundID,'maxPlayers'=>$this->maxPlayers,'buildings'=>$buildings);
+		return $data;
 	}
 	
-	//fetches all Buildings for this Playground
-	//RETURN VALUE: array of Buildings
-	public function getBuildings()
-	{
-	}
-	
+	//AUTOR: BIBI
 	//loads one Playground object from the database
 	//PARAMETER: int $playgroundID - id of the database entry
 	//RETURN VALUE: Playground
 	public static function loadFromDB($playgroundID)
-	{
+	{	$pg = new Playground();
+		
+		$con = db_connect();
+	
+		$statement = $con->prepare('Select * from playground where playground_id = ?');
+		$statement->execute(array($playgroundID));
+		$result = $statement;
+		
+		$row = $result->fetch(PDO::FETCH_ASSOC);
+		$pg->fillIntoObject($row);
+	
+		$con = null;
+		return $pg;
 	}
+	
+	//AUTOR: BIBI
+	//fills all the results into the object
+	//PARAMETER: $row - the resultset 
+	private function fillIntoObject($row)
+	{	$this->name = $row['name'];
+		$this->moneyToGo = $row['money_to_go'];
+		$this->maxPlayers = $row['maxPlayers'];
+		$this->startingMoney = $row['starting_money'];
+		$this->playgroundID = $row['playground_id'];
+		$this->buildingList = Building::getBuildings($this->playgroundID);
+	}
+	
 }
 
 

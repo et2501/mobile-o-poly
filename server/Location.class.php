@@ -5,15 +5,16 @@
 
 class Location
 {	//Attributes
-	private $lat; //float latitude
-	private $lon; //float longitude
-	private $accu; //float accuracy 
+	public $lat; //float latitude
+	public $lon; //float longitude
+	public $accu; //float accuracy 
 	
 	
-	//Generates a JSON Object of this instance
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON()
-	{
+	//Generates an array of this instance
+	//RETURN VALUE: array
+	public function generateArray()
+	{	$data = array('lat'=>$this->lat,'long'=>$this->lon,'accu'=>$this->accu);
+		return $data;
 	}
 	
 	//saves this instance into the database

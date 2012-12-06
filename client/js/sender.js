@@ -27,6 +27,15 @@ function sendReqRegister(mail,nickname,password)
 	send(send_obj);
 }
 
+//AUTOR: BIBI
+//REQUEST OBJECT FOR GETTING ALL PLAYGROUNDS
+function sendReqPlaygrounds()
+{	send_obj = 
+	{	"type":"loadAllPlaygrounds"
+	}
+	
+	send(send_obj);
+}
 
 //AUTOR: BIBI
 //SEND FUNCTION
@@ -35,7 +44,7 @@ function send(obj) {
 	$.ajax({       
 		type : 'POST',  
 		url : "http://flock-0308.students.fhstp.ac.at/server/communicator.php",
-		data : { json: obj },  
+		data : { json: obj },  
 		dataType:'json',
 		success : function(data) {       
 				  switch(data['type'])
@@ -47,12 +56,16 @@ function send(obj) {
 												};
 												
 												localStorage.setItem('user',JSON.stringify(usr_obj));
-												localStorage.setItem('trophies',JSON.stringify(data['loggedInUser']['trophies']));
+												localStorage.setItem('trophytypes',JSON.stringify(data['loggedInUser']['trophies']));
 												window.location.href = "menu.html";
 											}
 											else
 												alert(data['loggedInUser']['error']);
 				  							break;
+						case 'Playground': 	alert('test');
+											localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
+											//auflistung der playgrounds!!
+											break;
 				  }
 		},
 		error : function(xhr, type) { 

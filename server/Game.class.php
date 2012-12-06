@@ -31,9 +31,9 @@ class Game
 	{
 	}
 	
-	//generates a JSON of this instance
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON()
+	//generates an array of this instance
+	//RETURN VALUE: array
+	public function generateArray()
 	{
 	}
 	

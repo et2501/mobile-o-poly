@@ -23,8 +23,8 @@ class Log
 	{
 	}
 	
-	//RETURN VALUE: JSON Object
-	public function generateJSON()
+	//RETURN VALUE: array
+	public function generateArray()
 	{
 	}
 	

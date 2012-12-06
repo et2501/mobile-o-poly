@@ -23,9 +23,8 @@ class Main
 	//RETURN VALUE: JSON OBJECT
 	public static function login($email,$password)
 	{	$con = db_connect();
-		
-		$query = "Select password, user_id from user where email = ?";
-		$statement = $con->prepare($query);
+	
+		$statement = $con->prepare("Select password, user_id from user where email = ?");
 		$statement->execute(array($email));
 		$result = $statement;
 	
@@ -50,8 +49,7 @@ class Main
 	
 		if(!is_string($con))
 		{	//Step 1 see if mail adress is not already registered
-			$query = "Select * from user where email= ?";
-			$statement = $con->prepare($query);
+			$statement = $con->prepare("Select * from user where email= ?");
 			$statement->execute(array($email));
 			$result = $statement;
 			
@@ -96,19 +94,17 @@ class Main
 												if(!is_numeric($ret))
 													$data = array('type'=>'User','loggedInUser'=>array('error'=>$ret));
 												else
-													$data = array('type'=>'User','loggedInUser'=>array('password'=>$obj['password'],'username'=>$obj['username'],'userID'=>$ret,'trophies'=>Main::getTrophies()));
+													$data = array('type'=>'User','loggedInUser'=>array('password'=>$obj['password'],'username'=>($obj['username']!=null?$obj['username']:User::getNickname($ret)),'userID'=>$ret,'trophies'=>Main::getTrophies()));
 												
+												break;
+			//AUTOR: BIBI
+			case 'loadAllPlaygrounds':			$data = array('type'=>'Playground', 'playgrounds' =>Playground::getPlaygrounds());
 												break;
 		}
 		
 		return $data;
 	}
-	
-	//gets a list of every Playground in database and returns them as JSON
-	//RETURN VALUE: JSON OBJECT
-	public static function getPlaygrounds()
-	{
-	}
+
 	
 	//creates a new Log Entry out of the relevant data
 	public static function createNewLogEntry()
@@ -121,8 +117,7 @@ class Main
 	private static function getTrophies()
 	{	$con = db_connect();
 		
-		$query = "select distinct ty. * from type as ty inner join trophy as t ON t.type = ty.type_id";
-		$result = $con->query($query);
+		$result = $con->query("select distinct ty. * from type as ty inner join trophy as t ON t.type = ty.type_id");
 		
 		$types = array();
 		while($row = $result->fetch(PDO::FETCH_ASSOC))

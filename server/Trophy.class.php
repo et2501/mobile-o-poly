@@ -25,9 +25,8 @@ class Trophy
 	//RETURN VALUE: TrophyList
 	public static function getUserTrophies($userID)
 	{	$con = db_connect();
-		
-		$query = "Select at.achieved_at, at.achieved_trophy_id, t.type, t.triggered_at from achieved_trophy as at inner join trophy as t on t.trophy_id = at.trophy where at.user = ?";
-		$statement = $con->prepare($query);
+
+		$statement = $con->prepare("Select at.achieved_at, at.achieved_trophy_id, t.type, t.triggered_at from achieved_trophy as at inner join trophy as t on t.trophy_id = at.trophy where at.user = ?");
 		$statement->execute(array($userID));
 		$result = $statement;
 		

@@ -1,8 +1,21 @@
 <html>
 <head>
 	<title> Mobile-o-poly</title>
+    <script type="text/javascript" src="js/jQuery.js"></script>
+    <script type="text/javascript" src="js/jQuery-Validate.js"></script>
+    <script type="text/javascript" src="js/sender.js"></script>
+    <script type="text/javascript" src="js/createGame.js"></script>
 </head>
 <body>
-Spiel erstellen / Spiel beitreten
+	<section id="sec_createGame_1">
+    	<div id="lbl_menu_nickname"></div><br />
+        <input type="button" value="Logout" name="btn_logout" id="btn_logout"/><br /><br />
+        Gruppenname: <br />
+        <input type="text" id="txt_crga_groupname" name="txt_crga_groupname" maxlength="45" /><br /><br />
+        Spielfeld auswählen:
+        <div id="table_playgrounds"></div>
+        <br /><br />
+        <input type="button" value="weiter" name="btn_next" id="btn_next" />
+	</section>
 </body>
 </html>
