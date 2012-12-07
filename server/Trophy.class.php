@@ -14,8 +14,8 @@ class Trophy
 	//GETTERS and SETTERS (Setters if needed?)
 	
 	
-	//RETURN VALUE: JSON OBJECT
-	public function generateJSON($type)
+	//RETURN VALUE: Array OBJECT
+	public function generateArray($type)
 	{
 	}
 	
@@ -39,7 +39,7 @@ class Trophy
 				$troph->achievedAt = $row['at.achieved_at'];
 				$troph->trophyID = $row['at.achieved_trophy_id'];
 				$troph->triggeredAt = $row['t.triggered_at'];
-				$troph->trophyType = $row['t.type'];
+				$troph->trophyType = Type::loadFromDB($row['t.type']);
 				
 				$trophies[] = $troph;
 			}

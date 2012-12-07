@@ -92,7 +92,7 @@ class User
 	//			  $money - the money value the user begins with
 	public function putUserInGame($game,$role,$money)
 	{	$this->userRole = $role;
-		$this->currentGame = $game;
+		$this->currentGameID = $game;
 		$this->money = $money;
 		$this->color = User::createRandomColor();
 		$this->distanceWalked = 0;

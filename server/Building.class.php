@@ -75,7 +75,7 @@ class Building
 		$rnd = array();
 		
 		//create the random number array for the buildings to each get an own number (for the dices)
-		for($i=0;$i<count($buildings);$i++)
+		for($i=2;$i<count($buildings)+2;$i++)
 			$rnd[] = $i+1;
 			
 		shuffle($rnd);
@@ -87,7 +87,7 @@ class Building
 			$building->gameID = $game;	
 			$building->number = $rnd[$counter];
 			$building->buyValue = 1500; //ATTENTION --->> should be calculated on base of the number given!!!!!!! 
-			$building->fee = round($this->buyValue*10/100); //with uprgrade lvl 0 --> fee is 10% of buyvalue
+			$building->fee = round($building->buyValue*10/100); //with uprgrade lvl 0 --> fee is 10% of buyvalue
 			
 			$building->saveSelectedBuildingToDB();
 			

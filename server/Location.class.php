@@ -24,7 +24,7 @@ class Location
 	public function saveToDB()
 	{	$con = db_connect();
 		
-		$statement = $con->prepare('Insert into location (lat,long,radius) values (?,?,?)');
+		$statement = $con->prepare('Insert into location (lat,lon,radius) values (?,?,?)');
 		$statement->execute(array($this->lat,$this->lon,$this->accu));
 		
 		$this->locationID = $con->lastInsertId();

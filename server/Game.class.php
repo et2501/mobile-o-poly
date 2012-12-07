@@ -30,13 +30,12 @@ class Game
 	{	//PART 1 FILL IN ALL GAME ATTRIBUTES
 		$this->gameName = $name;
 		$this->isStarted = false;
-		$this->finished = false;
 		$date = new DateTime();
-		$this->creationDate = $date->getTimestamp();
+		$this->creationDate = date('Y-m-d H:i:s',$date->getTimestamp());
 		if($mode == 'Zeit')
 			$this->timeToPlay = $timeToPlay;
 		
-		$con->db_connect();
+		$con = db_connect();
 		
 		//get the mode ID
 		$statement = $con->prepare('Select mode_id from mode where name = ?');
@@ -56,7 +55,7 @@ class Game
 		$this->buildingList = Building::generateSelectedBuildings($pg,$this->gameID);
 		
 		//PART 3 GENERATE THE CARDS
-		$this->cardList = Card::generateSelectedCards($this->gameID); //<<<<<<
+		$this->cardList = Card::generateSelectedCards($this->gameID,count($this->buildingList)*2); //<<<<<<
 		
 		//PART 4 generate the attended Users --> in this case only the game master!!
 		$usr = new User();
@@ -87,7 +86,7 @@ class Game
 		foreach($this->attendingUsers as $user)
 			$users[] = $user->generateArray();
 		
-		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('name'=>$this->mode),'playground'=>$this->playground->generateArray(),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
+		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('name'=>$this->mode),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
 		return $data;
 	}
 	

@@ -19,7 +19,7 @@ class Playground
 	{	return $this->playgroundID;
 	}
 	
-	public function getStartingMoney()
+	public function getStartMoney()
 	{	return $this->startingMoney;
 	}
 	
@@ -36,7 +36,7 @@ class Playground
 		while($row = $result->fetch(PDO::FETCH_ASSOC))
 		{	$pg = new Playground();
 			$pg->fillIntoObject($row);
-			$ret[] = $pg->generateArray();
+			$ret[] = $pg->generateArray(true);
 		}
 		
 		$con = null;
