@@ -43,7 +43,13 @@ class Building
 	//RETURN VALUE: array
 	public function generateArray($type)
 	{	if($type=='normal')
-			$data = array('name'=>$this->name,'buildingImageURL'=>$this->picture,'location'=>$this->location->generateArray());
+			$data = array('name'=>$this->name,'picture'=>$this->picture,'location'=>$this->location->generateArray());
+		if($type=='game')
+		{	$data = array('name'=>$this->name,'number'=>$this->number,'fee'=>$this->fee,'buyValue'=>$this->buyValue,'picture'=>$this->picture,'upgradeLevel'=>$this->upgradeLevel,'buildingID'=>$this->buildingID,'location'=>$this->location->generateArray());
+			if($this->owner!=null)
+				$data['owner']=$this->owner->generateArray();
+		}
+                
 		return $data;
 	}
 	

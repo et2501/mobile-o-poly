@@ -2,29 +2,49 @@
 
 //User Class
 require_once('Trophy.class.php');
+require_once('Location.class.php');
 require_once('database.php');
 
 class User
 {	//Attributes
 	private $lastKnownPosition; //Location
-	private $Money; //int
-	private $currentGame; //Game
+	private $money; //int
+	private $currentGameID; //int gameID
 	private $userRole; //int
 	private $email; //string
 	private $color; //string
 	private $username; //string
 	private $userID; //int
+	private $distanceWalked; //int
 	private $achievedTrophies = array(); //TrophyList
 	
 	//GETTERS and SETTERS if needed
 	
 	
+	//AUTOR: BIBI
 	//PARAMETER: $userID - ID for the selected User
 	//			 $type - either "normal" for the normal User Object from the user table 
 	//			 		 or "game" for the complete user_in_game object
 	//RETURN VALUE: finished User object
-	public static function loadFromDB($userID)
-	{	
+	public static function loadFromDB($userID,$type)
+	{	$usr = new User();
+		
+		$con = db_connect();
+		
+		if($type=='normal')
+		{	$statement = $con->prepare('Select * from user where user_id = ?');
+			$statement->execute(array($userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			
+			$usr->email = $row['email'];
+			$usr->userID = $row['user_id'];
+			$usr->username = $row['username'];
+		}
+		
+		$con = null;
+		return $usr;
 	}
 	
 	
@@ -35,7 +55,8 @@ class User
 	
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()
-	{
+	{	$data = array('money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		return $data;
 	}
 	
 	//AUTOR: BIBI
@@ -63,6 +84,52 @@ class User
 	public function rolledDice($number)
 	{
 	}
+	
+	//AUTOR: BIBI
+	//puts a user into a game --> into the user_in_game database with all required information
+	//PARAMETERS: $game - the game the user should be put in
+	//			  $role - either admin or normal
+	//			  $money - the money value the user begins with
+	public function putUserInGame($game,$role,$money)
+	{	$this->userRole = $role;
+		$this->currentGame = $game;
+		$this->money = $money;
+		$this->color = User::createRandomColor();
+		$this->distanceWalked = 0;
+		
+		$loc = new Location();
+		$loc->accu = 0;
+		$loc->lat = 0;
+		$loc->lon = 0;
+		$loc->saveToDB();
+		
+		$this->lastKnownPosition = $loc;
+		
+		$con = db_connect();
+		
+		$statement = $con->prepare('Insert into user_in_game (user,game,money,distance_walked,role,color,last_known_location) values (?,?,?,?,?,?,?)');
+		$statement->execute(array($this->userID,$this->currentGameID,$this->money,$this->distanceWalked,$this->userRole,$this->color,$this->lastKnownPosition->locationID));
+		
+		$con = null;
+	}
+	
+	//AUTOR: BIBI
+	//gets all users for a specified game
+	//RETURN VALUE: USER list
+	public static function getUsersInGame($game)
+	{
+	}
+	
+	//AUTOR: BIBI
+	//returns a random hex code 
+	//TODO ----> luminance!!!!!
+	private static function createRandomColor()
+	{	return User::createRandomColorPart() . User::createRandomColorPart() . User::createRandomColorPart();
+	}
+	
+	private static function createRandomColorPart()
+	{	return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+	}	
 	
 }
 

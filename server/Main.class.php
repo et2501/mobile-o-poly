@@ -102,7 +102,8 @@ class Main
 												break;
 			//AUTOR: BIBI
 			case 'createGame':					$game = new Game();
-												$data = array('type'=>'createdGame','currentGame'=>$game->createNewGame($obj['playgroundID'],$obj['userID'],$obj['gameName'],$obj['mode'],$obj['timetoplay']));
+												$game->createNewGame($obj['playgroundID'],$obj['gameName'],$obj['mode'],$obj['timetoplay'],$obj['userID']);
+												$data = array('type'=>'createdGame','currentGame'=>$game->generateArray());
 												break;
 		}
 		

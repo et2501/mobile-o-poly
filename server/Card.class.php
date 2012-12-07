@@ -14,7 +14,8 @@ class Card
 	private $destinationLocation; //instance of Location - If required --> Location of the Destination 
 	private $cardID; //string - Card ID
 	private $alreadyTriggered;	//bool - was the card already in use or not?
-	private $timeToGo; //THOMAS FRAGEN!!
+	private $timeToGo; //int - time to go to a specified location
+	private $amount; //int - multiplicatior
 	
 	//GETTERS and SETTERS if required
 	

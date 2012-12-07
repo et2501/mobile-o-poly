@@ -14,6 +14,14 @@ class Playground
 	private $maxPlayers; //int - maximum number of players
 	
 	//GETTERS and SETTERS if needed
+	//AUTOR: BIBI
+	public function getID()
+	{	return $this->playgroundID;
+	}
+	
+	public function getStartingMoney()
+	{	return $this->startingMoney;
+	}
 	
 	//AUTOR: BIBI
 	//fetches all Playgrounds out of the database and returns them in an array
@@ -37,15 +45,21 @@ class Playground
 	
 	//AUTOR: BIBI
 	//creates an array out of this instance
+	//PARAMETER: $building - bool true if array should be with the building false if not
 	//RETURN VALUE: array 
-	public function generateArray()
-	{	$buildings = array();
+	public function generateArray($building)
+	{	if($building)
+		{	$buildings = array();
 		
-		foreach($this->buildingList as $build)
-			$buildings[] = $build->generateArray('normal');
+			foreach($this->buildingList as $build)
+				$buildings[] = $build->generateArray('normal');
 		
 		
-		$data = array('name'=>$this->name,'moneyToGo'=>$this->moneyToGo,'startingMoney'=>$this->startingMoney,'playgroundID'=>$this->playgroundID,'maxPlayers'=>$this->maxPlayers,'buildings'=>$buildings);
+			$data = array('name'=>$this->name,'moneyToGo'=>$this->moneyToGo,'startingMoney'=>$this->startingMoney,'playgroundID'=>$this->playgroundID,'maxPlayers'=>$this->maxPlayers,'buildings'=>$buildings);
+		}
+		else
+			$data = array('name'=>$this->name,'moneyToGo'=>$this->moneyToGo,'startingMoney'=>$this->startingMoney,'playgroundID'=>$this->playgroundID,'maxPlayers'=>$this->maxPlayers);
+			
 		return $data;
 	}
 	

@@ -5,6 +5,7 @@
 require_once('Card.class.php');
 require_once('Building.class.php');
 require_once('Playground.class.php');
+require_once('User.class.php');
 require_once('database.php');
 
 class Game
@@ -19,15 +20,14 @@ class Game
 	private $mode; //int - mode of game
 	private $timeToPlay; //int - time to play in seconds (if required)
 	private $gameID; //int - id of this game
+	private $attendingUsers=array(); //User List - all users who are in the game
 	
 	//GETTERS and SETTERS if required
 	
 	//AUTOR: BIBI
 	//creates a new game and stores it in the databases
-	public function createNewGame($pg,$master,$name,$mode,$timeToPlay)
+	public function createNewGame($pg,$name,$mode,$timeToPlay,$master)
 	{	//PART 1 FILL IN ALL GAME ATTRIBUTES
-	
-		$this->playground = $pg;
 		$this->gameName = $name;
 		$this->isStarted = false;
 		$this->finished = false;
@@ -49,16 +49,20 @@ class Game
 		//get Playground
 		$this->playground = Playground::loadFromDB($pg);
 		
-		//insert this game into DB
+		//insert this game into DB and save the ID
 		$this->gameID = $this->saveToDB();
 			
 		//PART 2 GENERATE THE BUILDINGS
 		$this->buildingList = Building::generateSelectedBuildings($pg,$this->gameID);
 		
 		//PART 3 GENERATE THE CARDS
-		$this->cardList = Card::generateSelectedCards($this->gameID);
+		$this->cardList = Card::generateSelectedCards($this->gameID); //<<<<<<
 		
-		//PART 4 SET THE ADMIN USER TO USER_IN_GAME and save 
+		//PART 4 generate the attended Users --> in this case only the game master!!
+		$usr = new User();
+		$usr = User::loadFromDB($master,'normal');
+		$usr->putUserInGame($this->gameID,'admin',$this->playground->getStartMoney());
+		$this->attendingUsers[] = $usr;
 	}
 	
 	//starts the game
@@ -66,10 +70,25 @@ class Game
 	{
 	}
 	
+	//AUTOR: BIBI
 	//generates an array of this instance
 	//RETURN VALUE: array
 	public function generateArray()
-	{
+	{	$buildings = array();
+		$cards = array();
+		$users = array();
+	
+		foreach($this->buildingList as $build)
+			$buildings[] = $build->generateArray('game');
+		
+		foreach($this->cardList as $card)
+			$cards[] = $card->generateArray();
+		
+		foreach($this->attendingUsers as $user)
+			$users[] = $user->generateArray();
+		
+		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('name'=>$this->mode),'playground'=>$this->playground->generateArray(),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
+		return $data;
 	}
 	
 	//saves this instance into the database
