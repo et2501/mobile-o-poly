@@ -31,7 +31,7 @@ class Card
 	//Generates an array Object of this instance
 	//RETURN VALUE: array
 	public function generateArray()
-	{	$data = array('titel'=>$this->title,'text'=>$this->text,'type'=>$this->type->generateArray(),'cardID'=>$this->cardID,'alreadyTriggered'=>$this->alreadyTriggered,'occuranceLocation'=>$this->occuranceLocation->generateArray(),'gameID'=>$this->gameID);
+	{	$data = array('titel'=>$this->title,'text'=>$this->text,'type'=>$this->type->generateArray(),'cardID'=>$this->cardID,'alreadyTriggered'=>$this->alreadyTriggered,'occuranceLocation'=>$this->occuranceLocation->generateArray(),'gameID'=>$this->gameID,'amount'=>$this->amount);
 		if($this->timeToGo!=0)
 			$data['timeToGo'] = $this->timeToGo;
 		if($this->destinationLocation!=null)
@@ -122,10 +122,61 @@ class Card
 		$con = null;
 	}
 	
-	//loads one card from the selected_cards table
-	//PARAMETER: int $selectedCardID - id of the card to be fetched
+	//AUTOR: BIBI
+	//loads all cards for a game
+	//PARAMETER: int $gameID - id of the game
 	//RETURN VALUE: Card object
-	public static function loadSelectedCardFromDB($selectedCardID)
+	public static function loadSelectedCardsFromGame($gameID)
+	{	$cards = array();
+		$con = db_connect();
+		
+		$statement = $con->prepare('Select * from selected_card inner join card on card = card_id inner join location on location_id = occurance_location where game_id = ?');
+		$statement->execute(array($gameID));
+		$result = $statement;
+		
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	$card = new Card();
+			
+			$card->alreadyTriggered = $row['already_triggered'];
+			$card->amount = $row['amount'];
+			$card->cardID = $row['card_id'];
+			$card->gameID =  $row['game_id'];
+			$card->text = $row['text'];
+			$card->title = $row['titel'];
+			$card->type = Type::loadFromDB($row['type']);
+			
+			$oc_loc = new Location();
+			$oc_loc->accu = $row['radius'];
+			$oc_loc->lat = $row['lat'];
+			$oc_loc->lon = $row['lon'];
+			$oc_loc->locationID = $row['location_id'];
+			$card->occuranceLocation = $oc_loc;
+			
+			$card->timeToGo = $row['time_for_distance'];
+			
+			if($card->timeToGo!=null) //NOT TESTED!!!!
+			{	$statement2 = $con->prepare('Select * from location where location_id = ?');
+				$statement2->execute(array($row['destination_location']));
+				$result2 = $statement2;
+				
+				$row2 = $result2->fetch(PDO::FETCH_ASSOC);
+				
+				$d_loc = new Location();
+				$d_loc->accu = $row2['radius'];
+				$d_loc->lat = $row2['lat'];
+				$d_loc->lon = $row2['lon'];
+				$d_loc->locationID = $row2['location_id'];
+				$card->destinationLocation = $d_loc;
+			}
+			
+			$cards[] = $card;
+		}
+		
+		$con = null;
+		return $cards;
+	}
+	
+	public static function loadSelectedCardFromDB($cardID)
 	{
 	}
 }

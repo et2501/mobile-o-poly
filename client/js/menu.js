@@ -14,6 +14,14 @@ $(document).ready(function(e) {
 		});
 	
 	$('#btn_create_game').on('click',function()
-		{	window.location.href = "createGame.html";
+		{	//set a temporary localStorage var for the createGame.html to know that its in the createGame mode
+			localStorage.setItem('crGa','create');
+			window.location.href = "createGame.html";
+		});
+	
+	$('#btn_join_game').on('click',function()
+		{	//set a temporary localStorage var for the createGame.html to know that its in the createGame mode
+			localStorage.setItem('crGa','join');
+			window.location.href = "createGame.html";
 		});
 });

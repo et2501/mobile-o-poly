@@ -10,7 +10,19 @@ $(document).ready(function(e) {
 		window.location.href = "index.html";
 	
 	$('#sec_createGame_2').hide();
+	$('#sec_waitForGamers').hide();
+	$('#cont_startButton').hide();
 	$('#tr_timetoplay').hide();
+	
+	if(localStorage.getItem('crGa')=='create')
+	{	$('#sec_attendGame').hide();
+		sendReqPlaygrounds(); //get all the playgrounds
+	}
+	if(localStorage.getItem('crGa')=='join')
+		$('#sec_createGame_1').hide();
+		
+	localStorage.removeItem('crGa');
+		
 	$("[name=mode]").removeAttr("checked");
 	
 	var user = JSON.parse(localStorage.getItem('user'));
@@ -63,6 +75,7 @@ $(document).ready(function(e) {
 				if(selected_mode&&(selected_mode=='Zeit'?time_to_play:true))
 				{	$('#txt_timetoplay').val('');
 					$('#txt_crga_groupname').val('');
+					$('#cont_startButton').show();
 					sendReqnewGame(gamename,JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].playgroundID,user.userID,selected_mode,time_to_play);
 				}
 				else
@@ -74,7 +87,24 @@ $(document).ready(function(e) {
 			$('#sec_createGame_2').hide();
 		});
 	
-	sendReqPlaygrounds(); //get all the playgrounds
+	$('#btn_back_2').on('click',function()
+		{	window.location.href="menu.html";
+		});
+		
+	$('#btn_back_3').on('click',function()
+		{	window.location.href="menu.html";
+		});	
+	
+	$('#btn_next_3').on('click',function()
+		{	gname = $('#txt_attendGame').attr('value');
+		
+			if(gname)
+			{	$('#txt_attendGame').val('');
+				sendReqattendGame(user['userID'],gname);
+			}
+			else
+				alert('Bitte geben Sie einen Spielenamen ein!');
+		});
 });
 
 //AUTOR: BIBI
@@ -106,4 +136,21 @@ function listPlaygrounds(pgs)
 	//IMPORTANT: without hiding and showing the main container --> on some mobile phones the DOM change would not appear!!
 	$('#sec_createGame_1').hide();
 	$('#sec_createGame_1').show(); 
+}
+
+function buildPlayerTable(maxPlayers,users)
+{	$('#table_waitForPlayers').html('');
+	output = "<table>";
+
+	for(i=0;i<maxPlayers;i++)
+	{	if(users[i])
+			output+='<tr><td>'+users[i]['username']+'</td><td style="background-color:red"></td></tr>';
+		else
+			output+='<tr><td>Freier Slot</td><td style="background-color:green"></td></tr>';
+	}
+
+	output+="</table>";
+	$('#table_waitForPlayers').append(output);
+	$('#sec_waitForGamers').hide();
+	$('#sec_waitForGamers').show();
 }

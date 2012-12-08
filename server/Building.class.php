@@ -3,7 +3,7 @@
 //Building Class
 require_once('database.php');
 require_once('Location.class.php');
-
+require_once('User.class.php');
 
 class Building
 {	//Attributes
@@ -98,9 +98,44 @@ class Building
 	}
 	
 	
-	//RETURN VALUE: Building
-	public static function loadSelectedBuildingFromDB($buildingID)
-	{
+	//AUTOR: BIBI
+	//loadsAll Buildings for a specified game
+	//PARAMETERS: 	$gameID - gameID 
+	//RETURN VALUE: Building array
+	public static function loadSelectedBuildingsFromGame($gameID)
+	{	$buildings = array();
+		$con = db_connect();
+	
+		$statement = $con->prepare('Select * from selected_building inner join building on building_id = building inner join location on location_id = location where game = ?');
+		$statement->execute(array($gameID));
+		$result = $statement;
+	
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	$build = new Building();
+			$build->buildingID = $row['building_id'];
+			$build->name = $row['name'];
+			$build->picture = $row['picture'];
+			
+			$loc = new Location();
+			$loc->accu = $row['radius'];
+			$loc->lat = $row['lat'];
+			$loc->lon = $row['long'];
+			$build->location = $loc;
+			
+			$build->buyValue = $row['buy_value'];
+			$build->fee = $row['fee'];
+			$build->gameID = $row['game'];
+			$build->number = $row['number'];
+			$build->upgradeLevel = $row['level'];
+			
+			if($row['owner'])
+				$build->owner = User::loadFromDB($row['owner'],'game');
+			
+			$buildings[] = $build;
+		}
+	
+		$con = null;
+		return $buildings;
 	}
 	
 	//AUTOR: BIBI
@@ -132,6 +167,10 @@ class Building
 		
 		$con = null;
 		return $ret;
+	}
+	
+	public static function loadSelectedBuildingFormDB($buildingID)
+	{
 	}
 	
 }

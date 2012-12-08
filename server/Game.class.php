@@ -27,41 +27,56 @@ class Game
 	//AUTOR: BIBI
 	//creates a new game and stores it in the databases
 	public function createNewGame($pg,$name,$mode,$timeToPlay,$master)
-	{	//PART 1 FILL IN ALL GAME ATTRIBUTES
-		$this->gameName = $name;
-		$this->isStarted = false;
-		$date = new DateTime();
-		$this->creationDate = date('Y-m-d H:i:s',$date->getTimestamp());
-		if($mode == 'Zeit')
-			$this->timeToPlay = $timeToPlay;
-		
+	{	//first look if there is any running game with this specified name -->> if so then error msg
 		$con = db_connect();
 		
-		//get the mode ID
-		$statement = $con->prepare('Select mode_id from mode where name = ?');
-		$statement->execute(array($mode));
+		$statement = $con->prepare('Select * from game where name = ? and finished is null');
+		$statement->execute(array($name));
 		$result = $statement;
 		
-		$row = $result->fetch(PDO::FETCH_ASSOC);
-		$this->mode = $row['mode_id'];
+		$con = null;
 		
-		//get Playground
-		$this->playground = Playground::loadFromDB($pg);
-		
-		//insert this game into DB and save the ID
-		$this->gameID = $this->saveToDB();
+		if($result->rowCount()==0)
+		{	//PART 1 FILL IN ALL GAME ATTRIBUTES
+			$this->gameName = $name;
+			$this->isStarted = false;
+			$date = new DateTime();
+			$this->creationDate = date('Y-m-d H:i:s',$date->getTimestamp());
+			if($mode == 'Zeit')
+				$this->timeToPlay = $timeToPlay;
 			
-		//PART 2 GENERATE THE BUILDINGS
-		$this->buildingList = Building::generateSelectedBuildings($pg,$this->gameID);
-		
-		//PART 3 GENERATE THE CARDS
-		$this->cardList = Card::generateSelectedCards($this->gameID,count($this->buildingList)*2); //<<<<<<
-		
-		//PART 4 generate the attended Users --> in this case only the game master!!
-		$usr = new User();
-		$usr = User::loadFromDB($master,'normal');
-		$usr->putUserInGame($this->gameID,'admin',$this->playground->getStartMoney());
-		$this->attendingUsers[] = $usr;
+			$con = db_connect();
+			
+			//get the mode ID
+			$statement = $con->prepare('Select mode_id from mode where name = ?');
+			$statement->execute(array($mode));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$this->mode = $row['mode_id'];
+			
+			//get Playground
+			$this->playground = Playground::loadFromDB($pg);
+			
+			//insert this game into DB and save the ID
+			$this->gameID = $this->saveToDB();
+				
+			//PART 2 GENERATE THE BUILDINGS
+			$this->buildingList = Building::generateSelectedBuildings($pg,$this->gameID);
+			
+			//PART 3 GENERATE THE CARDS
+			$this->cardList = Card::generateSelectedCards($this->gameID,count($this->buildingList)*2); //<<<<<<
+			
+			//PART 4 generate the attended Users --> in this case only the game master!!
+			$usr = new User();
+			$usr = User::loadFromDB($master,'normal');
+			$usr->putUserInGame($this->gameID,'admin',$this->playground->getStartMoney());
+			$this->attendingUsers[] = $usr;
+			
+			return "OK";
+		}
+		else
+			return "e107";
 	}
 	
 	//starts the game
@@ -86,7 +101,7 @@ class Game
 		foreach($this->attendingUsers as $user)
 			$users[] = $user->generateArray();
 		
-		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('name'=>$this->mode),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
+		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('mode_id'=>$this->mode,'name'=>Game::getModeName($this->mode)),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
 		return $data;
 	}
 	
@@ -108,19 +123,80 @@ class Game
 		$con = null;
 		return $id;
 	}
-	
-	//evtl mal statisch?? + übergabe der game id?
+
 	//Adds a User to the Game
-	//PARAMETER: int $userID - User to be added
-	public function attendGame($userID)
-	{
+	//PARAMETER: user object
+	//RETURN VALUE: eihter OK or error code
+	public function attendGame($user)
+	{	//First look if there is still space
+		if($this->playground->getMaxPlayers() > count($this->attendingUsers))
+		{	//then look if game is already started
+			if(!$this->isStarted)
+			{	$this->attendingUsers[] = $user;
+				$user->putUserInGame($this->gameID,'player',$this->playground->getStartMoney());
+				return "OK";
+			}
+			else
+				return "e105";
+		}
+		else	
+			return "e106";
 	}	
 	
-	//Loads one data row from Games
+	//AUTOR: BIBI
+	//Loads one data row from Games either through name (and finished is null for only the running games) or throuhg ID
+	//if the ID is set the name will be ignored
 	//PARAMETER: string $gameName - name of the Game to be selected
-	//RETURN VALUE: Game
-	public static function loadFromDB($gameName)
-	{
+	//			 int $gameID - id of the Game to be selected
+	//RETURN VALUE: Game - or if gameName not to find --> return error code
+	//              or game Array
+	public static function loadFromDB($gameName,$gameID = null)
+	{	$gam = new Game();
+	
+		$con = db_connect();
+		
+		if($gameID!=null)
+		{	$statement = $con->prepare('Select * from game where game_id = ?');
+			$statement->execute(array($gameID));
+		}
+		else
+		{	$statement = $con->prepare('Select * from game where name = ? and finished is null');
+			$statement->execute(array($gameName));
+		}
+		
+		$result = $statement;
+		if($result->rowCount()!=0)
+		{	$row = $result->fetch(PDO::FETCH_ASSOC);
+				
+			$gam->creationDate = $row['creation_date'];
+			$gam->finished = $row['finished'];
+			$gam->gameID = $row['game_id'];
+			$gam->gameName = $row['name'];
+			$gam->isStarted = $row['is_started'];
+			$gam->timeToPlay = $row['time_to_play'];
+			$gam->mode = $row['mode'];
+			$gam->playground = Playground::loadFromDB($row['playground']);
+			$gam->buildingList = Building::loadSelectedBuildingsFromGame($gam->gameID);
+			$gam->cardList = Card::loadSelectedCardsFromGame($gam->gameID);
+			$gam->attendingUsers = User::getUsersInGame($gam->gameID);
+			
+			return $gam;
+		}
+		else
+			return "e104";
+	}
+	
+	public static function getModeName($modeID)
+	{	$con = db_connect();
+		
+		$statement = $con->prepare('Select name from mode where mode_id = ?');
+		$statement->execute(array($modeID));
+		$result = $statement;
+		
+		$row = $result->fetch(PDO::FETCH_ASSOC);
+		
+		$con = null;
+		return $row['name'];
 	}
 }
 

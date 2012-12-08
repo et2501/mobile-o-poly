@@ -23,6 +23,10 @@ class Playground
 	{	return $this->startingMoney;
 	}
 	
+	public function getMaxPlayers()
+	{	return $this->maxPlayers;
+	}
+	
 	//AUTOR: BIBI
 	//fetches all Playgrounds out of the database and returns them in an array
 	//RETURN VALUE: array of Playgrounds

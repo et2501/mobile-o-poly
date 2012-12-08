@@ -42,6 +42,15 @@ class User
 			$usr->userID = $row['user_id'];
 			$usr->username = $row['username'];
 		}
+		if($type=='game')
+		{	$statement = $con->prepare('select * from user_in_game inner join user on user_id = user inner join location on location_id = last_known_location where user_id = ?');
+			$statement->execute(array($userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			
+			$usr->fillInUser($row);
+		}
 		
 		$con = null;
 		return $usr;
@@ -53,6 +62,7 @@ class User
 	}
 	
 	
+	//AUTOR: BIBI
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()
 	{	$data = array('money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
@@ -117,7 +127,41 @@ class User
 	//gets all users for a specified game
 	//RETURN VALUE: USER list
 	public static function getUsersInGame($game)
-	{
+	{	$users = array();
+		$con = db_connect();
+		
+		$statement = $con->prepare('select * from user_in_game inner join user on user_id = user inner join location on location_id = last_known_location where game = 12');
+		$statement->execute(array($game));
+		$result = $statement;
+		
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	$usr = new User();
+			
+			$usr->fillInUser($row);
+			
+			$users[] = $usr;
+		}
+		
+		
+		$con = null;
+		return $users;
+	}
+	
+	//AUTOR: BIBI
+	private function fillInUser($row)
+	{	$this->color = $row['color'];
+		$this->userID = $row['user_id'];
+		$this->username = $row['username'];
+		$this->money = $row['money'];
+		$this->userRole = $row['role'];
+			
+		$loc = new Location();
+		$loc->accu = $row['radius'];
+		$loc->lat = $row['lat'];
+		$loc->lon = $row['lon'];
+		$loc->locationID = $row['location_id'];
+			
+		$this->lastKnownPosition = $loc;
 	}
 	
 	//AUTOR: BIBI

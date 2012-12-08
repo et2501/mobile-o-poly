@@ -102,8 +102,24 @@ class Main
 												break;
 			//AUTOR: BIBI
 			case 'createGame':					$game = new Game();
-												$game->createNewGame($obj['playgroundID'],$obj['gameName'],$obj['mode'],$obj['timetoplay'],$obj['userID']);
-												$data = array('type'=>'createdGame','currentGame'=>$game->generateArray());
+												$ret = $game->createNewGame($obj['playgroundID'],$obj['gameName'],$obj['mode'],$obj['timetoplay'],$obj['userID']);
+												if($ret == "OK")
+													$data = array('type'=>'createdGame','currentGame'=>$game->generateArray());
+												else
+													$data = array('type'=>'attendGame','currentGame'=>array('error'=>$ret)); 
+												break;
+			//AUTOR: BIBI
+			case 'attendGame':					$game = Game::loadFromDB($obj['game']['gameName']);
+												if($game instanceof Game)
+												{	Main::$loggedInUser = User::loadFromDB($obj['user']['userID'],'normal');
+													$ret = $game->attendGame(Main::$loggedInUser);
+													if($ret != 'OK')
+														$data = array('type'=>'attendGame','currentGame'=>array('error'=>$ret)); 
+													else
+														$data = array('type'=>'attendGame','currentGame'=>$game->generateArray());	
+												}
+												else
+													$data = array('type'=>'attendGame','currentGame'=>array('error'=>$game)); 		
 												break;
 		}
 		

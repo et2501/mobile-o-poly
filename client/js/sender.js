@@ -55,6 +55,24 @@ function sendReqnewGame(gamename,playgroundID,userID,mode,timetoplay)
 }
 
 //AUTOR: BIBI
+//REQUEST ATTEND GAME
+function sendReqattendGame(userID,gameName)
+{	send_obj = 
+	{	"type": "attendGame",
+    	"object": 
+		{	"game": {
+        		"gameName": gameName
+    		},
+			"user":{
+				"userID": userID
+			}
+		}
+	};
+	
+	send(send_obj);
+}
+
+//AUTOR: BIBI
 //SEND FUNCTION
 //SENDS THE JSON OBJ TO THE COMMUNICATOR ON THE SERVER AND HANDLES THE RESPONSE DATA
 function send(obj) {
@@ -82,8 +100,16 @@ function send(obj) {
 						case 'playground': 				localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
 														listPlaygrounds(data['playgrounds']);
 														break;
-						case 'createdGame':				alert("test");
-														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+						case 'createdGame':	
+						case 'attendGame':				if(!data['currentGame']['error'])
+														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+															buildPlayerTable(data['currentGame']['playground']['maxPlayers'],data['currentGame']['users']);
+															$('#sec_waitForGamers').show();
+															$('#sec_attendGame').hide();
+															$('#sec_createGame_2').hide();
+				  										}
+														else
+															alert(data['currentGame']['error']);
 														break;
 				  }
 		},
