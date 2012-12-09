@@ -5,6 +5,13 @@ $(document).ready(function(e) {
 		window.location.href = "index.html";
 	
 	var user = JSON.parse(localStorage.getItem('user'));
+		
+	//is there is a current game running go to game.html if its not running to createGame.html
+	//ONLY WORKS IF THE USER HAS NOT LOGGED OUT IN BETWEEN!!
+	//NO PROBLEM FOR GAME BECAUSE LOGOUT WILL MEAN THAT HE IS KICKED FROM GAME BUT PROBLEM IF HE IST WAITING FOR A GAME TO START!!!!
+	
+	//send a request if a user is currently in a game!!
+	sendReqIsUserInGame(user['userID']);
 	
 	$('#lbl_menu_nickname').html(user.username);
 	
@@ -25,3 +32,24 @@ $(document).ready(function(e) {
 			window.location.href = "createGame.html";
 		});
 });
+
+function forwardTo()
+{	game = JSON.parse(localStorage.getItem('currentGame'));
+	if(game)
+	{	if(parseInt(game['isStarted'])==1)
+			window.location.href = "game.html";
+		else
+		{	localStorage.setItem('crGa','waiting');
+			//search for the user role!!
+			run = true
+			for(i=0;i<JSON.parse(localStorage.getItem('currentGame'))['users'].length&&run;i++)
+				if(JSON.parse(localStorage.getItem('user'))['username']==JSON.parse(localStorage.getItem('currentGame'))['users'][i]['username'])
+				{	run = false;
+					role = JSON.parse(localStorage.getItem('currentGame'))['users'][i]['userRole'];
+				}
+			
+			localStorage.setItem('asWhat',role);
+			window.location.href = "createGame.html";
+		}
+	}
+}

@@ -73,6 +73,55 @@ function sendReqattendGame(userID,gameName)
 }
 
 //AUTOR: BIBI
+//REQUEST CHECK IF THE GAME HAS ALREADY STARTED
+function sendReqCheckStarted(gameID,gameName)
+{	send_obj = 
+	{	"type": "checkStartedGame",
+    	"object": {
+        	"game": {
+				"gameID": gameID,
+				"gameName": gameName
+			}
+    	}
+	};
+	
+	send(send_obj);
+}
+
+//AUTOR: BIBI
+//REQUEST START GAME 
+function sendReqStartGame(gameID,gameName)
+{	send_obj =
+	{	"type": "startGame",
+		"object":	{
+			"game": {
+				"gameID": gameID,
+				"gameName": gameName
+			}
+		}
+	};
+	
+	send(send_obj);
+}
+
+
+//AUTOR: BIBI
+//REQUEST LOOK IF A USER IS CURRENTLY IN A GAME
+function sendReqIsUserInGame(userID)
+{	send_obj =
+	{	"type": "isUserInGame",
+		"object":	{
+			"user":{
+				"userID": userID
+			}
+		}
+	};
+	
+	send(send_obj);
+}
+
+
+//AUTOR: BIBI
 //SEND FUNCTION
 //SENDS THE JSON OBJ TO THE COMMUNICATOR ON THE SERVER AND HANDLES THE RESPONSE DATA
 function send(obj) {
@@ -100,6 +149,7 @@ function send(obj) {
 						case 'playground': 				localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
 														listPlaygrounds(data['playgrounds']);
 														break;
+						case 'checkStartedGame':
 						case 'createdGame':	
 						case 'attendGame':				if(!data['currentGame']['error'])
 														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
@@ -107,9 +157,20 @@ function send(obj) {
 															$('#sec_waitForGamers').show();
 															$('#sec_attendGame').hide();
 															$('#sec_createGame_2').hide();
+															
+															if(data['type'] != 'checkStartedGame')
+																localStorage.setItem('interval',window.setInterval(checkIfStarted, 5000));
+															else
+																checkStarted();
+															
 				  										}
 														else
 															alert(data['currentGame']['error']);
+														break;
+						case 'userGame':				if(!data['currentGame']['error'])
+														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+				  											forwardTo();
+														}
 														break;
 				  }
 		},

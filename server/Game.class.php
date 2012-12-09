@@ -79,9 +79,18 @@ class Game
 			return "e107";
 	}
 	
+	//AUTOR: BIBI
 	//starts the game
 	public function startGame()
-	{
+	{	$this->isStarted = true;
+		
+		//save change to db
+		$con = db_connect();
+		
+		$statement = $con->prepare('Update game set is_started = true where game_id = ?');	
+		$statement->execute(array($this->gameID));
+			
+		$con = null;
 	}
 	
 	//AUTOR: BIBI
@@ -105,6 +114,7 @@ class Game
 		return $data;
 	}
 	
+	//AUTOR: BIBI
 	//saves this instance into the database
 	//RETURN VALUE: int - insert ID
 	public function saveToDB()
@@ -123,7 +133,8 @@ class Game
 		$con = null;
 		return $id;
 	}
-
+	
+	//AUTOR: BIBI
 	//Adds a User to the Game
 	//PARAMETER: user object
 	//RETURN VALUE: eihter OK or error code
@@ -134,6 +145,10 @@ class Game
 			if(!$this->isStarted)
 			{	$this->attendingUsers[] = $user;
 				$user->putUserInGame($this->gameID,'player',$this->playground->getStartMoney());
+				
+				//now look if all player slots are full ---> if so start game!!!
+				if($this->playground->getMaxPlayers() == count($this->attendingUsers))
+					$this->startGame();
 				return "OK";
 			}
 			else
@@ -186,6 +201,9 @@ class Game
 			return "e104";
 	}
 	
+	//AUTOR: BIBI
+	//gets the name of a mode from the id
+	//RETURN VALUE: string mode name
 	public static function getModeName($modeID)
 	{	$con = db_connect();
 		
@@ -197,6 +215,27 @@ class Game
 		
 		$con = null;
 		return $row['name'];
+	}
+	
+	//AUTOR: BIBI
+	//looks if a user is currently in a game
+	//PARAMETER: $userID - user for the game
+	//RETURN VALUE: string gamename
+	public static function getGameForUser($userID)
+	{	$con = db_connect();
+		
+		$statement = $con->prepare('SELECT name from game inner join user_in_game on game = game_id where user = ? and finished is null');
+		$statement->execute(array($userID));
+		$result = $statement;
+		
+		$con = null;
+		
+		if($result->rowCount()>0)
+		{	$row = $result->fetch(PDO::FETCH_ASSOC);
+			return $row['name'];
+		}
+		else
+			return "e108";
 	}
 }
 

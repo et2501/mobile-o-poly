@@ -70,7 +70,7 @@ class Card
 					$i--;
 			}
 			else
-			{	$card_counter[$row[$rnd]->cardID] = 0;
+			{	$card_counter[$row[$rnd]['card_id']] = 0;
 				$ok = true;
 			}
 				

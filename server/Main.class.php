@@ -121,6 +121,34 @@ class Main
 												else
 													$data = array('type'=>'attendGame','currentGame'=>array('error'=>$game)); 		
 												break;
+			//AUTOR: BIBI
+			case 'checkStartedGame':			$game = Game::loadFromDB($obj['game']['gameName'],$obj['game']['gameID']);
+												if($game instanceof Game)
+													$data = array('type'=>'checkStartedGame','currentGame'=>$game->generateArray());
+												else
+													$data = array('type'=>'checkStartedGame','currentGame'=>array('error'=>$game));
+												break;
+		  //AUTOR: BIBI
+		  case 'startGame':						$game = Game::loadFromDB($obj['game']['gameName'],$obj['game']['gameID']);
+		  										if($game instanceof Game)
+												{	$game->startGame();
+													$data = array('type'=>'checkStartedGame','currentGame'=>$game->generateArray());
+												}
+												else
+													$data = array('type'=>'checkStartedGame','currentGame'=>array('error'=>$game));
+		  										break;
+			//AUTOR: BIBI
+			case 'isUserInGame':				$gamename = Game::getGameForUser($obj['user']['userID']);
+												if($gamename != "e108")
+												{	$game = Game::loadFromDB($gamename);
+													if($game instanceof Game)
+														$data = array('type'=>'userGame','currentGame'=>$game->generateArray());
+													else
+														$data = array('type'=>'userGame','currentGame'=>array('error'=>$game));
+												}
+												else
+													$data = array('type'=>'userGame','currentGame'=>array('error'=>$gamename));
+												break;
 		}
 		
 		return $data;

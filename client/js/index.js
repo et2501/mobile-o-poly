@@ -1,6 +1,9 @@
 //AUTOR: BIBI
 $(document).ready(function(e) {
 	
+	if(localStorage.getItem('user'))
+		window.location.href = "menu.html";
+	
 	//HIDE REGISTER SECTION
 	$('#sec_register').hide(); 
 	

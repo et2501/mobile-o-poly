@@ -130,7 +130,7 @@ class User
 	{	$users = array();
 		$con = db_connect();
 		
-		$statement = $con->prepare('select * from user_in_game inner join user on user_id = user inner join location on location_id = last_known_location where game = 12');
+		$statement = $con->prepare('select * from user_in_game inner join user on user_id = user inner join location on location_id = last_known_location where game = ?');
 		$statement->execute(array($game));
 		$result = $statement;
 		

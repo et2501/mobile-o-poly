@@ -10,17 +10,26 @@ $(document).ready(function(e) {
 		window.location.href = "index.html";
 	
 	$('#sec_createGame_2').hide();
-	$('#sec_waitForGamers').hide();
 	$('#cont_startButton').hide();
 	$('#tr_timetoplay').hide();
 	
 	if(localStorage.getItem('crGa')=='create')
 	{	$('#sec_attendGame').hide();
+		$('#sec_waitForGamers').hide();
 		sendReqPlaygrounds(); //get all the playgrounds
 	}
 	if(localStorage.getItem('crGa')=='join')
-		$('#sec_createGame_1').hide();
-		
+	{	$('#sec_createGame_1').hide();
+		$('#sec_waitForGamers').hide();
+	}
+	if(localStorage.getItem('crGa')=='waiting')
+	{	$('#sec_createGame_1').hide();
+		$('#sec_attendGame').hide();
+		if(localStorage.getItem('asWhat')=='admin')
+			$('#cont_startButton').show();
+		localStorage.removeItem('asWhat');
+		localStorage.setItem('interval',window.setInterval(checkIfStarted, 5000));
+	}
 	localStorage.removeItem('crGa');
 		
 	$("[name=mode]").removeAttr("checked");
@@ -105,6 +114,14 @@ $(document).ready(function(e) {
 			else
 				alert('Bitte geben Sie einen Spielenamen ein!');
 		});
+	
+	$('#btn_forceStart').on('click',function()
+		{	//look if there are at least 2 players!!!
+			if(JSON.parse(localStorage.getItem('currentGame'))['users'].length>1)
+				sendReqStartGame(JSON.parse(localStorage.getItem('currentGame'))['gameID'],JSON.parse(localStorage.getItem('currentGame'))['gameName']);
+			else
+				alert('Zumindest 2 Spieler!!');
+		});
 });
 
 //AUTOR: BIBI
@@ -138,6 +155,8 @@ function listPlaygrounds(pgs)
 	$('#sec_createGame_1').show(); 
 }
 
+//AUTOR: BIBI
+//generates the waiting for user table
 function buildPlayerTable(maxPlayers,users)
 {	$('#table_waitForPlayers').html('');
 	output = "<table>";
@@ -153,4 +172,22 @@ function buildPlayerTable(maxPlayers,users)
 	$('#table_waitForPlayers').append(output);
 	$('#sec_waitForGamers').hide();
 	$('#sec_waitForGamers').show();
+}
+
+
+//AUTOR: BIBI
+//checks every 5 seconds if the game is already started
+function checkIfStarted()
+{	sendReqCheckStarted(JSON.parse(localStorage.getItem('currentGame'))['gameID'],JSON.parse(localStorage.getItem('currentGame'))['gameName']);
+}
+
+//AUTOR: BIBI
+//checks if the game has already started!!
+function checkStarted()
+{	if(parseInt(JSON.parse(localStorage.getItem('currentGame'))['isStarted'])==1)
+	{	//STOP THE TIMER
+		window.clearInterval(parseInt(localStorage.getItem('interval')));
+		localStorage.removeItem('interval');
+		window.location.href = "game.html";
+	}
 }
