@@ -35,7 +35,7 @@ class Card
 		if($this->timeToGo!=0)
 			$data['timeToGo'] = $this->timeToGo;
 		if($this->destinationLocation!=null)
-			$data['detinationLocation'] = $this->destinationLocation->generateArray();
+			$data['destinationLocation'] = $this->destinationLocation->generateArray();
 		return $data;
 	}
 	
@@ -45,8 +45,11 @@ class Card
 	//			   $game - the game for which the cards should be created
 	//NOT TESTED throughoutly <---- ATTENTION
 	//RETURN VALUE: array of Card objects
-	public static function generateSelectedCards($game,$amount)
-	{	$sel_cards = array();
+	
+	public static function generateSelectedCards($game,$buildingList)
+	{	
+		$amount=count($buildingList)*2;
+		$sel_cards = array();
 		$card_counter = array(); //this array will prevent that one card can not be chosen more than 3 times!!
 		
 		//first select all cards available
@@ -63,7 +66,8 @@ class Card
 			//prove if card is already in card_counter
 			if(array_key_exists($row[$rnd]['card_id'],$card_counter))//if it exists --> add 1 to value if already three than i-1
 			{	if($card_counter[$row[$rnd]['card_id']] < 3)
-				{	$card_counter[$row[$rnd]['card_id']] += 1;
+				{	
+					$card_counter[$row[$rnd]['card_id']] += 1;
 					$ok = true;
 				}
 				else
@@ -179,6 +183,48 @@ class Card
 	public static function loadSelectedCardFromDB($cardID)
 	{
 	}
+	public static function GetDistance($lat1, $lon1, $lat2, $lon2)
+	{
+		//code for Distance in Kilo Meter
+		$theta = $lon1 - $lon2;
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+		$dist = abs(round(rad2deg(acos($dist)) * 60 * 1.1515 * 1.609344 * 1000, 0));
+		return ($dist);
+	}
+	
+	public static function deg2rad($deg)
+	{
+		return ($deg * pi() / 180.0);
+	}
+	
+	public static function rad2deg($rad)
+	{
+		return ($rad / pi()* 180.0);
+	}
+	
+	public static function getPointAtDistance($lat1,$lon1,$dist,$direction)
+	{
+		$R = 6378.1; //Radius of the Earth
+		$brng = deg2rad($direction); //Bearing is 90 degrees converted to radians.
+		$d = $dist/1000;//Distance in km
+	
+		//var lat2  52.20444 //the lat result I'm hoping for
+		//var lon2  0.36056 // the long result I'm hoping for.
+	
+		$lat1 = deg2rad($lat1); //Current lat point converted to radians
+		$lon1 = deg2rad($lon1); //Current long point converted to radians
+	
+		$lat2 = asin( sin($lat1)*cos($d/$R)+cos($lat1)*sin($d/$R)*cos($brng));
+	
+		$lon2 = $lon1 + atan2(sin($brng)*sin($d/$R)*cos($lat1),cos($d/$R)-sin($lat1)*sin($lat2));
+		//$lon2 = $lon1 + atan2((sin($brng)*sin($d/$R)*cos($lat1)),(cos($d/$R)-sin($lat1)*sin($lat2)));
+	
+		$lat2 = rad2deg($lat2);
+		$lon2 = rad2deg($lon2);
+		
+		return array($lat2,$lon2);
+	}
+
 }
 
 ?>
