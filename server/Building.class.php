@@ -119,7 +119,7 @@ class Building
 			$loc = new Location();
 			$loc->accu = $row['radius'];
 			$loc->lat = $row['lat'];
-			$loc->lon = $row['long'];
+			$loc->lon = $row['lon'];
 			$build->location = $loc;
 			
 			$build->buyValue = $row['buy_value'];
@@ -159,7 +159,7 @@ class Building
 			$loc = new Location();
 			$loc->accu = $row['radius'];
 			$loc->lat = $row['lat'];
-			$loc->lon = $row['long'];
+			$loc->lon = $row['lon'];
 			$build->location = $loc;
 			
 			$ret[] = $build;
