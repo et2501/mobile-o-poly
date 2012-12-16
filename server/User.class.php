@@ -168,12 +168,29 @@ class User
 	//returns a random hex code 
 	//TODO ----> luminance!!!!!
 	private static function createRandomColor()
-	{	return User::createRandomColorPart() . User::createRandomColorPart() . User::createRandomColorPart();
+	{	
+		//Formel für luminanz (0.2126*R) + (0.7152*G) + (0.0722*B)
+		//bei 255,255,255=  54,213+ 182,376+ 18,411
+		//255. am Besten wahrscheinlich zwischen 100 und 200
+		$red=0;
+		$green=0;
+		$blue=0;
+		$foundLumi=false;
+		
+		while(!$foundLumi)
+		{
+			$red=mt_rand(0,255);
+			$green=mt_rand(0,255);
+			$blue=mt_rand(0,255);
+			
+			if(($red*0.2126+$green*0.7152+$blue*0.0722)>100&&($red*0.2126+$green*0.7152+$blue*0.0722)<200)
+			{
+				$foundLumi=true;
+			}
+		}
+		
+		return str_pad( dechex( $red ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( $green ), 2, '0', STR_PAD_LEFT) . str_pad( dechex( $blue ), 2, '0', STR_PAD_LEFT);
 	}
-	
-	private static function createRandomColorPart()
-	{	return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-	}	
 	
 }
 

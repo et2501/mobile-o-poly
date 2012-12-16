@@ -16,6 +16,7 @@ $(document).ready(function(e) {
 	
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  console.log(currentGame);
+	  
 	  var debug=true;
 	  //init
 	  var lat=51;
@@ -38,6 +39,18 @@ $(document).ready(function(e) {
 		  shadowAnchor: [8, 29],  // the same for the shadow
 		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 		});
+		
+		var playerIconEveryone = L.icon({
+		  iconUrl: './assets/images/player_everyone.png',
+		  shadowUrl: './assets/images/player_shadow.png',
+	  
+		  iconSize:     [26, 24], // size of the icon
+		  shadowSize:   [35, 30], // size of the shadow
+		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
+		  shadowAnchor: [8, 29],  // the same for the shadow
+		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		});
+		
 		var buildingIcon=L.icon({
 		iconUrl: './assets/images/building.png',
 		  shadowUrl: './assets/images/building_shadow.png',
@@ -46,7 +59,7 @@ $(document).ready(function(e) {
 		  shadowSize:   [35, 30], // size of the shadow
 		  iconAnchor:   [10, 24], // point of the icon which will correspond to marker's location
 		  shadowAnchor: [10, 29],  // the same for the shadow
-		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		  popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
 		});
 	  
 	  
@@ -62,7 +75,7 @@ $(document).ready(function(e) {
 	  
 	  
 	  playermarkers[0]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
-
+		
 	  
 	  var watchId = navigator.geolocation.watchPosition(
 		  function(event){
@@ -120,6 +133,16 @@ $(document).ready(function(e) {
 	  function updatePlayermarkers()
 	  {
 		  
+		  for(var curUser in currentGame.users)
+		  {
+			  if(user.userID!=currentGame.users[curUser].userID)
+			  {
+				  //playerIconEveryone
+				   playermarkers[curUser]=L.marker([currentGame.users[curUser].lastKnownPosition.lat, currentGame.users[curUser].lastKnownPosition.long], {icon: playerIconEveryone}).addTo(map);
+		
+			  }
+		  }
+		  
 		  if(debug)
 		  {
 			  displayCardmarkers();
@@ -130,19 +153,22 @@ $(document).ready(function(e) {
 	  {
 		  for(var card in currentGame.cards)
 		  {
-			  buildingMarkerArray.push(L.circle([currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long], currentGame.cards[card].occuranceLocation.accu, {
+			  cardMarkers.push(L.circle([currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long], currentGame.cards[card].occuranceLocation.accu, {
 			  color: 'red',
 			  fillColor: '#f03',
 			  fillOpacity: 0.5}));
-			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
+			  cardMarkers[cardMarkers.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
 		  }
 	  }
 	  
 	  function updateBuildingmarkers()
 	  {
+		  buildingMarkerArray=new Array()
 		  for(var building in currentGame.buildings)
 		  {
-			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIcon}).addTo(map));			  
+			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIcon}));
+			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.buildings[building].name);	
+			  		  
 		  }
 	  }
 	  
