@@ -40,7 +40,7 @@ class Card
 		return $data;
 	}
 	
-	//AUTOR: BIBI
+	//AUTOR: BIBI, (tom)
 	//chooses a certain amount of cards for the game and saves them into database
 	//PARAMENTERS: $amount - the amount of cards to be selected
 	//			   $game - the game for which the cards should be created
@@ -61,6 +61,7 @@ class Card
 		
 		for($i=0;$i<$amount;$i++)
 		{	$ok = false;
+			//set_time_limit(30);
 			//create a random number between 0 and the number of cards in $row
 			$rnd = rand(0,count($row)-1);
 			
@@ -91,36 +92,32 @@ class Card
 				$selCard->timeToGo = 0;
 				
 				
-				//ATTENTION OCCURENCE LOCATION MUST GET A VALID VALUE!!!!!!!!!!!!!
-				
+				//Occurance location & destination location
+				//autor: tom
+				$distanceOK=false;
+				$occ_loc = new Location();
+				$newlat=0.0;
+				$newlong=0.0;
 				$distanceOK=false;
 				
-				while(i<cardCount)
+				while(!$distanceOK)
   				{
 	  				$building1=$buildingList[rand(0,count($buildingList)-1)];
 	  				$building2=$buildingList[rand(0,count($buildingList)-1)];
 	  
 	  			
 					$distanceOK=true;
-					if(rand(1,2)==1)
-					{
-					  //console.log(">0.5");
-					  $newlat=($building1->lat+$building2->lat)/2+rand(1,20);
-					  $newlong=($building1->long+$building2->long)/2+rand(1,20);
-					}
-					 
-					else
-					{
-					$newlat=($building1->lat+$building2->lat)/2+rand(1,20);
-					$newlong=($building1->long+$building2->long)/2+rand(1,20);
-					}
+					
+					//console.log(">0.5");
+					$newlat=($building1->location->lat+$building2->location->lat)/2+(rand(-20,20)/1000);
+					$newlong=($building1->location->lon+$building2->location->lon)/2+(rand(-20,20)/1000);
+					
 		  
-		  
-					for($i=0;$i<count($buildingList);$i++)
+					for($x=0;$x<count($buildingList);$x++)
 					{
-					  $distanceBTCB=GetDistance($newlat,$newlong,$buildingList[$i]->lat,$buildingList[$i]->long);
+					  $distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->lat,$buildingList[$x]->long);
 				
-					  if($distanceBTCB<(20+$radiusCards))
+					  if($distanceBTCB<($radiusCards)) //20+$radiusCards
 					  {
 					
 					  $distanceOK=false;
@@ -136,9 +133,9 @@ class Card
 					{
 						for($j=0;$j<count($sel_cards);$j++)
 						{	 
-							$distanceBTCard=GetDistance($newlat,$newlong,$sel_cards[$j]->lat,$sel_cards[$j]->long);
+							$distanceBTCard=Card::GetDistance($newlat,$newlong,$sel_cards[$j]->lat,$sel_cards[$j]->long);
 							
-							if($distanceBTCard<$radiusCards*2)
+							if($distanceBTCard<$radiusCards*1.5)
 							{
 								$distanceOK=false;
 								break;
@@ -147,27 +144,26 @@ class Card
 					  //console.log("card: "+i+" "+newlat+" "+newlong);
 					  if($distanceOK)
 					  {
-						$occ_loc = new Location();
-			
+						
 						$occ_loc->accu = $radiusCards;
 						$occ_loc->lat = $newlat;
 						$occ_loc->lon = $newlong;
-						
-						
 						$occ_loc->saveToDB();
 						
 						if($selCard->type->typeID==15)
 						{
 							$distance=rand(150,300);
-						  $destPoint=getPointAtDistance($newlat,$newlong,$disance,rand(0,360));
+						  $destPoint=Card::getPointAtDistance($newlat,$newlong,$distance,rand(0,360));
 						  
 						  $dest_loc=new Location();
 						  $dest_loc->accu=$radiusCards*2.77; //ergibt 50
 						  $dest_loc->lat=$destPoint[0];
 						  $dest_loc->lon=$destPoint[1];
+						  $dest_loc->saveToDB();
 						  $selCard->destinationLocation=$dest_loc;
 						  
 						  $speed=6; //6km/h
+						  
 						  //man nehme an, man geht mit 6km/h. das wären 6/3.6= 1,666m/s. d.h. wir haben pro s 1,666 meter zu schaffen. 
 						  //--> für 500 meter braucht man dann 500/1.666 --> 300sekunden. 
 						  $selCard->timeToGo = floor($distance/($speed/3.6));
@@ -175,10 +171,11 @@ class Card
 					  }
 					}
 				}
+				
 				$selCard->occuranceLocation = $occ_loc;
 				$selCard->saveSelectedCardToDB();
 				
-				$sel_cards[] = $selCard;
+				array_push($sel_cards,$selCard);
 			}
 		}
 		

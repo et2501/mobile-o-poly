@@ -13,7 +13,7 @@ class Building
 	private $fee; //int
 	private $buyValue; //int
 	private $picture; //string
-	private $location; //Location
+	public $location; //Location
 	private $upgradeLevel; //int
 	private $buildingID; //int
 	private $gameID; //int

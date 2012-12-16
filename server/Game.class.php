@@ -66,7 +66,7 @@ class Game
 			
 			//PART 3 GENERATE THE CARDS
 			
-			$this->cardList = Card::generateSelectedCards($this->gameID,buildingList); //<<<<<<
+			$this->cardList = Card::generateSelectedCards($this->gameID,$this->buildingList); //<<<<<<
 			
 			//PART 4 generate the attended Users --> in this case only the game master!!
 			$usr = new User();

@@ -16,7 +16,7 @@ $(document).ready(function(e) {
 	
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  console.log(currentGame);
-		  
+	  var debug=true;
 	  //init
 	  var lat=51;
 	  var lng=0;
@@ -24,6 +24,21 @@ $(document).ready(function(e) {
 	  var playermarkers=new Array();
 	  var buildingMarkerArray=new Array();
 	  var cardMarkers=new Array();
+	  
+	  
+	  
+	  //icons
+	  var playerIcon = L.icon({
+		  iconUrl: './assets/images/player.png',
+		  shadowUrl: './assets/images/player_shadow.png',
+	  
+		  iconSize:     [26, 24], // size of the icon
+		  shadowSize:   [35, 30], // size of the shadow
+		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
+		  shadowAnchor: [8, 29],  // the same for the shadow
+		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		});
+	  
 	  
 	  var walkedDistance=0;
 	  var lastKnownPosition;
@@ -36,11 +51,7 @@ $(document).ready(function(e) {
 	  }).addTo(map);
 	  
 	  
-	  playermarkers[0]=L.circle([lat, lng], 50, {
-			 color: 'blue',
-			  fillColor: 'blue',
-			  fillOpacity: 0.5
-	  }).addTo(map).bindPopup("Position");
+	  playermarkers[0]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
 
 	  
 	  var watchId = navigator.geolocation.watchPosition(
@@ -57,7 +68,6 @@ $(document).ready(function(e) {
 			  console.log(lastKnownPosition.lat,lastKnownPosition.lon);	
 			  map.panTo([lastKnownPosition.lat,lastKnownPosition.lon]);	
 			  playermarkers[0].setLatLng([lastKnownPosition.lat,lastKnownPosition.lon]);	
-			  playermarkers[0].setRadius(event.coords.accuracy);
 			  
 			  
 			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.lon);
@@ -72,6 +82,11 @@ $(document).ready(function(e) {
 	  
 	  updateBuildingmarkers();
 	  updatePlayermarkers();
+	  
+	  if(debug)
+	  {
+		  displayCardmarkers();
+	  }
 	  
 	  
 	  
@@ -103,17 +118,31 @@ $(document).ready(function(e) {
 		  
 	  }
 	  
-	  function updateBuildingmarkers()
+	  function displayCardmarkers()
 	  {
-		  for(var building in currentGame.buildings)
+		  for(var card in currentGame.cards)
 		  {
-			  buildingMarkerArray.push(L.circle([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], currentGame.buildings[building].location.accu, {
+			  buildingMarkerArray.push(L.circle([currentGame.cards[card].occurancelocation.lat,currentGame.cards[card].occurancelocation.long], currentGame.cards[card].occurancelocation.accu, {
 			  color: 'red',
 			  fillColor: '#f03',
 			  fillOpacity: 0.5}));
 			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup("Gebäude");
 			  
 			  console.log(currentGame.buildings[building].location);
+		  }
+	  }
+	  
+	  function updateBuildingmarkers()
+	  {
+		  for(var building in currentGame.buildings)
+		  {
+			  buildingMarkerArray.push(L.circle([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], currentGame.buildings[building].location.accu, {
+			  color: 'green',
+			  fillColor: '#f03',
+			  fillOpacity: 0.5}));
+			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup("Gebäude");
+			  
+			  console.log(currentGame.cards[card].occurancelocation);
 		  }
 	  }
 	  
