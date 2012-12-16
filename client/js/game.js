@@ -38,6 +38,16 @@ $(document).ready(function(e) {
 		  shadowAnchor: [8, 29],  // the same for the shadow
 		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
 		});
+		var buildingIcon=L.icon({
+		iconUrl: './assets/images/building.png',
+		  shadowUrl: './assets/images/building_shadow.png',
+	  
+		  iconSize:     [20, 24], // size of the icon
+		  shadowSize:   [35, 30], // size of the shadow
+		  iconAnchor:   [10, 24], // point of the icon which will correspond to marker's location
+		  shadowAnchor: [10, 29],  // the same for the shadow
+		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		});
 	  
 	  
 	  var walkedDistance=0;
@@ -81,13 +91,7 @@ $(document).ready(function(e) {
 	  
 	  
 	  updateBuildingmarkers();
-	  updatePlayermarkers();
-	  
-	  if(debug)
-	  {
-		  displayCardmarkers();
-	  }
-	  
+	  updatePlayermarkers(); 
 	  
 	  
 	  function checkPositionEvents(lat,lon)
@@ -116,19 +120,21 @@ $(document).ready(function(e) {
 	  function updatePlayermarkers()
 	  {
 		  
+		  if(debug)
+		  {
+			  displayCardmarkers();
+		  }
 	  }
 	  
 	  function displayCardmarkers()
 	  {
 		  for(var card in currentGame.cards)
 		  {
-			  buildingMarkerArray.push(L.circle([currentGame.cards[card].occurancelocation.lat,currentGame.cards[card].occurancelocation.long], currentGame.cards[card].occurancelocation.accu, {
+			  buildingMarkerArray.push(L.circle([currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long], currentGame.cards[card].occuranceLocation.accu, {
 			  color: 'red',
 			  fillColor: '#f03',
 			  fillOpacity: 0.5}));
-			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup("Gebäude");
-			  
-			  console.log(currentGame.buildings[building].location);
+			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
 		  }
 	  }
 	  
@@ -136,13 +142,7 @@ $(document).ready(function(e) {
 	  {
 		  for(var building in currentGame.buildings)
 		  {
-			  buildingMarkerArray.push(L.circle([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], currentGame.buildings[building].location.accu, {
-			  color: 'green',
-			  fillColor: '#f03',
-			  fillOpacity: 0.5}));
-			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup("Gebäude");
-			  
-			  console.log(currentGame.cards[card].occurancelocation);
+			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIcon}).addTo(map));			  
 		  }
 	  }
 	  

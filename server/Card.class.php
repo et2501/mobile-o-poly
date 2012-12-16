@@ -17,7 +17,7 @@ class Card
 	private $timeToGo; //int - time to go to a specified location
 	private $amount; //int - multiplicatior
 	private $gameID; //int ID of the game the card belongs to
-	private $radiusCards=18;
+	
 	
 	//GETTERS and SETTERS if required
 	
@@ -50,6 +50,7 @@ class Card
 	public static function generateSelectedCards($game,$buildingList)
 	{	
 		$amount=count($buildingList)*2;
+		$radiusCards=18;
 		$sel_cards = array();
 		$card_counter = array(); //this array will prevent that one card can not be chosen more than 3 times!!
 		
@@ -109,15 +110,15 @@ class Card
 					$distanceOK=true;
 					
 					//console.log(">0.5");
-					$newlat=($building1->location->lat+$building2->location->lat)/2+(rand(-20,20)/1000);
-					$newlong=($building1->location->lon+$building2->location->lon)/2+(rand(-20,20)/1000);
+					$newlat=($building1->location->lat+$building2->location->lat)/2+(rand(-100,100)/250000);
+					$newlong=($building1->location->lon+$building2->location->lon)/2+(rand(-100,100)/250000);
 					
 		  
 					for($x=0;$x<count($buildingList);$x++)
 					{
 					  $distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->lat,$buildingList[$x]->long);
 				
-					  if($distanceBTCB<($radiusCards)) //20+$radiusCards
+					  if($distanceBTCB<($radiusCards+20)) //20+$radiusCards
 					  {
 					
 					  $distanceOK=false;
@@ -135,7 +136,7 @@ class Card
 						{	 
 							$distanceBTCard=Card::GetDistance($newlat,$newlong,$sel_cards[$j]->lat,$sel_cards[$j]->long);
 							
-							if($distanceBTCard<$radiusCards*1.5)
+							if($distanceBTCard<$radiusCards*2)
 							{
 								$distanceOK=false;
 								break;
@@ -150,6 +151,7 @@ class Card
 						$occ_loc->lon = $newlong;
 						$occ_loc->saveToDB();
 						
+						
 						if($selCard->type->typeID==15)
 						{
 							$distance=rand(150,300);
@@ -159,7 +161,9 @@ class Card
 						  $dest_loc->accu=$radiusCards*2.77; //ergibt 50
 						  $dest_loc->lat=$destPoint[0];
 						  $dest_loc->lon=$destPoint[1];
+						  
 						  $dest_loc->saveToDB();
+						  
 						  $selCard->destinationLocation=$dest_loc;
 						  
 						  $speed=6; //6km/h
