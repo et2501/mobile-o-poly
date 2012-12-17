@@ -6,6 +6,7 @@ $(document).ready(function(e) {
 	
 	var user = JSON.parse(localStorage.getItem('user'));
 	console.log(user);
+	
 	$('#lbl_menu_nickname').html(user.username);
 	
 	$('#btn_logout').on('click',function()
@@ -37,7 +38,7 @@ $(document).ready(function(e) {
 		  shadowSize:   [35, 30], // size of the shadow
 		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
 		  shadowAnchor: [8, 29],  // the same for the shadow
-		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		  popupAnchor:  [-0, -20] // point from which the popup should open relative to the iconAnchor
 		});
 		
 		var playerIconEveryone = L.icon({
@@ -48,7 +49,7 @@ $(document).ready(function(e) {
 		  shadowSize:   [35, 30], // size of the shadow
 		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
 		  shadowAnchor: [8, 29],  // the same for the shadow
-		  popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+		  popupAnchor:  [-0, -20] // point from which the popup should open relative to the iconAnchor
 		});
 		
 		var buildingIcon=L.icon({
@@ -74,12 +75,38 @@ $(document).ready(function(e) {
 	  }).addTo(map);
 	  
 	  
-	  playermarkers[0]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
+	  playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
 		
+	  /*
+		  Es gibt folgende methoden: 
+		  
+		  void navigator.geolocation.getCurrentPosition(success_callback_function, error_callback_function, position_options)
+		  long navigator.geolocation.watchPosition(success_callback_function, error_callback_function, position_options)
+		  (deshalb long, weil eine id zurückkommt, die man für die nächste Methode braucht)
+		  void navigator.geolocation.clearWatch(watch_position_id)
+	  
+		  Folgende Position-options gibt es: 
+		  enableHighAccuracy – Eine boolean (true/false), die dem Gerät anweist, die genauestmögliche Position zu ermitteln (von Cell-of-Origin z.b. auf GPS switchen)
+		  maximumAge – Das maximale Alter(in Millisekunden), die der zuletzt upgedatete Eintrag alt sein darf (manche Geräte cachen die Einträge, um Energie zu sparen)
+		  timeout – Die Zeit, die zum Abrufen der Position zur Verfügung steht. Bei Timeout kommt man ins onError
+	  */
 	  
 	  var watchId = navigator.geolocation.watchPosition(
 		  function(event){
 			  
+			  //Success-Callback-Funktion
+			  
+			  //Hier gibt es folgende Elemente:
+			  //coords.latitude – Die derzeitige Latitude
+			  //coords.longitude – Die derzeitige Longitude
+			  //coords.accuracy – Die Genauigkeit der Position in Meter
+			  //coords.speed – Die Geschwindigkeit in Meter/Sekunde (um auf km/h zu kommen muss man dieses mit 3.6 multiplizieren
+			  //coords.heading - Richtung, in die man sich bewegt, in Grad, beginnend Norden im Uhrzeigersinn
+			  //coords.altitude – Die Altitude (Höhe) in Meter
+			  //coords.altitudeAccuracy – Die Genauigkeit der Altitude
+			  //timestamp
+			  
+			   
 			  //bisherige Entfernung ausrechnen
 			  //
 			  if(lastKnownPosition!=null)
@@ -87,20 +114,22 @@ $(document).ready(function(e) {
 				  walkedDistance+=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
 			  }
 			  
-			  lastKnownPosition={'lat':event.coords.latitude, 'lon':event.coords.longitude};
-			  console.log(lastKnownPosition.lat,lastKnownPosition.lon);	
-			  map.panTo([lastKnownPosition.lat,lastKnownPosition.lon]);	
-			  playermarkers[0].setLatLng([lastKnownPosition.lat,lastKnownPosition.lon]);	
+			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude};
+			  console.log(lastKnownPosition.lat,lastKnownPosition.long);	
+			  map.panTo([lastKnownPosition.lat,lastKnownPosition.long]);	
+			  playermarkers[user.userID].setLatLng([lastKnownPosition.lat,lastKnownPosition.long]);	
 			  
-			  
-			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.lon);
+			  updatePlayermarkers();
+			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
 			  
 			  
 		  },
 		  function(event){
+			  //Error-Callback-Funktion
 			  console.log(event);	
 		  },{maximumAge:6000, timeout:5000, enableHighAccuracy: true}	  
-	  );	
+	  );
+	  	
 	  
 	  
 	  updateBuildingmarkers();
@@ -133,13 +162,31 @@ $(document).ready(function(e) {
 	  function updatePlayermarkers()
 	  {
 		  
+		  for(var marker in playermarkers)
+		  {
+			  console.log("removed "+marker+" from ");
+			  console.log(playermarkers);
+			  map.removeLayer(playermarkers[marker]);
+		  }
 		  for(var curUser in currentGame.users)
 		  {
+			 
+			  
 			  if(user.userID!=currentGame.users[curUser].userID)
 			  {
 				  //playerIconEveryone
+				   console.log(currentGame.users[curUser].userID + " "+currentGame.users[curUser].username+" "+ user.userID+" someone else");
 				   playermarkers[curUser]=L.marker([currentGame.users[curUser].lastKnownPosition.lat, currentGame.users[curUser].lastKnownPosition.long], {icon: playerIconEveryone}).addTo(map);
-		
+				  playermarkers[curUser].addTo(map).bindPopup(currentGame.users[curUser].username);
+			  }
+			  if(user.userID==currentGame.users[curUser].userID)
+			  {
+				  if(lastKnownPosition)
+				  {
+					//playerIcon only myself
+					playermarkers[curUser]=L.marker([lastKnownPosition.lat, lastKnownPosition.long], {icon: playerIcon}).addTo(map);
+					playermarkers[curUser].addTo(map).bindPopup(currentGame.users[curUser].username);
+				  }
 			  }
 		  }
 		  

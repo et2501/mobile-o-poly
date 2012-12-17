@@ -116,13 +116,12 @@ class Card
 		  
 					for($x=0;$x<count($buildingList);$x++)
 					{
-					  $distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->lat,$buildingList[$x]->long);
+					  $distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->location->lat,$buildingList[$x]->location->lon);
 				
 					  if($distanceBTCB<($radiusCards+20)) //20+$radiusCards
 					  {
 					
 					  $distanceOK=false;
-					
 					  break;
 					  }
 					
@@ -134,7 +133,7 @@ class Card
 					{
 						for($j=0;$j<count($sel_cards);$j++)
 						{	 
-							$distanceBTCard=Card::GetDistance($newlat,$newlong,$sel_cards[$j]->lat,$sel_cards[$j]->long);
+							$distanceBTCard=Card::GetDistance($newlat,$newlong,$sel_cards[$j]->occuranceLocation->lat,$sel_cards[$j]->occuranceLocation->lon);
 							
 							if($distanceBTCard<$radiusCards*2)
 							{

@@ -159,6 +159,7 @@ function listPlaygrounds(pgs)
 //generates the waiting for user table
 function buildPlayerTable(maxPlayers,users)
 {	$('#table_waitForPlayers').html('');
+	$('#lbl_menu_gamename').html("Spielname: "+JSON.parse(localStorage.getItem('currentGame'))['gameName']);
 	output = "<table>";
 
 	for(i=0;i<maxPlayers;i++)
