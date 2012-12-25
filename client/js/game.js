@@ -18,7 +18,7 @@ $(document).ready(function(e) {
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  console.log(currentGame);
 	  
-	  var debug=true;
+	  var debug=false;
 	  //init
 	  var lat=51;
 	  var lng=0;
@@ -113,13 +113,16 @@ $(document).ready(function(e) {
 			  {
 				  walkedDistance+=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
 			  }
-			  
+			  checkForSpeedingTicket(event.coords.speed);
+			  //eventuell das ganze coords in LastKnownPosition speicher, um zu verhindern, dass 
+			  //das checkForSpeedingTicket ausgehebelt wird. 
 			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude};
-			  console.log(lastKnownPosition.lat,lastKnownPosition.long);	
+			  console.log("position updated:" +lastKnownPosition.lat,lastKnownPosition.long);	
 			  map.panTo([lastKnownPosition.lat,lastKnownPosition.long]);	
 			  playermarkers[user.userID].setLatLng([lastKnownPosition.lat,lastKnownPosition.long]);	
 			  
 			  updatePlayermarkers();
+			  checkwalkedDistanceEvent(walkedDistance);
 			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
 			  
 			  
@@ -218,6 +221,19 @@ $(document).ready(function(e) {
 			  		  
 		  }
 	  }
+	  
+	  function checkwalkedDistanceEvent(walkedDistance)
+	  {
+	  }
+	  
+	  function checkForSpeedingTicket(speed)
+	  {
+		  
+	  }
+	  
+	  
+	  
+	  //Mathematische Berechnungsformeln
 	  
 	  function GetDistance(lat1, lon1, lat2, lon2)
 	  {
