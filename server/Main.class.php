@@ -149,6 +149,28 @@ class Main
 												else
 													$data = array('type'=>'userGame','currentGame'=>array('error'=>$gamename));
 												break;
+			//AUTOR: TOM
+			case 'loadGlobalStatistics': 		
+												$user=User::loadFromDB($obj['user']['userID'],"normal");
+												$data=array('type'=>'loadGlobalStatistics','loggedInUser'=>$user->generateStatisticsArray());
+												
+												break;
+												
+			//AUTOR: TOM
+			case 'loadGameStatistics': 			
+												$game= Game::loadFromDB('',$obj['game']['gameID']);
+												
+													$game = Game::loadFromDB($gamename);
+													if($game instanceof Game)
+														$data = array('type'=>'loadGameStatistics','currentGame'=>$game->getGameStatistics());
+													else
+														$data = array('type'=>'loadGameStatistics','currentGame'=>array('error'=>$game));												
+												break;
+			//AUTOR: TOM
+			case 'updateLog': 					
+												$game= Game::loadFromDB('',$obj['game']['gameID']);
+												
+												break;
 		}
 		
 		return $data;

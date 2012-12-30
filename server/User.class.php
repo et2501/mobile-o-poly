@@ -69,6 +69,90 @@ class User
 		return $data;
 	}
 	
+	//AUTOR: TOM
+	//RETURN VALUE: Array Object of this instance
+	public function generateStatisticsArray($gameID = null)
+	{
+		$gotCards=null;
+		
+		$con = db_connect();
+					
+		if($gameID!=null)
+		{
+			$statement = $con->prepare("Select COUNT(*) from logger where user = ? AND game=? AND card IS NOT NULL");
+			$statement->execute(array($this->userID, $gameID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$gotCards=$row[0];
+			
+			$data = array('gotCards'=>$gotCards,'distanceWalked'=>$this->distanceWalked,'money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		return $data;
+			
+			
+		}
+		
+		else
+		{
+			//Count the raised Cards by User 
+			$statement = $con->prepare("Select COUNT(*) from logger where user = ? AND card IS NOT NULL");
+			$statement->execute(array($this->userID, $gameID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$gotCards=$row[0];
+			
+			//sum of the walked distance
+			$statement = $con->prepare("Select SUM(distance_walked) from user_in_game where user = ?");
+			$statement->execute(array($this->userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$sumDistanceWalked=$row[0];
+			
+			//maxMoney at the end of a game
+			$statement = $con->prepare("Select MAX(money) from user_in_game where user = ?");
+			$statement->execute(array($this->userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$maxMoney=$row[0];
+			
+			//SumMoney over all 
+			$statement = $con->prepare("Select SUM(money) from user_in_game where user = ?");
+			$statement->execute(array($this->userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$sumMoney=$row[0];
+			
+			//gameCount over all 
+			$statement = $con->prepare("Select Count(*) from user_in_game where user = ?");
+			$statement->execute(array($this->userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$gameCount=$row[0];
+			
+			//gameCount over all 
+			$statement = $con->prepare("Select Count(*) from logger where user = ? AND text=11");
+			$statement->execute(array($this->userID));
+			$result = $statement;
+			
+			$row = $result->fetch(PDO::FETCH_ASSOC);
+			$gamesWon=$row[0];
+			
+			$data = array('gotCards'=>$gotCards,'sumDistanceWalked'=>$sumDistanceWalked,'maxMoney'=>$maxMoney,'sumMoney'=>$sumMoney,'gameCount'=>$gameCount,'gamesWon'=>$gamesWon,'money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		return $data;
+			
+		}
+		
+		
+		
+		
+		
+	}
+	
 	//AUTOR: BIBI
 	//gets all the achieved trophies of this user instance
 	public function getAchievedTrophies()

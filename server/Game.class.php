@@ -238,6 +238,37 @@ class Game
 		else
 			return "e108";
 	}
+	//AUTOR: TOM
+	//Loads/Calculates the data for returning the current Game Statistics
+	/*This Data is: the gameobject with a userlist and each users Statistics */
+	//PARAMETER: 
+	//RETURN VALUE: Game - or if gameName not to find --> return error code
+	//              or game Array
+	public function getGameStatistics()
+	{
+		//The normal user Array is going to be replaced by a userArray with the user-statistics. 
+		//After that the normal generateArray-function-logic is going to provide the return value. 
+		$buildings = array();
+		$cards = array();
+		$users = array();
+		
+		foreach($this->attendingUsers as $user)
+			$users[] = $user->generateStatisticsArray($this->gameID);
+		
+	
+		foreach($this->buildingList as $build)
+			$buildings[] = $build->generateArray('game');
+		
+		foreach($this->cardList as $card)
+			$cards[] = $card->generateArray();
+		
+		
+		
+		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('mode_id'=>$this->mode,'name'=>Game::getModeName($this->mode)),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
+		
+		return $data;
+		
+	}
 }
 
 ?>

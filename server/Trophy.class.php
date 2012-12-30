@@ -53,6 +53,7 @@ class Trophy
 	//RETURN VALUE: TrophyList
 	public static function getTrophies()
 	{
+		
 	}
 	
 	
