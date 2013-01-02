@@ -6,6 +6,7 @@ require_once('Log.class.php');
 require_once('Type.class.php');
 require_once('Playground.class.php');
 require_once('database.php');
+require_once('Location.class.php');
 
 class Main 
 {	//Attributes
@@ -211,6 +212,24 @@ class Main
 												
 												$data = array('type'=>'logout','success'=>$logentry->game);
 												break;
+			case 'updateAll': 					
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												//new last known position, 
+												//then complete user inkl trophies, currentgame, complete log,
+												$newLoc=new Location();
+												$newLoc->lat=$obj['user']['lastknownPosition']['lat'];
+												$newLoc->lon=$obj['user']['lastknownPosition']['long'];
+												$newLoc->accu=$obj['user']['lastknownPosition']['accu'];
+												$newLoc->saveToDB();
+												$currentuser->lastKnownPosition=$newLoc;
+												$currentuser->distanceWalked=$obj['user']['distanceWalked'];
+												//money wird hier nicht verändert, damit der user nicht "schummeln" kann. Aber wer würd das schon machen ;) 
+												
+												$currentuser->changeUserInGameInDB();
+												$currentuser->getAchievedTrophies();
+												$game= Game::loadFromDB(Game::getGameForUser($currentuser->getUserID()));
+												$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$game->generateArray());
+												break; 
 		}
 		
 		return $data;

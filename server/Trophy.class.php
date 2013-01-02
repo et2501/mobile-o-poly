@@ -17,6 +17,8 @@ class Trophy
 	//RETURN VALUE: Array OBJECT
 	public function generateArray($type)
 	{
+		$data = array('trophyID'=>$this->trophyID,'achievedAt'=>$this->achievedAt, 'triggeredAt'=>$this->triggeredAt, 'trophyType'=>$this->trophyType->generateArray());
+		return $data;
 	}
 	
 	//AUTOR: BIBI
@@ -26,7 +28,7 @@ class Trophy
 	public static function getUserTrophies($userID)
 	{	$con = db_connect();
 
-		$statement = $con->prepare("Select at.achieved_at, at.achieved_trophy_id, t.type, t.triggered_at from achieved_trophy as at inner join trophy as t on t.trophy_id = at.trophy where at.user = ?");
+		$statement = $con->prepare("Select at.achieved_at as ATachievedAt, at.achieved_trophy_id ast ATTrophyID, t.type as TType, t.triggered_at as TTriggeredAt from achieved_trophy as at inner join trophy as t on t.trophy_id = at.trophy where at.user = ?");
 		$statement->execute(array($userID));
 		$result = $statement;
 		
@@ -36,10 +38,10 @@ class Trophy
 		{	$trophies = array();
 			while($row = $result->fetch(PDO::FETCH_ASSOC))
 			{	$troph = new Trophy();
-				$troph->achievedAt = $row['at.achieved_at'];
-				$troph->trophyID = $row['at.achieved_trophy_id'];
-				$troph->triggeredAt = $row['t.triggered_at'];
-				$troph->trophyType = Type::loadFromDB($row['t.type']);
+				$troph->achievedAt = $row['ATachievedAt'];
+				$troph->trophyID = $row['ATTrophyID'];
+				$troph->triggeredAt = $row['TTriggeredAt'];
+				$troph->trophyType = Type::loadFromDB($row['TType']);
 				
 				$trophies[] = $troph;
 			}

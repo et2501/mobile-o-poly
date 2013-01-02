@@ -184,6 +184,27 @@ function sendReqUpdateLog(gameID)
 	send(send_obj);
 }
 
+function sendRequpdateAll(userID, lat, lon, accu, distanceWalked)
+{
+	send_obj=
+	{
+		"type":"updateAll",
+		"object":{
+			"user":{
+				"userID": userID,
+				"distanceWalked":distanceWalked,
+				"lastknownPosition":{
+					"lat":lat,
+					"long":lon,
+					"accu":accu
+				}
+			}
+		}
+	};
+	console.log(send_obj);
+	send(send_obj);
+}
+
 
 //AUTOR: BIBI
 //SEND FUNCTION
@@ -247,6 +268,9 @@ function send(obj) {
 														console.log(data);
 														break;
 						case 'UpdateLog':				//TODO Irgendwas mit dem Log anfangen
+														console.log(data);
+														break;
+						case 'UpdateAll':				//TODO
 														console.log(data);
 														break;
 				  }

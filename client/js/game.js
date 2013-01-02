@@ -4,8 +4,22 @@ $(document).ready(function(e) {
 	if(!localStorage.getItem('user'))
 		window.location.href = "index.html";
 	
-	var user = JSON.parse(localStorage.getItem('user'));
-	console.log(user);
+	  var debug=false;
+	  //init
+	  var lat=51;
+	  var lng=0;
+	  var map = L.map('map',{zoomControl:false}).setView([lat, lng], 16);
+	  var playermarkers=new Array();
+	  var buildingMarkerArray=new Array();
+	  var cardMarkers=new Array();
+	  var user = JSON.parse(localStorage.getItem('user'));
+	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
+	  var walkedDistance=0; 
+	  lastKnownPosition={'lat':0, 'long':0, 'accu':0};
+			  
+	  console.log(user);
+	  console.log(currentGame);
+	
 	
 	
 	$('#lbl_menu_nickname').html(user.username);
@@ -18,17 +32,9 @@ $(document).ready(function(e) {
 		});
 	
 	
-	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
-	  console.log(currentGame);
 	  
-	  var debug=false;
-	  //init
-	  var lat=51;
-	  var lng=0;
-	  var map = L.map('map',{zoomControl:false}).setView([lat, lng], 16);
-	  var playermarkers=new Array();
-	  var buildingMarkerArray=new Array();
-	  var cardMarkers=new Array();
+	  
+	  
 	  
 	  
 	  
@@ -67,8 +73,7 @@ $(document).ready(function(e) {
 		});
 	  
 	  
-	  var walkedDistance=0;
-	  var lastKnownPosition;
+	  
 	  
 	  
 	  map.zoomControl=false;
@@ -119,13 +124,10 @@ $(document).ready(function(e) {
 			  checkForSpeedingTicket(event.coords.speed);
 			  //eventuell das ganze coords in LastKnownPosition speicher, um zu verhindern, dass 
 			  //das checkForSpeedingTicket ausgehebelt wird. 
-			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude};
+			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude, 'accu':event.coords.accuracy};
 			  console.log("position updated:" +lastKnownPosition.lat,lastKnownPosition.long);	
 			  map.panTo([lastKnownPosition.lat,lastKnownPosition.long]);	
 			  playermarkers[user.userID].setLatLng([lastKnownPosition.lat,lastKnownPosition.long]);	
-			  
-			  updatePlayermarkers();
-			  checkwalkedDistanceEvent(walkedDistance);
 			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
 			  
 			  
@@ -135,6 +137,14 @@ $(document).ready(function(e) {
 			  console.log(event);	
 		  },{maximumAge:6000, timeout:5000, enableHighAccuracy: true}	  
 	  );
+	  
+	  var updateInterval=window.setInterval(function()
+	  	{
+			sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance);
+			updatePlayermarkers();
+			checkwalkedDistanceEvent(walkedDistance);
+
+		},5000);
 	  	
 	  
 	  
@@ -170,8 +180,8 @@ $(document).ready(function(e) {
 		  
 		  for(var marker in playermarkers)
 		  {
-			  console.log("removed "+marker+" from ");
-			  console.log(playermarkers);
+			  //console.log("removed "+marker+" from ");
+			  //console.log(playermarkers);
 			  map.removeLayer(playermarkers[marker]);
 		  }
 		  for(var curUser in currentGame.users)
@@ -181,7 +191,7 @@ $(document).ready(function(e) {
 			  if(user.userID!=currentGame.users[curUser].userID)
 			  {
 				  //playerIconEveryone
-				   console.log(currentGame.users[curUser].userID + " "+currentGame.users[curUser].username+" "+ user.userID+" someone else");
+				   //console.log(currentGame.users[curUser].userID + " "+currentGame.users[curUser].username+" "+ user.userID+" someone else");
 				   playermarkers[curUser]=L.marker([currentGame.users[curUser].lastKnownPosition.lat, currentGame.users[curUser].lastKnownPosition.long], {icon: playerIconEveryone}).addTo(map);
 				  playermarkers[curUser].addTo(map).bindPopup(currentGame.users[curUser].username);
 			  }

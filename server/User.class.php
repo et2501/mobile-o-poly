@@ -7,15 +7,15 @@ require_once('database.php');
 
 class User
 {	//Attributes
-	private $lastKnownPosition; //Location
-	private $money; //int
+	public $lastKnownPosition; //Location
+	public $money; //int
 	private $currentGameID; //int gameID
 	private $userRole; //int
 	private $email; //string
 	private $color; //string
 	private $username; //string
 	private $userID; //int
-	private $distanceWalked; //int
+	public $distanceWalked; //int
 	private $achievedTrophies = array(); //TrophyList
 	
 	//GETTERS and SETTERS if needed
@@ -43,7 +43,7 @@ class User
 			$usr->username = $row['username'];
 		}
 		if($type=='game')
-		{	$statement = $con->prepare('select * from user_in_game inner join user on user_id = user inner join location on location_id = last_known_location where user_id = ?');
+		{	$statement = $con->prepare('select * from user_in_game inner join user on user_id = user left join location on location_id = last_known_location where user_id = ?');
 			$statement->execute(array($userID));
 			$result = $statement;
 			
@@ -85,7 +85,17 @@ class User
 	//AUTOR: BIBI
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()
-	{	$data = array('money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+	{	
+		$data = array('money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		if($this->achievedTrophies!=null)
+		{
+			$trophies=array();
+			foreach($this->achievedTrophies as $trophy)
+			$trophies[] = $trophy->generateArray();
+			
+			
+			$data['trophy']=$trophies;
+		}
 		return $data;
 	}
 	
