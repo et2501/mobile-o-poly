@@ -7,10 +7,13 @@ $(document).ready(function(e) {
 	var user = JSON.parse(localStorage.getItem('user'));
 	console.log(user);
 	
+	
 	$('#lbl_menu_nickname').html(user.username);
 	
 	$('#btn_logout').on('click',function()
-		{	localStorage.clear(); //if logout --> delete everything in localStorage
+		{	
+			sendReqLogout(user.userID, currentGame.gameID);
+			localStorage.clear(); //if logout --> delete everything in localStorage
 			window.location.href = "index.html"; //an return to login-screen
 		});
 	

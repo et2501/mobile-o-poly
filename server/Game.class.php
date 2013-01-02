@@ -74,10 +74,21 @@ class Game
 			$usr->putUserInGame($this->gameID,'admin',$this->playground->getStartMoney());
 			$this->attendingUsers[] = $usr;
 			
+			//logentry 6 --> createNewGame
+			$logentry=new Log();
+			$logentry->user=$usr;
+			$logentry->Text='6';
+			$logentry->game=$this;
+			$logentry->saveToDB();
+			
 			return "OK";
 		}
 		else
 			return "e107";
+	}
+	public function getGameID()
+	{
+		return $this->gameID;
 	}
 	
 	//AUTOR: BIBI
@@ -90,6 +101,11 @@ class Game
 		
 		$statement = $con->prepare('Update game set is_started = true where game_id = ?');	
 		$statement->execute(array($this->gameID));
+			
+		$logentry=new Log();
+		$logentry->Text='8';
+		$logentry->game=$this;
+		$logentry->saveToDB();
 			
 		$con = null;
 	}
@@ -147,9 +163,18 @@ class Game
 			{	$this->attendingUsers[] = $user;
 				$user->putUserInGame($this->gameID,'player',$this->playground->getStartMoney());
 				
+				
+				//logentry 7 --> attendGame
+				$logentry=new Log();
+				$logentry->user=$user;
+				$logentry->Text='7';
+				$logentry->game=$this;
+				$logentry->saveToDB();
+				
 				//now look if all player slots are full ---> if so start game!!!
 				if($this->playground->getMaxPlayers() == count($this->attendingUsers))
 					$this->startGame();
+					
 				return "OK";
 			}
 			else
@@ -225,7 +250,7 @@ class Game
 	public static function getGameForUser($userID)
 	{	$con = db_connect();
 		
-		$statement = $con->prepare('SELECT name from game inner join user_in_game on game = game_id where user = ? and finished is null');
+		$statement = $con->prepare('SELECT name,game_id from game inner join user_in_game on game = game_id where user = ? and finished is null');
 		$statement->execute(array($userID));
 		$result = $statement;
 		
@@ -233,7 +258,25 @@ class Game
 		
 		if($result->rowCount()>0)
 		{	$row = $result->fetch(PDO::FETCH_ASSOC);
-			return $row['name'];
+			$name=$row['name'];
+			$gameID=$row['game_id'];
+			
+			//check if user has logged out
+			$con = db_connect();
+		
+			$statement = $con->prepare('SELECT * from logger where user = ? and game = ? and text=13');
+			$statement->execute(array($userID, $gameID));
+			$result = $statement;
+			
+			$con = null;
+			if($result->rowCount()==0)
+			{	
+				return $name;
+			}
+			else
+			{
+				return "e109";
+			}
 		}
 		else
 			return "e108";

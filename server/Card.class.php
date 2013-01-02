@@ -21,6 +21,10 @@ class Card
 	
 	//GETTERS and SETTERS if required
 	
+	public function getCardID()
+	{
+		return $this->cardID; 
+	}
 	
 	//calculates the time from Location to Location
 	//RETURN VALUE: int - time in seconds
@@ -255,9 +259,57 @@ class Card
 		return $cards;
 	}
 	
+	//AUTOR: TOM
 	public static function loadSelectedCardFromDB($cardID)
 	{
+		$cards = array();
+		$con = db_connect();
 		
+		$statement = $con->prepare('Select * from selected_card inner join card on card = card_id inner join location on location_id = occurance_location where card_id = ?');
+		$statement->execute(array($cardID));
+		$result = $statement;
+		
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	
+			$card = new Card();
+			
+			$card->alreadyTriggered = $row['already_triggered'];
+			$card->amount = $row['amount'];
+			$card->cardID = $row['card_id'];
+			$card->gameID =  $row['game_id'];
+			$card->text = $row['text'];
+			$card->title = $row['titel'];
+			$card->type = Type::loadFromDB($row['type']);
+			
+			$oc_loc = new Location();
+			$oc_loc->accu = $row['radius'];
+			$oc_loc->lat = $row['lat'];
+			$oc_loc->lon = $row['lon'];
+			$oc_loc->locationID = $row['location_id'];
+			$card->occuranceLocation = $oc_loc;
+			
+			$card->timeToGo = $row['time_for_distance'];
+			
+			if($card->timeToGo!=null) //NOT TESTED!!!!
+			{	$statement2 = $con->prepare('Select * from location where location_id = ?');
+				$statement2->execute(array($row['destination_location']));
+				$result2 = $statement2;
+				
+				$row2 = $result2->fetch(PDO::FETCH_ASSOC);
+				
+				$d_loc = new Location();
+				$d_loc->accu = $row2['radius'];
+				$d_loc->lat = $row2['lat'];
+				$d_loc->lon = $row2['lon'];
+				$d_loc->locationID = $row2['location_id'];
+				$card->destinationLocation = $d_loc;
+			}
+			
+			$cards[] = $card;
+		}
+		
+		$con = null;
+		return $cards;
 	}
 	public static function GetDistance($lat1, $lon1, $lat2, $lon2)
 	{

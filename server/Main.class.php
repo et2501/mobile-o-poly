@@ -33,7 +33,18 @@ class Main
 		{	$row = $result->fetch(PDO::FETCH_ASSOC);
 
 			if($row['password']==hash('sha256',$password))
-				return $row['user_id']; //valid logIn
+			{
+				//logentry 4 --> login
+				$userid=$row['user_id'];
+				$logentry=new Log();
+				$logentry->user=User::loadFromDB($userid,'normal');
+				$logentry->Text='4';
+				$logentry->saveToDB();
+				
+				return $userid; //valid logIn
+				
+				
+			}
 			else
 				return "e103"; //Wrong password
 		}
@@ -61,6 +72,14 @@ class Main
 				$statement = $con->prepare($query);
 				$statement->execute(array($email,$username,hash('sha256',$password)));
 				$id = $con->lastInsertId();
+				
+				
+				//logentry 5 --> register
+				$logentry=new Log();
+				$logentry->user=User::loadFromDB($id,'normal');
+				$logentry->Text='5';
+				$logentry->saveToDB();
+				
 				return "OK";
 			}
 		}
@@ -139,7 +158,7 @@ class Main
 		  										break;
 			//AUTOR: BIBI
 			case 'isUserInGame':				$gamename = Game::getGameForUser($obj['user']['userID']);
-												if($gamename != "e108")
+												if($gamename != "e108"&&$gamename!="e109")
 												{	$game = Game::loadFromDB($gamename);
 													if($game instanceof Game)
 														$data = array('type'=>'userGame','currentGame'=>$game->generateArray());
@@ -160,7 +179,6 @@ class Main
 			case 'loadGameStatistics': 			
 												$game= Game::loadFromDB('',$obj['game']['gameID']);
 												
-													$game = Game::loadFromDB($gamename);
 													if($game instanceof Game)
 														$data = array('type'=>'loadGameStatistics','currentGame'=>$game->getGameStatistics());
 													else
@@ -168,8 +186,30 @@ class Main
 												break;
 			//AUTOR: TOM
 			case 'updateLog': 					
-												$game= Game::loadFromDB('',$obj['game']['gameID']);
+												if(isset($obj['game']['gameID']))
+												{
+													$loglist=Log::getLogs(null, $obj['game']['gameID']);
+													$logData=array();
+													foreach($loglist as $log)
+														$logData[] = $log->generateArray();
+												}
+												else
+												{
+													$data = array('type'=>'updateLog','log'=>"error");
+													//TODO has to be implemented
+												}
+												$data = array('type'=>'updateLog','log'=>$logData);
+												break;
+			//AUTOR: TOM									
+			case 'logout':						
+												//logentry 13 --> logout
+												$logentry=new Log();
+												$logentry->user=User::loadFromDB($obj['user']['userID'],'normal');
+												$logentry->Text='13';
+												$logentry->game=Game::loadFromDB('',$obj['game']['gameID']);
+												$logentry->saveToDB();
 												
+												$data = array('type'=>'logout','success'=>$logentry->game);
 												break;
 		}
 		

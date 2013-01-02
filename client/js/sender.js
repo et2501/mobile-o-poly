@@ -120,6 +120,70 @@ function sendReqIsUserInGame(userID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR LOGOUT
+function sendReqLogout(userID, gameID)
+{
+	send_obj=
+	{
+		"type":"logout",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	};
+	
+	send(send_obj);
+	
+}
+
+function sendReqGlobalStatistics(userID)
+{
+	send_obj=
+	{
+		"type":"loadGlobalStatistics",
+		"object":{
+			"user":{
+				"userID": userID
+			}
+		}
+	};
+	send(send_obj);
+}
+
+//loadGameStatistics
+function sendReqGameStatistics(gameID)
+{
+	send_obj=
+	{
+		"type":"loadGameStatistics",
+		"object":{
+			"game":{
+				"gameID": gameID
+			}
+		}
+	};
+	send(send_obj);
+}
+
+function sendReqUpdateLog(gameID)
+{
+	send_obj=
+	{
+		"type":"updateLog",
+		"object":{
+			"game":{
+				"gameID": gameID
+			}
+		}
+	};
+	send(send_obj);
+}
+
 
 //AUTOR: BIBI
 //SEND FUNCTION
@@ -171,6 +235,19 @@ function send(obj) {
 														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 				  											forwardTo();
 														}
+														break;
+						case 'logout':					
+														console.log(data);
+														break;
+						case 'loadGlobalStatistics':	
+														//TODO Irgendwas mit den Statistiken anfangen
+														console.log(data);
+														break;
+						case 'loadGameStatistics':		//TODO Irgendwas mit den Statistiken anfangen
+														console.log(data);
+														break;
+						case 'UpdateLog':				//TODO Irgendwas mit dem Log anfangen
+														console.log(data);
 														break;
 				  }
 		},

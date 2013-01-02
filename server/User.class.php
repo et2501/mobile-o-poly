@@ -56,9 +56,29 @@ class User
 		return $usr;
 	}
 	
-	
-	public function saveToDB()
+	public function getUserID()
 	{
+		return $this->userID;
+	}
+	
+	
+	public function saveUserToDB()
+	{
+		$con = db_connect();
+		
+		$statement = $con->prepare('update user set e-mail=?, username=?');
+		$statement->execute(array($this->email,$this->username));
+		
+		$con = null;
+	}
+	public function changeUserInGameInDB()
+	{
+		$con = db_connect();
+		
+		$statement = $con->prepare('update user_in_game set money=?, distance_walked=?, last_known_location=?');
+		$statement->execute(array($this->money,$this->distanceWalked,$this->lastKnownPosition->locationID));
+		
+		$con = null;
 	}
 	
 	
@@ -96,7 +116,7 @@ class User
 		{
 			//Count the raised Cards by User 
 			$statement = $con->prepare("Select COUNT(*) from logger where user = ? AND card IS NOT NULL");
-			$statement->execute(array($this->userID, $gameID));
+			$statement->execute(array($this->userID));
 			$result = $statement;
 			
 			$row = $result->fetch(PDO::FETCH_ASSOC);
@@ -142,7 +162,7 @@ class User
 			$row = $result->fetch(PDO::FETCH_ASSOC);
 			$gamesWon=$row[0];
 			
-			$data = array('gotCards'=>$gotCards,'sumDistanceWalked'=>$sumDistanceWalked,'maxMoney'=>$maxMoney,'sumMoney'=>$sumMoney,'gameCount'=>$gameCount,'gamesWon'=>$gamesWon,'money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+			$data = array('gotCards'=>$gotCards,'sumDistanceWalked'=>$sumDistanceWalked,'maxMoney'=>$maxMoney,'sumMoney'=>$sumMoney,'gameCount'=>$gameCount,'gamesWon'=>$gamesWon,'money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color);
 		return $data;
 			
 		}
