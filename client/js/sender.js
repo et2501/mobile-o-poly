@@ -184,7 +184,7 @@ function sendReqUpdateLog(gameID)
 	send(send_obj);
 }
 
-function sendRequpdateAll(userID, lat, lon, accu, distanceWalked)
+function sendRequpdateAll(userID, lat, lon, accu, distanceWalked,gameID)
 {
 	send_obj=
 	{
@@ -198,10 +198,13 @@ function sendRequpdateAll(userID, lat, lon, accu, distanceWalked)
 					"long":lon,
 					"accu":accu
 				}
+			},
+			"game":{
+				"gameID":gameID
 			}
 		}
 	};
-	console.log(send_obj);
+	//console.log(send_obj);
 	send(send_obj);
 }
 
@@ -270,7 +273,16 @@ function send(obj) {
 						case 'UpdateLog':				//TODO Irgendwas mit dem Log anfangen
 														console.log(data);
 														break;
-						case 'UpdateAll':				//TODO
+						case 'updateAll':				//TODO
+														//console.log("updateAll eingetroffen");
+														//console.log(data);
+														
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+														
+														break;
+						default: 						
+														console.log("sonstiges");
 														console.log(data);
 														break;
 				  }

@@ -225,10 +225,10 @@ class Main
 												$currentuser->distanceWalked=$obj['user']['distanceWalked'];
 												//money wird hier nicht verändert, damit der user nicht "schummeln" kann. Aber wer würd das schon machen ;) 
 												
-												$currentuser->changeUserInGameInDB();
+												$currentuser->changeUserInGameInDB($obj['game']['gameID']);
 												$currentuser->getAchievedTrophies();
-												$game= Game::loadFromDB(Game::getGameForUser($currentuser->getUserID()));
-												$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$game->generateArray());
+												$currentgame= Game::loadFromDB('',$obj['game']['gameID']);
+												$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
 												break; 
 		}
 		

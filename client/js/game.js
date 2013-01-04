@@ -16,9 +16,10 @@ $(document).ready(function(e) {
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  var walkedDistance=0; 
 	  lastKnownPosition={'lat':0, 'long':0, 'accu':0};
-			  
-	  console.log(user);
-	  console.log(currentGame);
+			 
+	  //zum anschaun der objekte 
+	  //console.log(user);
+	  //console.log(currentGame);
 	
 	
 	
@@ -140,7 +141,16 @@ $(document).ready(function(e) {
 	  
 	  var updateInterval=window.setInterval(function()
 	  	{
-			sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance);
+			sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance, currentGame.gameID);
+			
+			console.log(localStorage.getItem('user'));
+			user = JSON.parse(localStorage.getItem('user'));
+	 		currentGame=JSON.parse(localStorage.getItem('currentGame'));
+	  
+			
+			
+			
+			
 			updatePlayermarkers();
 			checkwalkedDistanceEvent(walkedDistance);
 

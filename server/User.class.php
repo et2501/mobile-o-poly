@@ -71,12 +71,12 @@ class User
 		
 		$con = null;
 	}
-	public function changeUserInGameInDB()
+	public function changeUserInGameInDB($gameID)
 	{
 		$con = db_connect();
 		
-		$statement = $con->prepare('update user_in_game set money=?, distance_walked=?, last_known_location=?');
-		$statement->execute(array($this->money,$this->distanceWalked,$this->lastKnownPosition->locationID));
+		$statement = $con->prepare('update user_in_game set money=?, distance_walked=?, last_known_location=? where user=? AND game=?');
+		$statement->execute(array($this->money,$this->distanceWalked,$this->lastKnownPosition->locationID, $this->userID, $gameID));
 		
 		$con = null;
 	}
