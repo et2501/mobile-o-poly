@@ -62,8 +62,8 @@ class Building
 	public function saveSelectedBuildingToDB()
 	{	$con = db_connect();
 	
-		$statement = $con->prepare('Insert into selected_building (building,game,buy_value,fee,number,level) values (?,?,?,?,?,?)');
-		$statement->execute(array($this->buildingID,$this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel));
+		$statement = $con->prepare('Insert into selected_building (building,game,buy_value,fee,number,level,owner) values (?,?,?,?,?,?,?)');
+		$statement->execute(array($this->buildingID,$this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel, $this->owner));
 		
 		$con = null;
 	}

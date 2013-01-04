@@ -39,45 +39,6 @@ $(document).ready(function(e) {
 	  
 	  
 	  
-	  
-	  //icons
-	  var playerIcon = L.icon({
-		  iconUrl: './assets/images/player.png',
-		  shadowUrl: './assets/images/player_shadow.png',
-	  
-		  iconSize:     [26, 24], // size of the icon
-		  shadowSize:   [35, 30], // size of the shadow
-		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
-		  shadowAnchor: [8, 29],  // the same for the shadow
-		  popupAnchor:  [-0, -20] // point from which the popup should open relative to the iconAnchor
-		});
-		
-		var playerIconEveryone = L.icon({
-		  iconUrl: './assets/images/player_everyone.png',
-		  shadowUrl: './assets/images/player_shadow.png',
-	  
-		  iconSize:     [26, 24], // size of the icon
-		  shadowSize:   [35, 30], // size of the shadow
-		  iconAnchor:   [13, 24], // point of the icon which will correspond to marker's location
-		  shadowAnchor: [8, 29],  // the same for the shadow
-		  popupAnchor:  [-0, -20] // point from which the popup should open relative to the iconAnchor
-		});
-		
-		var buildingIcon=L.icon({
-		iconUrl: './assets/images/building.png',
-		  shadowUrl: './assets/images/building_shadow.png',
-	  
-		  iconSize:     [20, 24], // size of the icon
-		  shadowSize:   [35, 30], // size of the shadow
-		  iconAnchor:   [10, 24], // point of the icon which will correspond to marker's location
-		  shadowAnchor: [10, 29],  // the same for the shadow
-		  popupAnchor:  [0, -20] // point from which the popup should open relative to the iconAnchor
-		});
-	  
-	  
-	  
-	  
-	  
 	  map.zoomControl=false;
 	  
 	  L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -245,7 +206,7 @@ $(document).ready(function(e) {
 		  buildingMarkerArray=new Array()
 		  for(var building in currentGame.buildings)
 		  {
-			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIcon}));
+			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE4}));
 			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.buildings[building].name);	
 			  		  
 		  }
