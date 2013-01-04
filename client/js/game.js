@@ -4,7 +4,7 @@ $(document).ready(function(e) {
 	if(!localStorage.getItem('user'))
 		window.location.href = "index.html";
 	
-	  var debug=false;
+	  var debug=true;
 	  //init
 	  var lat=51;
 	  var lng=0;
@@ -16,6 +16,7 @@ $(document).ready(function(e) {
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  var walkedDistance=0; 
 	  lastKnownPosition={'lat':0, 'long':0, 'accu':0};
+	  lastPositionupdate=null;
 			 
 	  //zum anschaun der objekte 
 	  //console.log(user);
@@ -123,6 +124,7 @@ $(document).ready(function(e) {
 				  walkedDistance+=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
 			  }
 			  checkForSpeedingTicket(event.coords.speed);
+			  lastPositionUpdate=event.coords.timestamp;
 			  //eventuell das ganze coords in LastKnownPosition speicher, um zu verhindern, dass 
 			  //das checkForSpeedingTicket ausgehebelt wird. 
 			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude, 'accu':event.coords.accuracy};
@@ -131,6 +133,9 @@ $(document).ready(function(e) {
 			  playermarkers[user.userID].setLatLng([lastKnownPosition.lat,lastKnownPosition.long]);	
 			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
 			  
+			updatePlayermarkers();
+			  
+			checkwalkedDistanceEvent(walkedDistance);
 			  
 		  },
 		  function(event){
@@ -143,16 +148,11 @@ $(document).ready(function(e) {
 	  	{
 			sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance, currentGame.gameID);
 			
-			console.log(localStorage.getItem('user'));
+			//console.log(localStorage.getItem('user'));
 			user = JSON.parse(localStorage.getItem('user'));
 	 		currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  
-			
-			
-			
-			
 			updatePlayermarkers();
-			checkwalkedDistanceEvent(walkedDistance);
 
 		},5000);
 	  	
@@ -224,6 +224,12 @@ $(document).ready(function(e) {
 	  
 	  function displayCardmarkers()
 	  {
+		  for(var marker in cardMarkers)
+		  {
+			  //console.log("removed "+marker+" from ");
+			  //console.log(playermarkers);
+			  map.removeLayer(cardMarkers[marker]);
+		  }
 		  for(var card in currentGame.cards)
 		  {
 			  cardMarkers.push(L.circle([currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long], currentGame.cards[card].occuranceLocation.accu, {
@@ -287,8 +293,27 @@ $(document).ready(function(e) {
 	  {
 		  console.log("function has to be implemented");
 	  }
+	  
+	  if(debug)
+	  {
+		var debugInterval=window.setInterval(function()
+	  	{
+			
+			  
+			lastKnownPosition={'lat':debuglat, 'long':debuglon, 'accu':0};
+			checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
+		
+		},50);  
+	  }
+	  
 });
 
-
+var debuglat=0;
+var debuglon=0;
+function simulatePosition(lat, lon)
+{
+	debuglat=lat;
+	debuglon=lon;
+}
 
 
