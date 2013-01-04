@@ -15,8 +15,9 @@ $(document).ready(function(e) {
 	  var user = JSON.parse(localStorage.getItem('user'));
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  var walkedDistance=0; 
-	  lastKnownPosition={'lat':0, 'long':0, 'accu':0};
-	  lastPositionupdate=null;
+	  var lastKnownPosition={'lat':0, 'long':0, 'accu':0};
+	  var lastPositionUpdate=new Date();
+	  var maxSpeed=25;
 			 
 	  //zum anschaun der objekte 
 	  //console.log(user);
@@ -47,21 +48,7 @@ $(document).ready(function(e) {
 	  
 	  
 	  playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
-		
-	  /*
-		  Es gibt folgende methoden: 
-		  
-		  void navigator.geolocation.getCurrentPosition(success_callback_function, error_callback_function, position_options)
-		  long navigator.geolocation.watchPosition(success_callback_function, error_callback_function, position_options)
-		  (deshalb long, weil eine id zurückkommt, die man für die nächste Methode braucht)
-		  void navigator.geolocation.clearWatch(watch_position_id)
-	  
-		  Folgende Position-options gibt es: 
-		  enableHighAccuracy – Eine boolean (true/false), die dem Gerät anweist, die genauestmögliche Position zu ermitteln (von Cell-of-Origin z.b. auf GPS switchen)
-		  maximumAge – Das maximale Alter(in Millisekunden), die der zuletzt upgedatete Eintrag alt sein darf (manche Geräte cachen die Einträge, um Energie zu sparen)
-		  timeout – Die Zeit, die zum Abrufen der Position zur Verfügung steht. Bei Timeout kommt man ins onError
-	  */
-	  
+			  
 	  var watchId = navigator.geolocation.watchPosition(
 		  function(event){
 			  
@@ -84,8 +71,11 @@ $(document).ready(function(e) {
 			  {
 				  walkedDistance+=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
 			  }
-			  checkForSpeedingTicket(event.coords.speed);
-			  lastPositionUpdate=event.coords.timestamp;
+			  
+			  checkForSpeedingTicket(event.coords.latitude,event.coords.longitude,event.coords.speed,event.timestamp);
+			  
+			  lastPositionUpdate=event.timestamp;
+			  
 			  //eventuell das ganze coords in LastKnownPosition speicher, um zu verhindern, dass 
 			  //das checkForSpeedingTicket ausgehebelt wird. 
 			  lastKnownPosition={'lat':event.coords.latitude, 'long':event.coords.longitude, 'accu':event.coords.accuracy};
@@ -102,7 +92,7 @@ $(document).ready(function(e) {
 		  function(event){
 			  //Error-Callback-Funktion
 			  console.log(event);	
-		  },{maximumAge:6000, timeout:5000, enableHighAccuracy: true}	  
+		  },{maximumAge:6000, timeout:15000, enableHighAccuracy: true}	  
 	  );
 	  
 	  var updateInterval=window.setInterval(function()
@@ -198,6 +188,16 @@ $(document).ready(function(e) {
 			  fillColor: '#f03',
 			  fillOpacity: 0.5}));
 			  cardMarkers[cardMarkers.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
+			  
+			  if(currentGame.cards[card].destinationLocation)
+			  {
+				  cardMarkers.push(L.circle([currentGame.cards[card].destinationLocation.lat,currentGame.cards[card].destinationLocation.long], currentGame.cards[card].destinationLocation.accu, {
+			  	color: 'red',
+			  fillColor: '#903',
+			  fillOpacity: 0.5}));
+			  cardMarkers[cardMarkers.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
+			  
+			  }
 		  }
 	  }
 	  
@@ -206,8 +206,67 @@ $(document).ready(function(e) {
 		  buildingMarkerArray=new Array()
 		  for(var building in currentGame.buildings)
 		  {
-			  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE4}));
-			  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.buildings[building].name);	
+			  if(!currentGame.buildings[building].owner)
+			  {
+				  //Gebäude gehört niemandem
+				  buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIcon}));
+				  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.buildings[building].name);	
+			  }
+			  else
+			  {		//Gebäude gehört irgendwem
+			  		//Wem gehört das Gebäude?
+				  var owner=currentGame.buildings[building].owner;
+				  if (owner.userID==user.userID)
+				  {
+					  switch(currentGame.buildings[building].level)
+					  {
+						  case 0:
+						  	buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconI0}));
+						  		break;
+						  case 1:
+						  	buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconI1}));
+						  		break;
+						  case 2:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconI2}));				   
+						  		break;
+						  case 3:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconI3}));
+						  		break;
+						  case 4:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconI4}));				   
+						  		break;
+						  default:
+						  		console.log("error");
+						  		break;
+					  }
+					 
+				  }
+				  else
+				  {
+					  switch(currentGame.buildings[building].level)
+					  {
+						  case 0:
+						  	buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE0}));
+						  		break;
+						  case 1:
+						  	buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE1}));
+						  		break;
+						  case 2:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE2}));				   
+						  		break;
+						  case 3:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE3}));
+						  		break;
+						  case 4:
+							buildingMarkerArray.push(L.marker([currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long], {icon: buildingIconE4}));				   
+						  		break;
+						  default:
+						  		console.log("error");
+						  		break;
+					  } 
+				  }
+				  buildingMarkerArray[buildingMarkerArray.length-1].addTo(map).bindPopup(currentGame.buildings[building].name+" <br /> gehört: "+owner.username);
+			  }
 			  		  
 		  }
 	  }
@@ -216,10 +275,7 @@ $(document).ready(function(e) {
 	  {
 	  }
 	  
-	  function checkForSpeedingTicket(speed)
-	  {
-		  
-	  }
+	  
 	  
 	  
 	  
@@ -255,24 +311,60 @@ $(document).ready(function(e) {
 		  console.log("function has to be implemented");
 	  }
 	  
+	  
+	  
 	  if(debug)
 	  {
 		var debugInterval=window.setInterval(function()
 	  	{
-			
-			  
+			checkForSpeedingTicket(debuglat,debuglon,0,debugtime);			  
 			lastKnownPosition={'lat':debuglat, 'long':debuglon, 'accu':0};
+			lastPositionUpdate=debugtime;
 			checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);
-		
-		},50);  
+
+		},500);  
+	  }
+	  
+	  function checkForSpeedingTicket(lat, lon, speed, time)
+	  {
+		  if(speed*3.6>maxSpeed)
+		  {
+			  console.log(" Speed: "+speed);
+			  raiseSpeedingTicket();
+		  }
+		  
+		  
+		  //jetzt noch falls speed nicht verfügbar is		 
+		   //Zeit in sekunden
+		  var walkedTime=(time-lastPositionUpdate)/1000; 
+			//Weg in Meter
+		  var walkedDistance=GetDistance(lat, lon, lastKnownPosition.lat,lastKnownPosition.long);
+		  
+		  
+		  if(walkedDistance/walkedTime*3.6>maxSpeed)
+		  {
+			  console.log("calculatedSpeed: "+walkedDistance/walkedTime*3.6+"km/h");
+			  console.log("distance: "+walkedDistance+", Time: "+walkedTime);
+			  raiseSpeedingTicket();
+		  }
+		  //floor($distance/($speed/3.6));
+
+		  
+	  }
+	  function raiseSpeedingTicket()
+	  {
+		  console.log("user got speeding ticket");
 	  }
 	  
 });
 
 var debuglat=0;
 var debuglon=0;
+var debugtime=new Date();
+
 function simulatePosition(lat, lon)
 {
+	debugtime=new Date();
 	debuglat=lat;
 	debuglon=lon;
 }
