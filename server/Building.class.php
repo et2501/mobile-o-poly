@@ -4,6 +4,7 @@
 require_once('database.php');
 require_once('Location.class.php');
 require_once('User.class.php');
+require_once('Playground.class.php');
 
 class Building
 {	//Attributes
@@ -75,12 +76,14 @@ class Building
 	//RETURN VALUE: BuildingList
 	public static function generateSelectedBuildings($pg,$game)
 	{	$buildings = Building::getBuildings($pg); //get all buildings of the playground
-		
+		$playground=Playground::loadFromDB($pg);
 		$rnd = array();
 		
 		//create the random number array for the buildings to each get an own number (for the dices)
 		for($i=2;$i<count($buildings)+2;$i++)
 			$rnd[] = $i+1;
+			
+		//sollte man das da drüber nicht nochmal überdenken?
 			
 		shuffle($rnd);
 		
@@ -90,7 +93,8 @@ class Building
 		{	$building->upgradeLevel = 0;
 			$building->gameID = $game;	
 			$building->number = $rnd[$counter];
-			$building->buyValue = 1500; //ATTENTION --->> should be calculated on base of the number given!!!!!!! 
+			
+			$building->buyValue = ($playground->getStartMoney()*rand(30,60))/100; //ATTENTION --->> should be calculated on base of the number given!!!!!!! 
 			$building->fee = round($building->buyValue*10/100); //with uprgrade lvl 0 --> fee is 10% of buyvalue
 			
 			$building->saveSelectedBuildingToDB();
@@ -118,7 +122,7 @@ class Building
 		{	$build = new Building();
 			$build->buildingID = $row['building_id'];
 			$build->name = $row['name'];
-			$build->picture = $row['picture'];
+			$build->picture = $row['name'];
 			
 			$loc = new Location();
 			$loc->accu = $row['radius'];

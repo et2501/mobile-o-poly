@@ -15,6 +15,13 @@ $(document).ready(function(e) {
 	  var user = JSON.parse(localStorage.getItem('user'));
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  var playground=JSON.parse(localStorage.getItem('playground'));
+	  var destinations=[{
+	  	'location':{
+		'lat':0, 'long':0, 'accu':0
+		},
+		'object':{
+		}
+	  }];
 	  var walkedDistance=0;
 	  var walkedDistanceSinceMoney=0; 
 	  var lastKnownPosition={'lat':0, 'long':0, 'accu':0};
@@ -33,7 +40,7 @@ $(document).ready(function(e) {
 		{	
 			sendReqLogout(user.userID, currentGame.gameID);
 			localStorage.clear(); //if logout --> delete everything in localStorage
-			window.location.href = "index.html"; //an return to login-screen
+			
 		});
 	
 	  map.zoomControl=false;

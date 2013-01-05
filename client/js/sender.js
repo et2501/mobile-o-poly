@@ -296,6 +296,7 @@ function send(obj) {
 														break;
 						case 'logout':					
 														console.log(data);
+														window.location.href = "index.html"; //an return to login-screen
 														break;
 						case 'loadGlobalStatistics':	
 														//TODO Irgendwas mit den Statistiken anfangen
