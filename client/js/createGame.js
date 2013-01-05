@@ -60,6 +60,7 @@ $(document).ready(function(e) {
 			{	$('#sec_createGame_1').hide();
 				$('#sec_createGame_2').show();
 				$('#lbl_playground_name').html(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].name);
+				localStorage.setItem('playground',JSON.stringify(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground]));
 			}
 			else
 				alert("Bitte ein Spielfeld auswählen und einen Namen eingeben!");

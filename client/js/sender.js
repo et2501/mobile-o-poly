@@ -207,6 +207,40 @@ function sendRequpdateAll(userID, lat, lon, accu, distanceWalked,gameID)
 	//console.log(send_obj);
 	send(send_obj);
 }
+function sendReqSpeedTicket(userID, gameID)
+{
+	send_obj=
+	{
+		"type":"SpeedTicket",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	}
+}
+
+function sendReqMoneyToGo(userID, gameID, playgroundID)
+{
+	send_obj=
+	{
+		"type":"MoneyToGo",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"game":{
+				"gameID":gameID
+			},
+			"playground":{
+				"playgroundID":playgroundID	
+			}
+		}
+	}
+}
 
 
 //AUTOR: BIBI
@@ -281,6 +315,13 @@ function send(obj) {
 														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 														
 														break;
+						case 'SpeedTicket':				
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														break;
+						case 'MoneyToGo':				
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														break;								
+														
 						default: 						
 														console.log("sonstiges");
 														console.log(data);

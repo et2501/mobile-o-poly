@@ -14,7 +14,9 @@ $(document).ready(function(e) {
 	  var cardMarkers=new Array();
 	  var user = JSON.parse(localStorage.getItem('user'));
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
-	  var walkedDistance=0; 
+	  var playground=JSON.parse(localStorage.getItem('playground'));
+	  var walkedDistance=0;
+	  var walkedDistanceSinceMoney=0; 
 	  var lastKnownPosition={'lat':0, 'long':0, 'accu':0};
 	  var lastPositionUpdate=new Date();
 	  var maxSpeed=25;
@@ -34,12 +36,6 @@ $(document).ready(function(e) {
 			window.location.href = "index.html"; //an return to login-screen
 		});
 	
-	
-	  
-	  
-	  
-	  
-	  
 	  map.zoomControl=false;
 	  
 	  L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -69,7 +65,9 @@ $(document).ready(function(e) {
 			  //
 			  if(lastKnownPosition!=null)
 			  {
-				  walkedDistance+=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
+				  var lastDistance=GetDistance(lastKnownPosition.lat,lastKnownPosition.lon,event.coords.latitude,event.coords.longitude);
+				  walkedDistance+=lastDistance;
+				  walkedDistanceSinceMoney+=lastDistance;
 			  }
 			  
 			  checkForSpeedingTicket(event.coords.latitude,event.coords.longitude,event.coords.speed,event.timestamp);
@@ -271,8 +269,16 @@ $(document).ready(function(e) {
 		  }
 	  }
 	  
+	  
+	  
 	  function checkwalkedDistanceEvent(walkedDistance)
 	  {
+		  if(walkedDistanceSinceMoney>500)
+		  {
+			  walkedDistanceSinceMoney=0;
+			  //User has to get money;
+			  sendReqMoneyToGo(user.userID, currentGame.gameID, playground.playgroundID);
+		  }
 	  }
 	  
 	  
@@ -338,13 +344,13 @@ $(document).ready(function(e) {
 		   //Zeit in sekunden
 		  var walkedTime=(time-lastPositionUpdate)/1000; 
 			//Weg in Meter
-		  var walkedDistance=GetDistance(lat, lon, lastKnownPosition.lat,lastKnownPosition.long);
+		  var walkedDistanceS=GetDistance(lat, lon, lastKnownPosition.lat,lastKnownPosition.long);
 		  
 		  
-		  if(walkedDistance/walkedTime*3.6>maxSpeed)
+		  if(walkedDistanceS/walkedTime*3.6>maxSpeed)
 		  {
-			  console.log("calculatedSpeed: "+walkedDistance/walkedTime*3.6+"km/h");
-			  console.log("distance: "+walkedDistance+", Time: "+walkedTime);
+			  console.log("calculatedSpeed: "+walkedDistanceS/walkedTime*3.6+"kmh");
+			  console.log("distance: "+walkedDistanceS+", Time: "+walkedTime);
 			  raiseSpeedingTicket();
 		  }
 		  //floor($distance/($speed/3.6));
@@ -353,6 +359,8 @@ $(document).ready(function(e) {
 	  }
 	  function raiseSpeedingTicket()
 	  {
+		  sendReqSpeedTicket(user.userID, currentGame.gameID);
+		  user = JSON.parse(localStorage.getItem('user'));
 		  console.log("user got speeding ticket");
 	  }
 	  

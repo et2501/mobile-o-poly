@@ -172,7 +172,10 @@ class Main
 			//AUTOR: TOM
 			case 'loadGlobalStatistics': 		
 												$user=User::loadFromDB($obj['user']['userID'],"normal");
-												$data=array('type'=>'loadGlobalStatistics','loggedInUser'=>$user->generateStatisticsArray());
+												if($user instanceof User)
+													$data=array('type'=>'loadGlobalStatistics','loggedInUser'=>$user->generateStatisticsArray());
+												else
+													$data = array('type'=>'loadGlobalStatistics','currentGame'=>array('error'=>$user));
 												
 												break;
 												
@@ -216,20 +219,51 @@ class Main
 												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
 												//new last known position, 
 												//then complete user inkl trophies, currentgame, complete log,
-												$newLoc=new Location();
-												$newLoc->lat=$obj['user']['lastknownPosition']['lat'];
-												$newLoc->lon=$obj['user']['lastknownPosition']['long'];
-												$newLoc->accu=$obj['user']['lastknownPosition']['accu'];
-												$newLoc->saveToDB();
-												$currentuser->lastKnownPosition=$newLoc;
-												$currentuser->distanceWalked=$obj['user']['distanceWalked'];
-												//money wird hier nicht verändert, damit der user nicht "schummeln" kann. Aber wer würd das schon machen ;) 
+												if($currentuser instanceof User)
+												{
+													$newLoc=new Location();
+													$newLoc->lat=$obj['user']['lastknownPosition']['lat'];
+													$newLoc->lon=$obj['user']['lastknownPosition']['long'];
+													$newLoc->accu=$obj['user']['lastknownPosition']['accu'];
+													$newLoc->saveToDB();
+													$currentuser->lastKnownPosition=$newLoc;
+													$currentuser->distanceWalked=$obj['user']['distanceWalked'];
+													//money wird hier nicht verändert, damit der user nicht "schummeln" kann. Aber wer würd das schon machen ;) 
+													
+													$currentuser->changeUserInGameInDB($obj['game']['gameID']);
+													$currentuser->getAchievedTrophies();
+													$currentgame= Game::loadFromDB('',$obj['game']['gameID']);
+													$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
+												}
+												else
+													$data = array('type'=>'updateAll','loggedInUser'=>array('error'=>$currentuser));
 												
-												$currentuser->changeUserInGameInDB($obj['game']['gameID']);
-												$currentuser->getAchievedTrophies();
-												$currentgame= Game::loadFromDB('',$obj['game']['gameID']);
-												$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
-												break; 
+												break;
+			case 'SpeedTicket':					
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+												  $currentuser->gotSpeedingTicket();
+												  $currentuser->changeUserInGameInDB( $obj['game']['gameID']);
+												  $data=array('type'=>'SpeedTicket','loggedInUser'=>$currentuser->generateArray());
+												}
+												else
+													$data = array('type'=>'SpeedTicket','loggedInUser'=>array('error'=>$currentuser));
+												break;
+			case 'MoneyToGo':														
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{	
+													$currentPlayground=Playground::loadFromDB($obj['playground']['playgroundID']);
+													$currentuser->money=$currentuser->money+$currentPlayground->getMoneyToGo();
+													$currentuser->changeUserInGameInDB($obj['game']['gameID']);
+													$data=array('type'=>'MoneyToGo','loggedInUser'=>$currentuser->generateArray());
+												
+												}
+												else
+													$data = array('type'=>'MoneyToGo','loggedInUser'=>array('error'=>$currentuser));
+												
+												
 		}
 		
 		return $data;

@@ -49,7 +49,22 @@ class User
 			
 			$row = $result->fetch(PDO::FETCH_ASSOC);
 			
-			$usr->fillInUser($row);
+			//check if user has logged out
+			
+			$logoutstatement = $con->prepare('SELECT * from logger where user = ? and game = ? and text=13');
+			$logoutstatement->execute(array($userID, $row['game']));
+			$logoutresult = $logoutstatement;
+			
+			if($logoutresult->rowCount()==0)
+			{	
+				$usr->fillInUser($row);
+			}
+			else
+			{
+				return "e109";
+			}
+			
+			
 		}
 		
 		$con = null;
@@ -79,6 +94,11 @@ class User
 		$statement->execute(array($this->money,$this->distanceWalked,$this->lastKnownPosition->locationID, $this->userID, $gameID));
 		
 		$con = null;
+	}
+	public function gotSpeedingTicket()
+	{
+		//SpeedingTicket= 10% of currentMoney
+		$this->money=$this->money*0.9;
 	}
 	
 	
