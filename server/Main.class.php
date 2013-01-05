@@ -263,6 +263,24 @@ class Main
 												else
 													$data = array('type'=>'MoneyToGo','loggedInUser'=>array('error'=>$currentuser));
 												
+												break;
+			case 'changeNick':					
+												$ret = Main::login($obj['user']['email'],$obj['user']['password']);
+												if(!is_numeric($ret))
+													$data = array('type'=>'user','changeNick'=>array('error'=>$ret));
+												else
+												{
+													$currentuser=User::loadFromDB($ret,'normal');
+													if($currentuser instanceof User)
+													{
+															$currentuser->setNickname($obj['user']['username']);
+															$currentuser->saveUserToDB();
+													}			
+														
+													$data = array('type'=>'changeNick','loggedInUser'=>$currentuser->generateArray());
+												}
+												break;
+												
 												
 		}
 		

@@ -15,19 +15,19 @@ $(document).ready(function(e) {
 	  var user = JSON.parse(localStorage.getItem('user'));
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  var playground=JSON.parse(localStorage.getItem('playground'));
-	  var destinations=[{
-	  	'location':{
-		'lat':0, 'long':0, 'accu':0
-		},
-		'object':{
-		}
-	  }];
 	  var walkedDistance=0;
 	  var walkedDistanceSinceMoney=0; 
 	  var lastKnownPosition={'lat':0, 'long':0, 'accu':0};
 	  var lastPositionUpdate=new Date();
 	  var maxSpeed=25;
-			 
+	  
+	  var destinations=[{
+	  	'location':{
+		'lat':0, 'long':0, 'accu':0
+		},
+		'object':null
+	  }];	 
+	  var destinationMarker=null;
 	  //zum anschaun der objekte 
 	  //console.log(user);
 	  //console.log(currentGame);
@@ -109,15 +109,14 @@ $(document).ready(function(e) {
 	 		currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  
 			updatePlayermarkers();
+			updateBuildingmarkers();
 
 		},5000);
 	  	
-	  
-	  
-	  updateBuildingmarkers();
-	  updatePlayermarkers(); 
-	  
-	  
+	
+	   updateBuildingmarkers();
+       updatePlayermarkers(); 
+	   
 	  function checkPositionEvents(lat,lon)
 	  {
 		  for(var card in currentGame.cards)
@@ -172,10 +171,25 @@ $(document).ready(function(e) {
 			  }
 		  }
 		  
-		  if(debug)
+		  if(destinationMarker)
+		  {
+			   map.removeLayer(destinationMarker);
+			   
+		  }
+		 	
+		  if(destinations[destinations.length-1].object!=null)
+		  {
+			  destinationMarker=L.circle([destinations[destinations.length-1].location.lat,destinations[destinations.length-1].location.long], destinations[destinations.length-1].location.accu, {
+			  color: 'blue',
+			  fillColor: '#03f',
+			  fillOpacity: 0.2});
+			  destinationMarker.addTo(map).bindPopup("Dein Ziel");
+		  }
+		  
+		  /*if(debug)
 		  {
 			  displayCardmarkers();
-		  }
+		  }*/
 	  }
 	  
 	  function displayCardmarkers()
@@ -193,6 +207,7 @@ $(document).ready(function(e) {
 			  fillColor: '#f03',
 			  fillOpacity: 0.5}));
 			  cardMarkers[cardMarkers.length-1].addTo(map).bindPopup(currentGame.cards[card].text);
+			  
 			  
 			  if(currentGame.cards[card].destinationLocation)
 			  {
@@ -328,6 +343,11 @@ $(document).ready(function(e) {
 	  
 	  if(debug)
 	  {
+		  
+		 
+		destinations[0].location=currentGame.buildings[0].location;
+		destinations[0].object=currentGame.buildings[0];
+		 
 		var debugInterval=window.setInterval(function()
 	  	{
 			checkForSpeedingTicket(debuglat,debuglon,0,debugtime);			  

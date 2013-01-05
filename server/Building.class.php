@@ -122,7 +122,7 @@ class Building
 		{	$build = new Building();
 			$build->buildingID = $row['building_id'];
 			$build->name = $row['name'];
-			$build->picture = $row['name'];
+			$build->picture = $row['picture'];
 			
 			$loc = new Location();
 			$loc->accu = $row['radius'];

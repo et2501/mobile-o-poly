@@ -75,6 +75,10 @@ class User
 	{
 		return $this->userID;
 	}
+	public function setNickname($nickname)
+	{
+		$this->username=$nickname;
+	}
 	
 	
 	public function saveUserToDB()

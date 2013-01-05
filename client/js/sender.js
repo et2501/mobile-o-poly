@@ -242,6 +242,20 @@ function sendReqMoneyToGo(userID, gameID, playgroundID)
 	}
 }
 
+function sendReqChangeNick(userID, password, newnick)
+{
+	send_obj=
+	{
+		"type":"changeNick",
+		"object":{
+			"user":{
+				"userID": userID, 
+				"password":password,
+				"username": newnick
+			}
+		}
+	}
+}
 
 //AUTOR: BIBI
 //SEND FUNCTION
@@ -321,7 +335,11 @@ function send(obj) {
 														break;
 						case 'MoneyToGo':				
 														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
-														break;								
+														break;	
+						case 'changeNick': 				//check for error
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));								
+														break;
+																					
 														
 						default: 						
 														console.log("sonstiges");
