@@ -141,6 +141,8 @@ function sendReqLogout(userID, gameID)
 	
 }
 
+//AUTOR: TOM
+//REQUEST FOR Global Statistics
 function sendReqGlobalStatistics(userID)
 {
 	send_obj=
@@ -155,7 +157,8 @@ function sendReqGlobalStatistics(userID)
 	send(send_obj);
 }
 
-//loadGameStatistics
+//AUTOR: TOM
+//REQUEST FOR Game Statistics
 function sendReqGameStatistics(gameID)
 {
 	send_obj=
@@ -170,6 +173,8 @@ function sendReqGameStatistics(gameID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR Updating the Log
 function sendReqUpdateLog(gameID)
 {
 	send_obj=
@@ -184,6 +189,8 @@ function sendReqUpdateLog(gameID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR for Update All
 function sendRequpdateAll(userID, lat, lon, accu, distanceWalked,gameID)
 {
 	send_obj=
@@ -207,6 +214,9 @@ function sendRequpdateAll(userID, lat, lon, accu, distanceWalked,gameID)
 	//console.log(send_obj);
 	send(send_obj);
 }
+
+//AUTOR: TOM
+//REQUEST FOR Speeding Ticket
 function sendReqSpeedTicket(userID, gameID)
 {
 	send_obj=
@@ -224,6 +234,8 @@ function sendReqSpeedTicket(userID, gameID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR MoneyToGo 
 function sendReqMoneyToGo(userID, gameID, playgroundID)
 {
 	send_obj=
@@ -244,6 +256,8 @@ function sendReqMoneyToGo(userID, gameID, playgroundID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR StopGame
 function sendReqStopGame(userID, gameID)
 {
 	send_obj=
@@ -261,6 +275,8 @@ function sendReqStopGame(userID, gameID)
 	send(send_obj);
 }
 
+//AUTOR: TOM
+//REQUEST FOR ChangeNick
 function sendReqChangeNick(userID, password, newnick)
 {
 	send_obj=
@@ -323,50 +339,107 @@ function send(obj) {
 														else
 															alert(data['currentGame']['error']);
 														break;
+														
 						case 'userGame':				if(!data['currentGame']['error'])
 														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 				  											forwardTo();
 														}
 														break;
+														
 						case 'logout':					
+														if(!data['success']['error'])
+														{
 														console.log(data);
 														localStorage.clear();
 														setTimeout(window.location.href = "index.html",500); //an return to login-screen
+														}
+														else
+															alert(data['success']['error']);
 														break;
+														
+													
 						case 'loadGlobalStatistics':	
-														//TODO Irgendwas mit den Statistiken anfangen
-														console.log(data);
+														if(!data['loggedInUser']['error'])
+														{
+														  //TODO Irgendwas mit den Statistiken anfangen
+														  console.log(data);
+				  										}
+														else
+															alert(data['loggedInUser']['error']);
 														break;
-						case 'loadGameStatistics':		//TODO Irgendwas mit den Statistiken anfangen
-														console.log(data);
+														
+						case 'loadGameStatistics':		if(!data['currentGame']['error'])
+														{
+														  //TODO Irgendwas mit den Statistiken anfangen
+														  console.log(data);
+														}
+														else
+															alert(data['currentGame']['error']);
 														break;
-						case 'UpdateLog':				//TODO Irgendwas mit dem Log anfangen
-														console.log(data);
+						case 'UpdateLog':				
+														if(!data['log']=='log')
+														{
+														  //TODO Irgendwas mit dem Log anfangen
+														  console.log(data);
+														}
+														else
+															alert('error log');
 														break;
 						case 'updateAll':				//TODO
 														//console.log("updateAll eingetroffen");
 														//console.log(data);
-														
-														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
-														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
-														
+														if(!data['loggedInUser']['error'])
+														{
+															if(!data['currentGame']['error'])
+															{
+																//TODO Irgendwas mit den Statistiken anfangen
+																console.log(data);
+														  		localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+																localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+															}
+															else
+															alert(data['currentGame']['error']);
+				  										}
+														else
+															alert(data['loggedInUser']['error']);
+																												
 														break;
 						case 'SpeedTicket':				
-														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														if(!data['loggedInUser']['error'])
+														{
+														  localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															alert(data['loggedInUser']['error']);
 														break;
-						case 'MoneyToGo':				
-														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+						case 'MoneyToGo':				if(!data['loggedInUser']['error'])
+														{
+															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															alert(data['loggedInUser']['error']);
 														break;	
 						case 'changeNick': 				//check for error
-														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));								
+														if(!data['loggedInUser']['error'])
+														{
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															alert(data['loggedInUser']['error']);
 														break;
 						case 'StopGame': 				
+														if(!data['loggedInUser']['error'])
+														{
 														console.log(data);
 														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+														}
+														else
+															alert(data['loggedInUser']['error']);
 														break;												
 																																			
 														
 						default: 						
+						
 														console.log("sonstiges");
 														console.log(data);
 														break;

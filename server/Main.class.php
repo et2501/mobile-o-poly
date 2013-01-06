@@ -175,7 +175,7 @@ class Main
 												if($user instanceof User)
 													$data=array('type'=>'loadGlobalStatistics','loggedInUser'=>$user->generateStatisticsArray());
 												else
-													$data = array('type'=>'loadGlobalStatistics','currentGame'=>array('error'=>$user));
+													$data = array('type'=>'loadGlobalStatistics','loggedInUser'=>array('error'=>$user));
 												
 												break;
 												
@@ -199,7 +199,7 @@ class Main
 												}
 												else
 												{
-													$data = array('type'=>'updateLog','log'=>"error");
+													$data = array('type'=>'updateLog','log'=>'error');
 													//TODO has to be implemented
 												}
 												$data = array('type'=>'updateLog','log'=>$logData);
@@ -209,11 +209,25 @@ class Main
 												//logentry 13 --> logout
 												$logentry=new Log();
 												$logentry->user=User::loadFromDB($obj['user']['userID'],'normal');
-												$logentry->Text='13';
-												$logentry->game=Game::loadFromDB('',$obj['game']['gameID']);
-												$logentry->saveToDB();
-												
-												$data = array('type'=>'logout','success'=>$logentry->game);
+												if($logentry->user instanceof User)
+												{
+												  $logentry->Text='13';
+												  $logentry->game=Game::loadFromDB('',$obj['game']['gameID']);
+												  if($logentry->game instanceof Game)
+												  {
+													$logentry->saveToDB();
+													
+													$data = array('type'=>'logout','success'=>$logentry->game);
+												  }
+												  else
+												  {
+													  $data = array('type'=>'logout','success'=>array('error'=>'e999'));
+												  }
+												}
+												else
+												{
+													$data = array('type'=>'logout','success'=>array('error'=>'e999'));
+												}
 												break;
 			case 'updateAll': 					
 												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
@@ -233,7 +247,14 @@ class Main
 													$currentuser->changeUserInGameInDB($obj['game']['gameID']);
 													$currentuser->getAchievedTrophies();
 													$currentgame= Game::loadFromDB('',$obj['game']['gameID']);
-													$data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
+													if($currentgame instanceof Game)
+													{
+													  $data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
+													}
+													else
+													{
+													  $data = array('type'=>'updateAll','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>array('error'=>$currentgame));	
+													}
 												}
 												else
 													$data = array('type'=>'updateAll','loggedInUser'=>array('error'=>$currentuser));
@@ -267,17 +288,21 @@ class Main
 			case 'changeNick':					
 												$ret = Main::login($obj['user']['email'],$obj['user']['password']);
 												if(!is_numeric($ret))
-													$data = array('type'=>'user','changeNick'=>array('error'=>$ret));
+													$data = array('type'=>'changeNick','loggedInUser'=>array('error'=>$ret));
 												else
 												{
 													$currentuser=User::loadFromDB($ret,'normal');
 													if($currentuser instanceof User)
 													{
-															$currentuser->setNickname($obj['user']['username']);
-															$currentuser->saveUserToDB();
-													}			
+														$currentuser->setNickname($obj['user']['username']);
+														$currentuser->saveUserToDB();
+														$data = array('type'=>'changeNick','loggedInUser'=>$currentuser->generateArray());
+													}
+													else
+													{		
+														$data = array('type'=>'changeNick','loggedInUser'=>array('error'=>'e999'));	
+													}
 														
-													$data = array('type'=>'changeNick','loggedInUser'=>$currentuser->generateArray());
 												}
 												break;
 			case 'StopGame':														
