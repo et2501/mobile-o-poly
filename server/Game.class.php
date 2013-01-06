@@ -109,6 +109,20 @@ class Game
 			
 		$con = null;
 	}
+	public function stopGame()
+	{
+		//save change to db
+		$con = db_connect();
+		
+		$date = new DateTime();
+		$date = date('Y-m-d H:i:s',$date->getTimestamp());
+		
+		$statement = $con->prepare('Update game set finished = ? where game_id = ?');	
+		$statement->execute(array($date,$this->gameID));
+		
+			
+		$con = null;
+	}
 	
 	//AUTOR: BIBI
 	//generates an array of this instance
@@ -160,22 +174,28 @@ class Game
 		if($this->playground->getMaxPlayers() > count($this->attendingUsers))
 		{	//then look if game is already started
 			if(!$this->isStarted)
-			{	$this->attendingUsers[] = $user;
-				$user->putUserInGame($this->gameID,'player',$this->playground->getStartMoney());
-				
-				
-				//logentry 7 --> attendGame
-				$logentry=new Log();
-				$logentry->user=$user;
-				$logentry->Text='7';
-				$logentry->game=$this;
-				$logentry->saveToDB();
-				
-				//now look if all player slots are full ---> if so start game!!!
-				if($this->playground->getMaxPlayers() == count($this->attendingUsers))
-					$this->startGame();
+			{	
+				if($this->finished==null)
+				{
+					$this->attendingUsers[] = $user;
+					$user->putUserInGame($this->gameID,'player',$this->playground->getStartMoney());
 					
-				return "OK";
+					
+					//logentry 7 --> attendGame
+					$logentry=new Log();
+					$logentry->user=$user;
+					$logentry->Text='7';
+					$logentry->game=$this;
+					$logentry->saveToDB();
+					
+					//now look if all player slots are full ---> if so start game!!!
+					if($this->playground->getMaxPlayers() == count($this->attendingUsers))
+						$this->startGame();
+						
+					return "OK";
+				}
+				else
+					return "e111";
 			}
 			else
 				return "e105";

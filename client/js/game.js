@@ -4,12 +4,11 @@ $(document).ready(function(e) {
 	if(!localStorage.getItem('user'))
 		window.location.href = "index.html";
 	
-	  var debug=true;
+	  var debug=false;
 	  //init
 	  var lat=51;
 	  var lng=0;
 	  var map = L.map('map',{zoomControl:false}).setView([lat, lng], 16);
-	  var playermarkers=new Array();
 	  var buildingMarkerArray=new Array();
 	  var cardMarkers=new Array();
 	  var user = JSON.parse(localStorage.getItem('user'));
@@ -17,9 +16,12 @@ $(document).ready(function(e) {
 	  var playground=JSON.parse(localStorage.getItem('playground'));
 	  var walkedDistance=0;
 	  var walkedDistanceSinceMoney=0; 
-	  var lastKnownPosition={'lat':0, 'long':0, 'accu':0};
+	  var lastKnownPosition=null;//{'lat':0, 'long':0, 'accu':0};
 	  var lastPositionUpdate=new Date();
 	  var maxSpeed=25;
+	  var playermarkers=new Array();
+	  playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
+	  var gameStopped=false;
 	  
 	  var destinations=[{
 	  	'location':{
@@ -28,18 +30,49 @@ $(document).ready(function(e) {
 		'object':null
 	  }];	 
 	  var destinationMarker=null;
+	  
+	  
 	  //zum anschaun der objekte 
 	  //console.log(user);
 	  //console.log(currentGame);
 	
 	
 	
-	$('#lbl_menu_nickname').html(user.username);
+	$('#lbl_menu_nickname').html(user.username+user.userRole);
+	
+	
+	
 	
 	$('#btn_logout').on('click',function()
 		{	
-			sendReqLogout(user.userID, currentGame.gameID);
-			localStorage.clear(); //if logout --> delete everything in localStorage
+			if(user.userRole=="admin"&&currentGame.finished==null)
+			{
+				alert("Sie müssen das Spiel beenden, um sich ausloggen zu können!");
+			}
+			else
+			{
+				
+				sendReqLogout(user.userID, currentGame.gameID);
+				
+				 //if logout --> delete everything in localStorage
+			}
+			
+			
+		});
+		
+	$('#btn_stop').on('click',function()
+		{	
+			sendReqStopGame(user.userID, currentGame.gameID);
+			currentGame=JSON.parse(localStorage.getItem('currentGame'));
+	  
+			if(currentGame.finished!=null)
+			{
+			  //Was kommt jetzt????
+			  gameStopped=true;
+			  //localStorage.removeItem('currentGame');
+			  //localStorage.removeItem('playground');
+			  
+			}
 			
 		});
 	
@@ -49,8 +82,6 @@ $(document).ready(function(e) {
 		  maxZoom: 18,
 	  }).addTo(map);
 	  
-	  
-	  playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
 			  
 	  var watchId = navigator.geolocation.watchPosition(
 		  function(event){
@@ -102,7 +133,14 @@ $(document).ready(function(e) {
 	  
 	  var updateInterval=window.setInterval(function()
 	  	{
-			sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance, currentGame.gameID);
+			if(!lastKnownPosition)
+			{
+				sendRequpdateAll(user.userID, 0,0, 0, walkedDistance, currentGame.gameID);
+			}
+			else
+			{
+				sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, walkedDistance, currentGame.gameID);
+			}
 			
 			//console.log(localStorage.getItem('user'));
 			user = JSON.parse(localStorage.getItem('user'));
@@ -110,6 +148,22 @@ $(document).ready(function(e) {
 	  
 			updatePlayermarkers();
 			updateBuildingmarkers();
+			
+			if(user.userRole=="admin")
+			{
+				$('#btn_stop').show();
+			}
+			
+			
+			if(currentGame.finished!=null)
+			{
+			  //Was kommt jetzt????
+			  alert("Spiel beendet!");
+			  window.clearInterval(updateInterval);
+			  localStorage.removeItem('currentGame');
+			  localStorage.removeItem('playground');
+			  
+			}
 
 		},5000);
 	  	
@@ -200,6 +254,7 @@ $(document).ready(function(e) {
 			  //console.log(playermarkers);
 			  map.removeLayer(cardMarkers[marker]);
 		  }
+		  cardMarkers=new Array();
 		  for(var card in currentGame.cards)
 		  {
 			  cardMarkers.push(L.circle([currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long], currentGame.cards[card].occuranceLocation.accu, {
@@ -223,6 +278,12 @@ $(document).ready(function(e) {
 	  
 	  function updateBuildingmarkers()
 	  {
+		  for(var marker in buildingMarkerArray)
+		  {
+			  //console.log("removed "+marker+" from ");
+			  //console.log(playermarkers);
+			  map.removeLayer(buildingMarkerArray[marker]);
+		  }
 		  buildingMarkerArray=new Array()
 		  for(var building in currentGame.buildings)
 		  {
@@ -371,7 +432,8 @@ $(document).ready(function(e) {
 		   //Zeit in sekunden
 		  var walkedTime=(time-lastPositionUpdate)/1000; 
 			//Weg in Meter
-		  var walkedDistanceS=GetDistance(lat, lon, lastKnownPosition.lat,lastKnownPosition.long);
+		  if(lastKnownPosition)	
+			  var walkedDistanceS=GetDistance(lat, lon, lastKnownPosition.lat,lastKnownPosition.long);
 		  
 		  
 		  if(walkedDistanceS/walkedTime*3.6>maxSpeed)

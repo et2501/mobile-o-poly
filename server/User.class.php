@@ -43,21 +43,17 @@ class User
 			$usr->username = $row['username'];
 		}
 		if($type=='game')
-		{	$statement = $con->prepare('select * from user_in_game inner join user on user_id = user left join location on location_id = last_known_location where user_id = ?');
-			$statement->execute(array($userID));
+		{	
+			
+			$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location WHERE user_id =? AND game NOT IN ( SELECT game FROM logger WHERE text =13 AND user=?)');
+			$statement->execute(array($userID,$userID));
 			$result = $statement;
 			
 			$row = $result->fetch(PDO::FETCH_ASSOC);
-			
-			//check if user has logged out
-			
-			$logoutstatement = $con->prepare('SELECT * from logger where user = ? and game = ? and text=13');
-			$logoutstatement->execute(array($userID, $row['game']));
-			$logoutresult = $logoutstatement;
-			
-			if($logoutresult->rowCount()==0)
-			{	
-				$usr->fillInUser($row);
+	
+			if($row)
+			{
+					$usr->fillInUser($row);
 			}
 			else
 			{
@@ -79,6 +75,11 @@ class User
 	{
 		$this->username=$nickname;
 	}
+	public function getUserRole()
+	{
+		return $this->userRole;
+	}
+	
 	
 	
 	public function saveUserToDB()

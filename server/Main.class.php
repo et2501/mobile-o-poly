@@ -280,19 +280,53 @@ class Main
 													$data = array('type'=>'changeNick','loggedInUser'=>$currentuser->generateArray());
 												}
 												break;
+			case 'StopGame':														
 												
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+													if($currentuser instanceof User)
+													{
+														if($currentuser->getUserRole()=='admin')
+														{
+															$currentgame=Game::loadFromDB('',$obj['game']['gameID']);
+															if($currentgame instanceof Game)
+															{						
+																$currentgame->stopGame();									
+																$logentry=new Log();
+																$logentry->Text='15';
+																$logentry->user=$currentuser;
+																$logentry->game=$currentgame;
+																$logentry->saveToDB();
+																
+																$data = array('type'=>'StopGame','loggedInUser'=>$currentuser->generateArray(), 'currentGame'=>$currentgame->generateArray());
+															}
+															else
+															{
+																$data = array('type'=>'StopGame','loggedInUser'=>array('error'=>'e108'));
+															}
+														}
+														else
+														{
+															$data = array('type'=>'StopGame','loggedInUser'=>array('error'=>'e110'));
+														}
+													}
+													else
+													{
+														$data = array('type'=>'StopGame','loggedInUser'=>array('error'=>'e999'));
+													}
+													
+													
+												break;
+				default:						
+												$data=array('type'=>'error','error'=>'cant process command');
+												break;
+
 												
 		}
 		
 		return $data;
 	}
 
-	
-	//creates a new Log Entry out of the relevant data
-	public static function createNewLogEntry()
-	{
-	}
-	
+		
 	//AUTOR: BIBI
 	//gets a list of all general trophy types and returns them as JSON
 	//RETURN VALUE: Type array

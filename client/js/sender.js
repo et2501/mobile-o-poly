@@ -221,6 +221,7 @@ function sendReqSpeedTicket(userID, gameID)
 			}
 		}
 	}
+	send(send_obj);
 }
 
 function sendReqMoneyToGo(userID, gameID, playgroundID)
@@ -240,6 +241,24 @@ function sendReqMoneyToGo(userID, gameID, playgroundID)
 			}
 		}
 	}
+	send(send_obj);
+}
+
+function sendReqStopGame(userID, gameID)
+{
+	send_obj=
+	{
+		"type":"StopGame",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	}
+	send(send_obj);
 }
 
 function sendReqChangeNick(userID, password, newnick)
@@ -255,6 +274,7 @@ function sendReqChangeNick(userID, password, newnick)
 			}
 		}
 	}
+	send(send_obj);
 }
 
 //AUTOR: BIBI
@@ -310,7 +330,8 @@ function send(obj) {
 														break;
 						case 'logout':					
 														console.log(data);
-														window.location.href = "index.html"; //an return to login-screen
+														localStorage.clear();
+														setTimeout(window.location.href = "index.html",500); //an return to login-screen
 														break;
 						case 'loadGlobalStatistics':	
 														//TODO Irgendwas mit den Statistiken anfangen
@@ -339,7 +360,11 @@ function send(obj) {
 						case 'changeNick': 				//check for error
 														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));								
 														break;
-																					
+						case 'StopGame': 				
+														console.log(data);
+														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+														break;												
+																																			
 														
 						default: 						
 														console.log("sonstiges");
