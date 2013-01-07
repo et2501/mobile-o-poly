@@ -13,7 +13,6 @@ $(document).ready(function(e) {
 	  var buildingMarkerArray=new Array();									//This contains the Buildingmarkers
 	  var cardMarkers=new Array();											//This contains the cardmarkers (if debug=true)
 	  var playermarkers=new Array();										//This contains the playermarkers				
-	  playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
 	  
 	  var user = JSON.parse(localStorage.getItem('user'));					//this contains the user object	(loaded from localStorage)
 	  var currentGame=JSON.parse(localStorage.getItem('currentGame'));		//this contains the game object (loaded from localStorage)
@@ -43,6 +42,9 @@ $(document).ready(function(e) {
 	  L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',{
 		  maxZoom: 18,
 	  }).addTo(map);														//maaaap
+	  
+	   playermarkers[user.userID]=L.marker([lat, lng], {icon: playerIcon}).addTo(map);
+	 
 	  
 	  //zum anschaun der objekte 
 	  //console.log(user);
