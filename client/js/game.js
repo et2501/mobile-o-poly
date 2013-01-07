@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 //AUTOR: BIBI
 $(document).ready(function(e) {
 	//first of all look if there is a loggedInUser!!!
