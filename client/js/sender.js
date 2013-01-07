@@ -293,6 +293,67 @@ function sendReqChangeNick(userID, password, newnick)
 	send(send_obj);
 }
 
+//AUTOR: MARCUS
+//REQUEST FOR buyBuilding
+function sendReqBuyBuilding(userID, gameID, buildingID)
+{
+	send_obj=
+	{
+		"type":"BuyBuilding",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"building":{
+				"buildingID": buildingID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	}
+	send(send_obj);
+}
+//UpgradeBuilding
+function sendReqUpgradeBuilding(userID, gameID, buildingID)
+{
+	send_obj=
+	{
+		"type":"UpgradeBuilding",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"building":{
+				"buildingID": buildingID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	}
+	send(send_obj);
+}
+function sendReqRentBuilding(userID, ownerID, gameID, buildingID)
+{
+	send_obj=
+	{
+		"type":"RentBuilding",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"building":{
+				"buildingID": buildingID, 
+				"ownerID":ownerID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	}
+	send(send_obj);
+}
 //AUTOR: BIBI
 //SEND FUNCTION
 //SENDS THE JSON OBJ TO THE COMMUNICATOR ON THE SERVER AND HANDLES THE RESPONSE DATA
@@ -393,7 +454,7 @@ function send(obj) {
 															if(!data['currentGame']['error'])
 															{
 																//TODO Irgendwas mit den Statistiken anfangen
-																console.log(data);
+																//console.log(data);
 														  		localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 																localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 															}
@@ -426,6 +487,24 @@ function send(obj) {
 														}
 														else
 															alert(data['loggedInUser']['error']);
+														break;
+						case 'BuyBuilding': 			if(data['currentGame'])
+														{
+															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															//alert(data['loggedInUser']);
+																												
+														break;
+														
+						case 'UpgradeBuilding':			
+														if(data['currentGame'])
+														{
+															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															//alert(data['loggedInUser']);
+																												
 														break;
 						case 'StopGame': 				
 														if(!data['loggedInUser']['error'])

@@ -7,6 +7,7 @@ require_once('Type.class.php');
 require_once('Playground.class.php');
 require_once('database.php');
 require_once('Location.class.php');
+require_once('Building.class.php');
 
 class Main 
 {	//Attributes
@@ -305,6 +306,147 @@ class Main
 														
 												}
 												break;
+			//AUTOR: MARCUS									
+			case 'BuyBuilding':					
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+												
+													$building = Building::loadSelectedBuildingFromDB($obj['building']['buildingID']);
+													
+														if($building instanceof Building)
+														{
+															if($building->owner==null)
+															{
+																$building->buyBuilding($currentuser);
+																$game = Game::loadFromDB('',$obj['game']['gameID']);
+																if($game instanceof Game)
+																{
+																$data = array('type'=>'BuyBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+																}
+																else
+																{
+																	$data=array('type'=>'BuyBuilding','error'=>$game);	
+			
+																}
+															}
+															else
+															{
+															  $data = array('type'=>'BuyBuilding','currentgame'=>$game->generateArray());
+															}
+															
+														}
+														else
+														{
+															$data=array('type'=>'BuyBuilding','error'=>$building);
+														}
+													
+												}
+												else
+												{
+													$data=array('type'=>'BuyBuilding','error'=>$currentuser);	
+												}
+												
+												break;
+			case 'UpgradeBuilding':					
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+												
+													$building = Building::loadSelectedBuildingFromDB($obj['building']['buildingID']);
+													
+														if($building instanceof Building)
+														{
+															if($building->owner->getUserID()==$currentuser->getUserID())
+															{
+																if($currentuser->money>=$building->getBuyValue()*0.25)
+																{
+																	$oldLevel=$building->getLevel();
+																	$building->upgradeBuilding();
+																	if($oldLevel<$building->getLevel())
+																	{
+																		$currentuser->money=$currentuser->money-($building->getBuyValue()*0.25);
+																		$currentuser->changeUserInGameInDB($building->getGameID());
+																	}
+																}
+																$game = Game::loadFromDB('',$obj['game']['gameID']);
+																
+																if($game instanceof Game)
+																{
+																	$data = array('type'=>'UpgradeBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+																}
+																else
+																{
+																	$data=array('type'=>'UpgradeBuilding','error'=>$game);	
+																}
+															}
+															else
+															{
+															  $data = array('type'=>'UpgradeBuilding','currentgame'=>$game->generateArray());
+															}
+															
+														}
+														else
+														{
+															$data=array('type'=>'UpgradeBuilding','error'=>$building);
+														}
+													
+													
+												}
+												else
+												{
+													$data=array('type'=>'UpgradeBuilding','error'=>$currentuser);	
+												}
+												
+												break;											
+			case 'RentBuilding':					
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+													$ownerUser=User::loadFromDB($obj['building']['ownerID'],'game');
+													if($ownerUser instanceof User)
+													{
+													$building = Building::loadSelectedBuildingFromDB($obj['building']['buildingID']);
+													
+														if($building instanceof Building)
+														{
+															
+																if($currentuser->money>=$building->getFee())
+																{
+																	$currentuser->money=$currentuser->money-$building->getFee();
+																	$ownerUser->money=$ownerUser->money+$building->getFee();
+																	$currentuser->changeUserInGameInDB($building->getGameID());
+																	$ownerUser->changeUserInGameInDB($building->getGameID());
+																	
+																}
+																$game = Game::loadFromDB('',$obj['game']['gameID']);
+																
+																if($game instanceof Game)
+																{
+																	$data = array('type'=>'UpgradeBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+																}
+																else
+																{
+																	$data=array('type'=>'UpgradeBuilding','error'=>$game);	
+																}
+															
+															
+														}
+														else
+														{
+															$data=array('type'=>'UpgradeBuilding','error'=>$building);
+														}
+													}
+													
+													
+												}
+												else
+												{
+													$data=array('type'=>'UpgradeBuilding','error'=>$currentuser);	
+												}
+												
+												break;											
+																																						
 			case 'StopGame':														
 												
 												$currentuser=User::loadFromDB($obj['user']['userID'],'game');

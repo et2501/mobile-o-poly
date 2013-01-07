@@ -10,7 +10,7 @@ class Building
 {	//Attributes
 	private $name; //string
 	private $number; //int
-	private $owner; //User
+	public $owner; //User
 	private $fee; //int
 	private $buyValue; //int
 	private $picture; //string
@@ -26,19 +26,77 @@ class Building
 	{
 		return $this->buildingID;
 	}
-	
-	public function buyBuilding($User)
+	public function getLevel()
 	{
+		return $this->upgradeLevel;
+	}
+	public function getBuyValue()
+	{
+		return $this->buyValue;
+	}
+	public function getGameID()
+	{
+		return $this->gameID;
+	}
+	public function getFee()
+	{
+		return $this->fee;
 	}
 	
+	//AUTOR: MARCUS
+	public function buyBuilding($User)
+	{
+		
+		$User->money = $User->money - $this->buyValue;
+		
+		$this->owner = $User;
+		
+		$User->changeUserInGameInDB($this->gameID);
+		
+		$this->updateBuildingToDB();
+		return $this->owner;
 	
+	}
+	
+	//AUTOR: MARCUS
 	public function rentBuilding($User)
 	{
 	}
 	
-	
+	//AUTOR: MARCUS
 	public function upgradeBuilding()
 	{
+		if($this->upgradeLevel<=4)
+		{
+			$this->upgradeLevel+1;
+		}
+		if($this->upgradeLevel==1)
+		{
+			$this->fee=$this->buyValue*0.25;
+		}
+		if($this->upgradeLevel==2)
+		{
+			$this->fee=$this->buyValue*0.33;
+		}
+		if($this->upgradeLevel==3)
+		{
+			$this->fee=$this->buyValue*0.50;
+		}
+		if($this->upgradeLevel==4)
+		{
+			$this->fee=$this->buyValue*0.66;
+		}
+		$this->updateBuildingToDB();
+	}
+	
+	//AUTOR: MARCUS
+	public function updateBuildingToDB()
+	{	$con = db_connect();
+	
+		$statement = $con->prepare('UPDATE selected_building SET game=?, buy_value=?, fee=?, number=?, level=?, owner=? where selected_building_id=?');
+		$statement->execute(array($this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel, $this->owner->getUserID(),$this->buildingID));
+		
+		$con = null;
 	}
 	
 	//AUTOR: BIBI
@@ -120,7 +178,7 @@ class Building
 	
 		while($row = $result->fetch(PDO::FETCH_ASSOC))
 		{	$build = new Building();
-			$build->buildingID = $row['building_id'];
+			$build->buildingID = $row['selected_building_id'];
 			$build->name = $row['name'];
 			$build->picture = $row['picture'];
 			
@@ -179,7 +237,7 @@ class Building
 	
 	public static function loadSelectedBuildingFromDB($buildingID)
 	{
-		$ret = array();
+		$build=new Building();
 	
 		$con = db_connect();
 		$statement = $con->prepare('Select * from selected_building inner join building on selected_building.building=building.building_id inner join location on location_id = location where selected_building_id=?');
@@ -189,12 +247,14 @@ class Building
 		while($row = $result->fetch(PDO::FETCH_ASSOC))
 		{	
 		
-			$build = new Building();
-			$build->buildingID = $row['building_id'];
+			$build->buildingID = $row['selected_building_id'];
 			$build->name = $row['name'];
 			$build->picture = $row['picture'];
 			$build->number=$row['number'];
+			if($row['owner']!=null)
+			{
 			$build->owner=User::loadFromDB($row['owner'],'game');
+			}
 			$build->fee=$row['fee'];
 			$build->buyValue=$row['buy_value'];
 			$build->upgradeLevel=$row['level'];
@@ -205,13 +265,12 @@ class Building
 			$loc->accu = $row['radius'];
 			$loc->lat = $row['lat'];
 			$loc->lon = $row['lon'];
-			$build->location = $loc;
+			//$build->location = $loc;
 			
-			$ret[] = $build;
 		}
 		
 		$con = null;
-		return $ret;
+		return $build;
 	}
 	
 }

@@ -107,6 +107,44 @@ class User
 	}
 	
 	
+	
+	//AUTOR: MiKe
+	public function userGotCard($game, $card, $moneyToGo){
+		
+		
+		
+		
+		console.log($moneyToGo);
+		
+		//$moneyToGo = $playground->getMoneyToGo();	
+		
+							
+		
+		
+		
+		
+		$amount = $card->getAmount();
+		
+		
+		//sofortiger Zuschuss
+		if($card->type=='12'){
+			$this->money += $moneyToGo * $amount;
+		}
+													
+		//sofortiger Abzug
+		else if($card->type=='15'){
+													
+			$this->money -= $moneyToGo * $amount;
+													
+		}	
+		
+		$this->saveUserToDB();
+		
+	}
+	
+	
+	
+	
 	//AUTOR: BIBI
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()

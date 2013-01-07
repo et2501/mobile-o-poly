@@ -17,6 +17,7 @@ class Card
 	private $timeToGo; //int - time to go to a specified location
 	private $amount; //int - multiplicatior
 	private $gameID; //int ID of the game the card belongs to
+	private $selectedCardID; //int ID of the selected Card
 	
 	
 	//GETTERS and SETTERS if required
@@ -25,6 +26,14 @@ class Card
 	{
 		return $this->cardID; 
 	}
+	
+	
+	// AUTOR: MiKe
+	public function getAmount()
+	{	return $this->amount;
+	}
+	
+	
 	
 	//calculates the time from Location to Location
 	//RETURN VALUE: int - time in seconds
@@ -36,7 +45,7 @@ class Card
 	//Generates an array Object of this instance
 	//RETURN VALUE: array
 	public function generateArray()
-	{	$data = array('titel'=>$this->title,'text'=>$this->text,'type'=>$this->type->generateArray(),'cardID'=>$this->cardID,'alreadyTriggered'=>$this->alreadyTriggered,'occuranceLocation'=>$this->occuranceLocation->generateArray(),'gameID'=>$this->gameID,'amount'=>$this->amount);
+	{	$data = array('titel'=>$this->title,'text'=>$this->text,'type'=>$this->type->generateArray(),'cardID'=>$this->cardID,'alreadyTriggered'=>$this->alreadyTriggered,'occuranceLocation'=>$this->occuranceLocation->generateArray(),'gameID'=>$this->gameID,'amount'=>$this->amount,'selectedCardID'=>$this->selectedCardID);
 		if($this->timeToGo!=0)
 			$data['timeToGo'] = $this->timeToGo;
 		if($this->destinationLocation!=null)
@@ -194,8 +203,8 @@ class Card
 	{	$con = db_connect();
 	
 		if($this->timeToGo==0)
-		{	$statement = $con->prepare('Insert into selected_card (card,occurance_location,already_triggered,game_id) values (?,?,?,?)');
-			$statement->execute(array($this->cardID,$this->occuranceLocation->locationID,$this->alreadyTriggered,$this->gameID));
+		{	$statement = $con->prepare('Insert into selected_card (card,occurance_location,already_triggered,game_id,selectedCardID) values (?,?,?,?,?)');
+			$statement->execute(array($this->cardID,$this->occuranceLocation->locationID,$this->alreadyTriggered,$this->gameID,$this->selectedCardID));
 		}
 		else
 		{	$statement = $con->prepare('Insert into selected_card (card,occurance_location,already_triggered,game_id,destination_location,time_for_distance) values (?,?,?,?,?,?)');
@@ -227,6 +236,9 @@ class Card
 			$card->text = $row['text'];
 			$card->title = $row['titel'];
 			$card->type = Type::loadFromDB($row['type']);
+			
+			//Autor: MiKe
+			$card->selectedCardID = $row['selected_card_id'];
 			
 			$oc_loc = new Location();
 			$oc_loc->accu = $row['radius'];
@@ -280,6 +292,9 @@ class Card
 			$card->text = $row['text'];
 			$card->title = $row['titel'];
 			$card->type = Type::loadFromDB($row['type']);
+			
+			//Autor: MiKe
+			$card->selectedCardID = $row['selected_card_id'];
 			
 			$oc_loc = new Location();
 			$oc_loc->accu = $row['radius'];
