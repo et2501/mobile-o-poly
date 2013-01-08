@@ -90,41 +90,36 @@ $(document).ready(function(e) {
 	$('#btn_dice').on('click',function()
 		{	
 			
-			if(destinations[destinations.length-1].object==null)
-			{
+			//if(destinations[destinations.length-1].object==null)
+			//{
 				
-				while(document.getElementById('diceHolder').hasChildNodes())
-				{
-					document.getElementById('diceHolder').removeChild(document.getElementById('diceHolder').firstChild);
-				}
-				var	result = Dice.init(currentGame.buildings.length, 8, {
-					animate : true,
-					debug : true, 
-					diceFaces : 6,
-					diceSize: 200,
-					diceCls : { 
-						box : 'diceBox', 
-						cube : 'diceCube',
-						face : 'face',
-						side : 'side'
-					},
-					wrapper : 'diceHolder',
-					xRange : [8, 16],
-					yRange : [8, 16],
-				});
-				Dice.animate();
+				result=quickAndDirtyDice(currentGame.buildings.length,6);
 				destinationBuilding=getBuildingByNumer(result);
+				alert(destinationBuilding.name);
+				//destinations[destinations.length].object=new Array();
+				destinations.push({'location':{'lat':destinationBuilding.location.lat, 'long':destinationBuilding.location.long, 'accu':destinationBuilding.location.accu},'object':destinationBuilding});	 		
 				
 				/*Dice.animate(function () {
 					var result=Dice.init(currentGame.buildings.length,0);
 					alert(destinationBuilding.name);
-       				//destinations[destination.length].object=destinationBuilding;
+       			
     				});*/
-			}
+			//}
 			
 			
 		});
-	  
+		
+	function quickAndDirtyDice(buildings,currentbuilding)
+	{	var number=getRandomInt(3,16);
+		while(number==currentbuilding)
+		{
+			number=getRandomInt(3,16);
+		}
+		return number;
+	}
+	function getRandomInt (min, max) {
+    	return Math.floor(Math.random() * (max - min + 1)) + min;
+	}  
 	  function getBuildingByNumer(number)
 	  {
 		   for(var building in currentGame.buildings)
@@ -216,28 +211,51 @@ $(document).ready(function(e) {
 	  //check for cards or buildings in range
 	  function checkPositionEvents(lat,lon)
 	  {
-		  for(var card in currentGame.cards)
-		  {
-			  
-			  //Radius zwischen Karte und Position < 18
-			  //can be changed to currentGame.cards[card].occuranceLocation.accu
-			  if(GetDistance(lat,lon,currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long)<18&&currentGame.cards[card].alreadyTriggered==0)
-			  {
-				  raiseCardEvent(currentGame.cards[card]);
-			  }
-		  }
-		  for(var building in currentGame.buildings)
-		  {
-			  //Radius zwischen Karte und Position < 18
-			  //can be changed to currentGame.buildings[building].location.accu
-			  if(GetDistance(lat,lon,currentGame.buildings[building].location.lat,currentGame.buildings[building].location.long)<25)
-			  {
-				  raiseBuildingEvent(currentGame.buildings[building]);
-			  }
-		  }
-		  //TODO
-		  //Check for destinations!! maybe the loop for every building can then be skipped
+		  //karte kann gezogen werden wenn ma nirgends hin muss oder wenn ma zu einem gebäude muss aber nicht, wenn eine karte eingetragen ist
+		  var checkCard=false;
 		  
+		  //wenn ein Nutzer nicht zu einem Gebäude oder irgendeinem Ziel muss
+		  if(destinations[destinations.length-1].object==null)
+		  {
+			  checkCard=true;
+		  }
+		  //Wenn das objekt nicht leer is muss unterschieden werden
+		  if(destinations[destinations.length-1].object!=null)
+		  {
+			  //ist darin keine cardID enthalten, darf eine karte gezogen werden.  
+			  if(!destinations[destinations.length-1].object.cardID)
+			  {
+				   checkCard=true;
+			  }
+			  
+			   //ist dort drin eine karte drin muss auch was passieren:
+			   if(destinations[destinations.length-1].object.cardID)
+			   {
+				   //reachedDestination
+					if(GetDistance(lat,lon,destinations[destinations.length-1].lat,destinations[destinations.length-1].long)<destinations[destinations.length-1].accu)
+					{
+						raiseCardEvent(currentGame.cards[card]);
+					}
+			   }
+			   if(destinations[destinations.length-1].object.cardID.buildingID)
+			   {
+				    raiseBuildingEvent(destinations[destinations.length-1].object.cardID.buildingID);
+			   }
+			  
+		  }
+		  if(checkCard)
+		  {
+			  for(var card in currentGame.cards)
+			  {
+				  
+				  //Radius zwischen Karte und Position < 18
+				  //can be changed to currentGame.cards[card].occuranceLocation.accu
+				  if(GetDistance(lat,lon,currentGame.cards[card].occuranceLocation.lat,currentGame.cards[card].occuranceLocation.long)<18&&currentGame.cards[card].alreadyTriggered==0)
+				  {
+					  raiseCardEvent(currentGame.cards[card]);
+				  }
+			  }
+		  }		  
 	  }
 	  
 	  
