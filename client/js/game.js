@@ -6,7 +6,7 @@ $(document).ready(function(e) {
 	
 	  
 	  //init
-	  var debug=true; 														//If Debug=true, marker for buildings can be displayed and a position can be simulated
+	  var debug=false; 														//If Debug=true, marker for buildings can be displayed and a position can be simulated
 	  var lat=48.2045;															//startinglatitude
 	  var lng=15.6229;															//startinglongitude
 	  var map = L.map('map',{zoomControl:false}).setView([lat, lng], 16); 	//leaflet-map
@@ -71,26 +71,72 @@ $(document).ready(function(e) {
 			}
 		});
 	
+	$('#btn_logout').on('click',function()
+		{	
+			if(user.userRole=="admin"&&currentGame.finished==null)
+			{
+				alert("Sie müssen das Spiel beenden, um sich ausloggen zu können!");
+			}
+			else
+			{
+				sendReqLogout(user.userID, currentGame.gameID);
+			}
+		});	
+	
 	//AUTOR: TOM
 	//StopButton, this can only be pressed by the admin	
 	//The request is dispatched and the game in the localstorage is renewed. 
 	//There has to be something implemented. maybe displaying the log. 
-	$('#btn_stop').on('click',function()
+	$('#btn_dice').on('click',function()
 		{	
-			sendReqStopGame(user.userID, currentGame.gameID);
-			currentGame=JSON.parse(localStorage.getItem('currentGame'));
-	  
-			if(currentGame.finished!=null)
+			
+			if(destinations[destinations.length-1].object==null)
 			{
-			  //Was kommt jetzt????
-			  gameStopped=true;
-			  //localStorage.removeItem('currentGame');
-			  //localStorage.removeItem('playground');
-			  
+				
+				while(document.getElementById('diceHolder').hasChildNodes())
+				{
+					document.getElementById('diceHolder').removeChild(document.getElementById('diceHolder').firstChild);
+				}
+				var	result = Dice.init(currentGame.buildings.length, 8, {
+					animate : true,
+					debug : true, 
+					diceFaces : 6,
+					diceSize: 200,
+					diceCls : { 
+						box : 'diceBox', 
+						cube : 'diceCube',
+						face : 'face',
+						side : 'side'
+					},
+					wrapper : 'diceHolder',
+					xRange : [8, 16],
+					yRange : [8, 16],
+				});
+				Dice.animate();
+				destinationBuilding=getBuildingByNumer(result);
+				
+				/*Dice.animate(function () {
+					var result=Dice.init(currentGame.buildings.length,0);
+					alert(destinationBuilding.name);
+       				//destinations[destination.length].object=destinationBuilding;
+    				});*/
 			}
+			
 			
 		});
 	  
+	  function getBuildingByNumer(number)
+	  {
+		   for(var building in currentGame.buildings)
+		  {
+			  //Radius zwischen Karte und Position < 18
+			  //can be changed to currentGame.buildings[building].location.accu
+			  if(currentGame.buildings[building].number==number)
+			  {
+				  return currentGame.buildings[building];
+			  }
+		  }
+	  }
 	  //AUTOR: TOM
 	  //Geolocation
 	  var watchId = navigator.geolocation.watchPosition(

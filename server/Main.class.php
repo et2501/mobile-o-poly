@@ -332,7 +332,7 @@ class Main
 															}
 															else
 															{
-															  $data = array('type'=>'BuyBuilding','currentgame'=>$game->generateArray());
+															  $data = array('type'=>'BuyBuilding','loggedInUser'=>$currentuser->generateArray());
 															}
 															
 														}
@@ -382,7 +382,7 @@ class Main
 															}
 															else
 															{
-															  $data = array('type'=>'UpgradeBuilding','currentgame'=>$game->generateArray());
+															  $data = array('type'=>'BuyBuilding','loggedInUser'=>$currentuser->generateArray());
 															}
 															
 														}
