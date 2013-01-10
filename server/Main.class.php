@@ -8,6 +8,7 @@ require_once('Playground.class.php');
 require_once('database.php');
 require_once('Location.class.php');
 require_once('Building.class.php');
+require_once('Card.class.php');
 
 class Main 
 {	//Attributes
@@ -216,7 +217,12 @@ class Main
 												  $logentry->game=Game::loadFromDB('',$obj['game']['gameID']);
 												  if($logentry->game instanceof Game)
 												  {
-													$logentry->saveToDB();
+													  
+													  $BuildingList=Building::loadSelectedBuildingsFromUserInGame($logentry->user->getUserID(),$logentry->game->getGameID());
+													  foreach($BuildingList as $building)
+														$building->resetBuilding();
+													  
+													  $logentry->saveToDB();
 													
 													$data = array('type'=>'logout','success'=>$logentry->game);
 												  }
@@ -276,10 +282,18 @@ class Main
 												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
 												if($currentuser instanceof User)
 												{	
-													$currentPlayground=Playground::loadFromDB($obj['playground']['playgroundID']);
-													$currentuser->money=$currentuser->money+$currentPlayground->getMoneyToGo();
+													$game = Game::loadFromDB('',$obj['game']['gameID']);
+													if($game instanceof Game)
+													{
+														$playground=$game->getPlayground();
+													$currentuser->money=$currentuser->money+$playground->getMoneyToGo();
 													$currentuser->changeUserInGameInDB($obj['game']['gameID']);
 													$data=array('type'=>'MoneyToGo','loggedInUser'=>$currentuser->generateArray());
+													}
+													else
+													{
+														$data = array('type'=>'MoneyToGo','loggedInUser'=>array('error'=>$game));
+													}
 												
 												}
 												else
@@ -306,7 +320,7 @@ class Main
 														
 												}
 												break;
-			//AUTOR: MARCUS									
+			//AUTOR: Tom									
 			case 'BuyBuilding':					
 												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
 												if($currentuser instanceof User)
@@ -322,6 +336,13 @@ class Main
 																$game = Game::loadFromDB('',$obj['game']['gameID']);
 																if($game instanceof Game)
 																{
+																	$logentry=new Log();
+																	$logentry->Text='1';
+																	$logentry->user=$currentuser;
+																	$logentry->game=$game;
+																	$logentry->building=$building;
+																	$logentry->saveToDB();
+																	
 																$data = array('type'=>'BuyBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
 																}
 																else
@@ -359,7 +380,7 @@ class Main
 														{
 															if($building->owner->getUserID()==$currentuser->getUserID())
 															{
-																if($currentuser->money>=$building->getBuyValue()*0.25)
+																if($currentuser->money>=($building->getBuyValue()*0.25))
 																{
 																	$oldLevel=$building->getLevel();
 																	$building->upgradeBuilding();
@@ -373,6 +394,14 @@ class Main
 																
 																if($game instanceof Game)
 																{
+																	
+																		$logentry=new Log();
+																		$logentry->Text='3';
+																		$logentry->user=$currentuser;
+																		$logentry->game=$game;
+																		$logentry->building=$building;
+																		$logentry->saveToDB();
+																		
 																	$data = array('type'=>'UpgradeBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
 																}
 																else
@@ -417,24 +446,32 @@ class Main
 																	$ownerUser->money=$ownerUser->money+$building->getFee();
 																	$currentuser->changeUserInGameInDB($building->getGameID());
 																	$ownerUser->changeUserInGameInDB($building->getGameID());
-																	
 																}
 																$game = Game::loadFromDB('',$obj['game']['gameID']);
 																
+																		$logentry=new Log();
+																		$logentry->Text='2';
+																		$logentry->user=$currentuser;
+																		$logentry->game=$game;
+																		$logentry->building=$building;
+																		$logentry->saveToDB();
+																		
+																
+																
 																if($game instanceof Game)
 																{
-																	$data = array('type'=>'UpgradeBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+																	$data = array('type'=>'RentBuilding','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
 																}
 																else
 																{
-																	$data=array('type'=>'UpgradeBuilding','error'=>$game);	
+																	$data=array('type'=>'RentBuilding','error'=>$game);	
 																}
 															
 															
 														}
 														else
 														{
-															$data=array('type'=>'UpgradeBuilding','error'=>$building);
+															$data=array('type'=>'RentBuilding','error'=>$building);
 														}
 													}
 													
@@ -442,7 +479,7 @@ class Main
 												}
 												else
 												{
-													$data=array('type'=>'UpgradeBuilding','error'=>$currentuser);	
+													$data=array('type'=>'RentBuilding','error'=>$currentuser);	
 												}
 												
 												break;											
@@ -483,6 +520,120 @@ class Main
 													
 													
 												break;
+				case 'userGotCard':				$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+												$game = Game::loadFromDB('',$obj['game']['gameID']);
+												if($game instanceof Game)
+												{	
+														$card = Card::loadSelectedCardFromDB($obj['card']['selectedCardID']);
+														if($card instanceof Card)
+														{
+															//playground for starting money
+															$playground=$game->getPlayground();
+															if($card->getAlreadyTriggered()==0)
+															{
+																
+																  switch($card->type->typeID)
+																  {
+																	  case 12:
+																	  case 15: 
+																			  //raise money	
+																			  $currentuser->money+=$card->getAmount()*$playground->getMoneyToGo();
+																			  $card->setAlreadyTriggered();
+																			  $card->changeSelectedCardInDB();
+																			  break;
+																	  case 13: 
+																			  //loosemoney
+																			  $currentuser->money-=$card->getAmount()*$playground->getMoneyToGo();
+																			  $card->setAlreadyTriggered();
+																			  $card->changeSelectedCardInDB();
+																			  break;
+																  }
+																  $currentuser->changeUserInGameInDB($game->getGameID());
+																  //neu laden vom game, damit die card upgedated drin is. 
+																  $game = Game::loadFromDB('',$obj['game']['gameID']);
+																  
+																  
+																		$logentry=new Log();
+																		$logentry->Text='10';
+																		$logentry->user=$currentuser;
+																		$logentry->game=$game;
+																		$logentry->card=$card;
+																		$logentry->saveToDB();
+																		
+																  
+																  $data = array('type'=>'userGotCard','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+
+																}
+																else
+																{
+																	$data=array('type'=>'userGotCard','loggedInUser'=>array('error'=>'card2','card'=>$card));	
+																}
+															}
+															else
+															{
+															  $data = array('type'=>'userGotCard','loggedInUser'=>array('error'=>'card1','card'=>$card));
+															}
+															
+														}
+														else
+														{
+															$data=array('type'=>'userGotCard','loggedInUser'=>array('error'=>'game','game'=>$game));
+														}
+													
+													
+												}
+												else
+												{
+													$data=array('type'=>'userGotCard','loggedInUser'=>array('error'=>'user','data'=>$currentuser));	
+												}
+															
+				
+												break;	
+				case 'bankrupt': 				
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												if($currentuser instanceof User)
+												{
+													$game = Game::loadFromDB('',$obj['game']['gameID']);
+													if($game instanceof Game)
+													{
+														$BuildingList=Building::loadSelectedBuildingsFromUserInGame($currentuser->getUserID(),$game->getGameID());
+													  	foreach($BuildingList as $building)
+															$building->resetBuilding();
+														
+														$currentuser->money=0;
+														$currentuser->changeUserInGameInDB($game->getGameID());
+														
+														$logentry=new Log();
+														$logentry->Text='12';
+														$logentry->user=$currentuser;
+														$logentry->game=$game;
+														$logentry->saveToDB();
+														
+														$game = Game::loadFromDB('',$obj['game']['gameID']);
+														if($game instanceof Game)
+														{
+																$data = array('type'=>'bankrupt','loggedInUser'=>$currentuser->generateArray(),'currentgame'=>$game->generateArray());
+	
+														}
+														else
+														{
+																$data=array('type'=>'bankrupt','loggedInUser'=>array('error'=>'game','game'=>$game));
+														}	
+													}
+													else
+													{
+															$data=array('type'=>'bankrupt','loggedInUser'=>array('error'=>'game','game'=>$game));
+													}
+												}
+												else
+												{
+													$data=array('type'=>'bankrupt','loggedInUser'=>array('error'=>'user','data'=>$currentuser));	
+												}
+												
+				
+												break;															
 				default:						
 												$data=array('type'=>'error','error'=>'cant process command');
 												break;

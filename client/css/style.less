@@ -1,0 +1,573 @@
+@import "../fonts/fonts.css";
+@import "carina.less";
+@import "lisa.less";
+
+* {
+margin: 0;
+padding: 0;
+ }
+
+//colors 
+
+@beige: #F8E9B9;
+@beige_t: rgba(248, 233, 185, 0.6);
+@dark_brown: #231815;
+@brown: #35251F;
+@red: #CC333F;
+@orange: #EB6841;
+@yellow: #EDC951;
+@blue: #00A0B0;
+
+@background: url('../img/background.png');
+@background2: url('../img/background2.jpg');
+
+// fonts
+
+@bebas_neue: 'BebasNeueRegular';
+@museo_regular: 'museo_slab_500regular';
+@museo_italic: 'museo_slab_500italic';
+
+
+// rounded corners
+
+.rounded_corners(@radius: 5px){
+  -webkit-border-radius: @radius;
+   -khtml-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+.rounded_corners_rechts(@radius:0 5px 5px 0){
+-webkit-border-radius: @radius;
+   -khtml-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+.rounded_corners_links(@radius:5px 0 0 5px){
+-webkit-border-radius: @radius;
+   -khtml-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+
+html{
+width: 100%;
+height: 100%;
+}
+
+body {
+background: url('../img/background.png');
+font-family: @museo_regular;
+width: 100%;
+height: 100%;
+}
+
+nav,h1 {
+color: @dark_brown;
+font-family: @bebas_neue;
+font-weight: 100;
+}
+
+h1#schriftzug{
+font-size: 3.0em;
+padding-top: 0.2em;
+margin-left: 60px;
+}
+
+p {
+font-family: @museo_regular;
+}
+
+.italic {
+font-family:@museo_italic;
+}
+
+.accordion a {
+font-family: @museo_regular;
+color: @beige;
+}
+
+.accordion{
+font-size: 1.2em;
+font-weight: 100;
+}
+
+// HINTERGRUNDFARBEN
+
+.orange_bg {
+background-color:@orange!important;
+}
+
+.red_bg {
+background-color:@red!important;
+}
+
+.blue_bg{
+background-color:@blue!important;
+}
+
+.beige_bg{
+background-color:@beige!important;
+}
+
+.dark_brown {
+background-color: @dark_brown;
+}
+
+.brown {
+background-color:@brown;
+}
+
+// SCHRIFTFARBEN
+
+.orange{
+color:@orange!important;
+}
+
+.blue{
+color:@blue!important;
+}
+
+.white {
+color:white!important;
+}
+
+.accordion-inner {
+padding: 0;
+padding-top: 10px;
+}
+
+.left{
+float:left;
+}
+
+.right{
+float:right;
+}
+
+.text_right {
+text-align:right;
+}
+
+.text_center {
+text-align:center;
+}
+
+
+#logo{
+.left;
+}
+
+#logo_big{
+.left;
+width:100%;
+height:20px;
+margin:0;
+}
+
+#logo img{
+width: 54px;
+}
+
+#logo_big img{
+width: 54px;
+margin:1em 0 0 0;
+}
+
+
+.arrow{
+.right;
+padding-top:0.25em;
+padding-right: 1em;
+}
+
+.impressum{
+height: 26px;
+margin-top: 5px;
+padding-left: 0.8em;
+padding-right: 0.4em;
+.left;
+}
+
+.text_impressum{
+background-color: rgba(255,255,255,0.7);
+padding: 10px;
+}
+
+
+
+::-webkit-input-placeholder  {  
+font-family: @bebas_neue !important; 
+color: #000;
+padding-top: 0.3em;
+font-size: 1.2em;
+}
+
+input:-moz-placeholder {  
+font-family: @bebas_neue !important; 
+color: #000;
+font-size: 1.2em;
+padding-top: 0.3em;
+}
+
+
+input[type="text"]{
+.rounded_corners;
+}
+
+.form_border(@color: #fff){
+border-top: 5px solid @color;
+}
+
+input[type="text"].form_blue, input[type="password"].form_blue{
+.form_border(@blue);
+}
+
+input[type="text"].form_orange, input[type="password"].form_orange{
+.form_border(@orange);
+}
+
+input[type="text"].form_gelb{
+.form_border(@yellow);
+}
+
+input[type="password"].form_red{
+.form_border(@red);
+}
+
+input[type="submit"]{
+padding: 0.6em;
+margin:1em 0 1em 0;
+width:97%
+}
+
+.button {
+font-size:1.7em;
+.rounded_corners;
+background-color: @dark_brown;
+color: @beige;
+font-family:@bebas_neue;
+}
+
+input:not([type=submit]){
+padding: 0.8em 0.7em 0.5em 0.7em;
+padding-top: 0.3em;
+width:83%;
+margin-left:3%;
+margin-right: 3%;
+}
+
+input {
+font-size: 1.3em !important;
+}
+
+#login input[type="submit"]{
+padding: 0.5em;
+width:94%;
+margin-left:3%;
+margin-right: 3%;
+}
+
+.button_login{
+.rounded_corners;
+background-color: @dark_brown;
+color: @beige;
+font-family:@bebas_neue;
+border:0;
+}
+.border_right {
+border-right:1px solid @beige;
+}
+
+.border_bottom {
+border-bottom:1px solid @beige;
+}
+
+// MENÜ
+.menue_common {
+height:57px;
+font-size:1.8em;
+font-family:@bebas_neue;
+font-weight:normal;
+background-color:@dark_brown;
+position:relative;
+}
+ 
+.menue_common a {
+color:@beige;
+}
+
+.icon {
+height:42px;
+padding:0.3em 0.2em 0.3em 0.5em;
+}
+
+.icon_klein {
+height:36px;
+padding:0.3em 0.1em 0.2em 0.2em;
+}
+
+.user {
+.left;
+width:20%;
+margin-left: -2px;
+}
+
+.menue {
+.left;
+width:40%;
+}
+
+.logout {
+.right;
+width:40%;
+
+}
+// ENDE MENÜ
+
+// USERÜBERSICHT
+.content {
+width:100%;
+min-height:470px;
+background:@background2;
+}
+
+h2 {
+.rounded_corners_rechts;
+width:86%;
+font-family:@bebas_neue;
+font-weight:normal;
+font-size:2em;
+color:@beige;
+background:@dark_brown;
+padding:0.15em 0 0 1em;
+}
+
+.user2 {
+width:85%;
+height:30px;
+background-color:@dark_brown;
+color:@beige;
+padding:0.8em 1.2em 0.1em 1.2em;
+margin:0 0 0.3em 0;
+}
+
+.spieler {
+font-size:1.4em;
+}
+
+tr > td {
+margin-bottom:2em;
+}
+
+.teilnahme {
+background-color:@orange;
+color:@dark_brown;
+}
+// ENDE USERÜBERSICHT
+
+// KONTO
+
+.edit {
+height:50px;
+margin:1.5em 2em 0 1em;
+}
+
+.big2 {
+font-size:1.2em;
+line-height:1.8em;
+}
+
+.big {
+font-size:1.4em;
+line-height:2em;
+}
+
+.edit img {
+height:36px;
+}
+
+h3 {
+font-family:@bebas_neue;
+font-weight:normal;
+font-size:1.8em;
+margin:0.5em 0 0 0.5em;
+}
+
+h3 img {
+height:36px;
+margin:0 0.3em 0 0;
+}
+
+table {
+font-size:1.5em;
+margin:0.5em 0 0.5em 0.5em;
+}
+
+td {
+padding:0.3em;
+}
+
+td img {
+height:32px;
+}
+
+.nav {
+width:100%;
+height:48px;
+background:@dark_brown;
+font-family:@bebas_neue;
+font-size:1.8em;
+color:@beige;
+margin:0;
+padding:0.4em 0 0 1em;
+}
+
+.abstand{
+margin: 0 0 0 1em;
+}
+
+.nav img {
+height:36px;
+margin:0 1em 0 0;
+}
+// ENDE KONTO
+
+.content p {
+margin:0 0 1em 1em;
+}
+
+
+
+// MODUS
+.modus {
+.rounded_corners;
+width:85%;
+height:40px;
+background-color:@dark_brown;
+color:@beige;
+padding:0.3em 1.2em 0.1em 0.6em;
+margin:0 0 0.1em 0;
+font-family:@bebas_neue;
+font-size:1.8em;
+}
+
+.modus img {
+height:32px;
+margin:0 0.5em 0 0;
+}
+//ENDE MODUS
+
+// OVERLAY
+
+.modal h3 {
+margin:0.5em 0 0 0.5em;
+}
+
+.modal-header {
+border-bottom:0;
+}
+
+.modal-header h3 {
+color:black!important;
+text-align:center;
+}
+
+.modal-body {
+padding:0px 15px 15px 15px;
+}
+
+.modal-body p {
+font-size:1.2em;
+margin:0 0 0.5em 0;
+}
+
+.modal-body table {
+font-size:1.3em;
+}
+
+.modal-body th {
+background-color:@yellow;
+padding:0.3em;
+border:2px solid white;
+}
+
+.modal-body td {
+background-color:@beige;
+border:2px solid white;
+}
+
+.modal-footer {
+border-top:0;
+border-bottom:0;
+background-color:white;
+text-align:left;
+padding:0;
+}
+
+.btn{
+font-size:1.7em;
+.rounded_corners;
+background-color: @dark_brown;
+color: @beige;
+font-family:@bebas_neue;
+background-image:none;
+background-repeat:none;
+padding:0.5em 1em 0.5em 1em;
+text-shadow:none;
+}
+
+.rechts {
+.rounded_corners_rechts;
+margin:0!important;
+width:45%;
+}
+.links {
+.rounded_corners_links;
+margin:0 0 0 0.5em!important;
+width:45%;
+}
+
+#overlay input[type="submit"]{
+padding: 0.5em;
+width:96%;
+margin-left:2%;
+margin-right: 2%;
+}
+
+#overlay input:not([type=submit]){
+padding: 0.8em 0.7em 0.5em 0.7em;
+padding-top: 0.3em;
+width:83%;
+margin-left:3%;
+margin-right: 3%;
+}
+
+#overlay input{
+font-size: 1.3em !important;
+
+}
+
+// ENDE OVERLAY
+
+// OVERLAY TYP 2
+.overlay {
+margin-left:-0.7em;
+color:white!important;
+}
+
+.overlay_box {
+width:97%;
+background-color:@dark_brown;
+padding:2% 0 0.5% 3%;
+margin:0 0 0.3em 0;
+}
+
+.gebaeude {
+height:120px;
+}
+
+
+// ENDE OVERLAY 2

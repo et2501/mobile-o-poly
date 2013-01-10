@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>mobile-o-poly // Startseite</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	
+</head>
+
+<body>
+<header>
+	<div class="menue_common user border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/mein_profil.png" alt="Mein Profil" class="icon"></a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <li id="usr_name">_user_</li>
+
+          
+  		</ul>
+		
+	</div>
+	<div class="menue_common menue border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/menue.png" alt="Menü" class="icon"> MENU</a>
+		
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+         <li><a href="#">Mein Konto</a></li>
+          <li><a href="#">Pokale/Achievements</a></li>
+           <li><a href="#">aktueller Spielstand</a></li>
+
+          
+  		</ul>
+	</div>	
+	<div class="menue_common logout">
+
+		<a href="#myModal" role="button" data-toggle="modal"><img src="img/beitreten.png" alt="Logout" class="icon"> LOGOUT</a>
+	</div>
+		
+
+</header>
+
+
+<section class="content">
+<br><br><br>
+	<h2><span class="orange">></span> modus auswählen</h2>
+				
+	<!-- ACCORDION -->
+	<div class="accordion2" id="accordion2">
+		<div class="accordion-group">
+			<div class="accordion-heading2 dark_brown" id="modeZeit">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+					<img src="img/modus_zeit.png" alt="Modus: Spiel auf Zeit"> Zeit 
+				</a>
+			</div>
+			<div id="collapseOne" class="accordion-body collapse">
+				<div class="accordion-inner">
+					<form id="form_log">
+						<input type="text" placeholder="Zeit"  name="txt_timetoplay" id="txt_timetoplay" maxlength="11" class="form_blue" onClick="selectMode('Zeit')"/>			
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading2 dark_brown" id="modeWirtschaft" onClick="selectMode('Wirtschaft')">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2">
+					<img src="img/modus_wirtschaft.png" alt="Modus: Wirtschaft"> wirtschaft 
+				</a>
+			</div>
+		</div>
+		<div class="accordion-group">
+			<div class="accordion-heading2 dark_brown" id="modeMonopol" onClick="selectMode('Monopol')">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2">
+					<img src="img/modus_monopol.png" alt="Modus: Monopol"> monopol
+				</a>
+			</div>
+		</div>
+		<br>
+		<button class="btn2 links border_right blue" name="btn_next_2" id="btn_next_2">starten</button>
+ 					<button class="btn2 btn-primary rechts orange" id="btn_cancel">abbrechen</button>
+	</section>
+	
+	<!-- add content here -->
+    <script src="js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/jQuery-Validate.js"></script>
+    <script type="text/javascript" src="js/sender.js"></script>
+    <script type="text/javascript" src="js/createGame.js"></script>
+	
+	
+<!-- ################# modals #######-->    
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Achtung</h3>
+ 			</div>
+ 			<div class="modal-body">
+    <p class="italic">Sind sie sicher dass sie das Spiel verlassen wollen?</p>
+ 			</div>
+ 			<div class="modal-footer">
+    <button class="btn links border_right blue" data-dismiss="modal" aria-hidden="true" id="btn_logout">Logout</button>
+	<button class="btn btn-primary rechts orange" data-dismiss="modal" aria-hidden="true">Abbrechen</button>
+  </div>
+</div>
+</body>
+</html>

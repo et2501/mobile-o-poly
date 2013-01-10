@@ -1,32 +1,35 @@
 //AUTOR: BIBI
 $(document).ready(function(e) {
 	
+	
+	
 	if(localStorage.getItem('user'))
-		window.location.href = "menu.html";
+		window.location.href = "start.html";
 	
-	//HIDE REGISTER SECTION
-	$('#sec_register').hide(); 
+	//HIDE REGISTER SECTION - unused
+	//$('#sec_register').hide(); 
 	
-	//SWITCH TO REGISTER SECTION
-	$('#btn_log_reg').on('click',function()
-		{	$('#sec_register').show();
-			$('#sec_login').hide();
-		});
+	//SWITCH TO REGISTER SECTION - unused
+	//$('#btn_log_reg').on('click',function()
+	//	{	$('#sec_register').show();
+	//		$('#sec_login').hide();
+	//	});
 	
 	//SWITCH FROM REGISTER BACK TO LOGIN
-	//CLEAR THE TEXTFIELDS
-	$('#btn_reg_cancel').on('click',function()
-		{	$('#sec_register').hide();
-			$('#sec_login').show();
-			$('#txt_reg_mail').val('');
-			$('#txt_reg_pass').val('');
-			$('#txt_reg_nickname').val('');
-		});
+	//CLEAR THE TEXTFIELDS - unused
+	//$('#btn_reg_cancel').on('click',function()
+	//	{	$('#sec_register').hide();
+	//		$('#sec_login').show();
+	//		$('#txt_reg_mail').val('');
+	//		$('#txt_reg_pass').val('');
+	//		$('#txt_reg_nickname').val('');
+	//	});
 	
 	//REGISTER
 	//VALIDATES THE INPUT OF THE USER AND IF VALID CALLS THE BUILD REQUEST FUNCTION
 	$("#btn_reg_reg").on('click',function()
-		{	$("#form_reg").validate({
+		{	
+			$("#form_reg").validate({
 				rules: {
 					txt_reg_mail: {
 						required: true,
@@ -53,14 +56,18 @@ $(document).ready(function(e) {
 			nickname = $('#txt_reg_nickname').attr('value');
 			
 			if($('#form_reg').valid())	
+				{
 				sendReqRegister(mail,nickname,pass);
+				}
 	
 		});
 	
 	//LOGIN
 	//CALLS THE BUILD REQUEST FUNCTION IF THE TEXTFIELDS ARE NOT EMPTY
 	$('#btn_log_logIn').on('click',function()
-		{	mail = $('#txt_log_mail').attr('value');
+		{	
+		
+			mail = $('#txt_log_mail').attr('value');
 			pass = $('#txt_log_pass').attr('value');	
 			
 			if(mail&&pass)

@@ -8,66 +8,27 @@ $(document).ready(function(e) {
 	//first of all look if there is a loggedInUser!!!
 	if(!localStorage.getItem('user'))
 		window.location.href = "index.html";
-	
-	$('#sec_createGame_2').hide();
-	$('#cont_startButton').hide();
-	$('#tr_timetoplay').hide();
-	
-	if(localStorage.getItem('crGa')=='create')
-	{	$('#sec_attendGame').hide();
-		$('#sec_waitForGamers').hide();
-		sendReqPlaygrounds(); //get all the playgrounds
-	}
-	if(localStorage.getItem('crGa')=='join')
-	{	$('#sec_createGame_1').hide();
-		$('#sec_waitForGamers').hide();
-	}
-	if(localStorage.getItem('crGa')=='waiting')
-	{	$('#sec_createGame_1').hide();
-		$('#sec_attendGame').hide();
-		if(localStorage.getItem('asWhat')=='admin')
-			$('#cont_startButton').show();
-		localStorage.removeItem('asWhat');
-		localStorage.setItem('interval',window.setInterval(checkIfStarted, 5000));
-	}
-	localStorage.removeItem('crGa');
 		
-	$("[name=mode]").removeAttr("checked");
 	
 	var user = JSON.parse(localStorage.getItem('user'));
+		
+	$('#usr_name').html(user.username);
+		
+	sendReqPlaygrounds();
 	
-	//show time textfield if time mode is chosen
-	$("input:radio").change(function()
-		{	if($("input:radio[name='mode']:checked").val() == 'Zeit')
-				$('#tr_timetoplay').show();
-			else
-				$('#tr_timetoplay').hide();
-		});
-	
+		
 	$('#lbl_menu_nickname').html(user.username);
 	
 	$('#btn_logout').on('click',function()
 		{	localStorage.clear(); //if logout --> delete everything in localStorage
 			window.location.href = "index.html"; //and return to login-screen
 		});
-	
-	$('#btn_next_1').on('click',function()
-		{	//save the selected index and the name in global variables
-			gamename = $('#txt_crga_groupname').attr('value');
-			selected_playground = (isNaN(parseInt($("input:radio[name='playgrounds']:checked").val()))?null:parseInt($("input:radio[name='playgrounds']:checked").val()));
-			
-			if(gamename&&selected_playground!=null)
-			{	$('#sec_createGame_1').hide();
-				$('#sec_createGame_2').show();
-				$('#lbl_playground_name').html(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].name);
-				localStorage.setItem('playground',JSON.stringify(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground]));
-			}
-			else
-				alert("Bitte ein Spielfeld auswählen und einen Namen eingeben!");
-		});
-	
+	$('#btn_cancel').on('click',function()
+	{
+		window.location.href = "index.html";
+	});
 	$('#btn_next_2').on('click',function()
-		{	selected_mode = $("input:radio[name='mode']:checked").val();
+		{	
 			if(selected_mode == 'Zeit')
 				time_to_play = $('#txt_timetoplay').attr('value');
 			else
@@ -81,36 +42,25 @@ $(document).ready(function(e) {
 				}
 			});
 			
-			if($('#form_timetoplay').valid())
+			if($('#form_log').valid())
 				if(selected_mode&&(selected_mode=='Zeit'?time_to_play:true))
 				{	$('#txt_timetoplay').val('');
-					$('#txt_crga_groupname').val('');
-					$('#cont_startButton').show();
-					sendReqnewGame(gamename,JSON.parse(localStorage.getItem('playgrounds'))[selected_playground].playgroundID,user.userID,selected_mode,time_to_play);
+					
+					sendReqnewGame(localStorage.getItem('gamename'),JSON.parse(localStorage.getItem('playground')).playgroundID,user.userID,selected_mode,time_to_play);
 				}
 				else
 					alert('Bitte einen Modus auswählen und wenn nötig Zeit eingeben!');
 		});
 	
-	$('#btn_back').on('click',function()
-		{	$('#sec_createGame_1').show();
-			$('#sec_createGame_2').hide();
-		});
 	
-	$('#btn_back_2').on('click',function()
-		{	window.location.href="menu.html";
-		});
-		
-	$('#btn_back_3').on('click',function()
-		{	window.location.href="menu.html";
-		});	
-	
-	$('#btn_next_3').on('click',function()
+	$('#btn_beitreten').on('click',function()
 		{	gname = $('#txt_attendGame').attr('value');
 		
 			if(gname)
-			{	$('#txt_attendGame').val('');
+			{	
+				$('#txt_attendGame').val('');
 				sendReqattendGame(user['userID'],gname);
+			
 			}
 			else
 				alert('Bitte geben Sie einen Spielenamen ein!');
@@ -125,71 +75,179 @@ $(document).ready(function(e) {
 		});
 });
 
-//AUTOR: BIBI
+//AUTOR: BIBI, ch TOM
 //generated the playground-list table
 function listPlaygrounds(pgs)
-{	$('#table_playgrounds').html('');
+{	
+	$('.spielfeld').html('');
 
-	output = "<table>";
+	output="";
 	counter = 0;
 		
+	console.log(pgs);
 	$.each(pgs, function(index, value)
-		{	counter++;
+		{	
+			counter++;
+			output += "<div class='city left house"+counter+"' value='"+index+"' onclick='changeSelection("+(index+1*1)+","+pgs.length+")'><div class='player_number'><span class='number'>"+value.maxPlayers+"</span></div>";
+			console.log(value); 
+			
 			if(counter%2 == 1)
-				output += "<tr>";
+				output+="<img src='img/house.png' alt='House'";
+			else
+				output+="<img src='img/town.png' alt='House'";
+			
+			output+=" class='icon_spielfeld img_house"+counter+"'/><p>"+value['name']+"</p></div>";
 			
 			//ATTENTION in the checkbox value ----> is the index of the playground in the playground array stored in localStorage!!!!
 			//NOT the id of the playground
-			output += "<td><input type='radio' name='playgrounds' value='"+(counter-1)+"' />"+value['name']+"</td>";
-			
-			if(counter%2 == 0)
-				output += "</tr>";
 		});
 		
-	if(counter%2 == 1)
-		output += "<td></td></tr>";
-				
-	output += "</table>";
-	$('#table_playgrounds').append(output);
-	//IMPORTANT: without hiding and showing the main container --> on some mobile phones the DOM change would not appear!!
-	$('#sec_createGame_1').hide();
-	$('#sec_createGame_1').show(); 
+	$('.spielfeld').append(output); 
 }
 
-//AUTOR: BIBI
-//generates the waiting for user table
-function buildPlayerTable(maxPlayers,users)
-{	$('#table_waitForPlayers').html('');
-	$('#lbl_menu_gamename').html("Spielname: "+JSON.parse(localStorage.getItem('currentGame'))['gameName']);
-	output = "<table>";
 
-	for(i=0;i<maxPlayers;i++)
-	{	if(users[i])
-			output+='<tr><td>'+users[i]['username']+'</td><td style="background-color:red"></td></tr>';
-		else
-			output+='<tr><td>Freier Slot</td><td style="background-color:green"></td></tr>';
+
+function changeSelection(index, nPgs)
+{
+	
+	if(index%2==1)
+	{
+		
+				if($(".house"+index).hasClass('active'))
+				{
+  					$(".img_house"+index).attr('src','img/house.png');
+  					$(".house"+index).removeClass('active');
+					selected_playground=null;
+  				}
+				else
+				{
+					deactivateAll(nPgs);
+					selected_playground=index-1;
+  					$(".img_house"+index).attr('src','img/house_inverse.png');
+  					$(".house"+index).addClass('active');	
+ 				}
 	}
-
-	output+="</table>";
-	$('#table_waitForPlayers').append(output);
-	$('#sec_waitForGamers').hide();
-	$('#sec_waitForGamers').show();
+	else
+	{	
+				if($(".house"+index).hasClass('active'))
+				{
+  					$(".img_house"+index).attr('src','img/town.png');
+  					$(".house"+index).removeClass('active');
+				  selected_playground=null;
+  				}
+				else
+				{
+					deactivateAll(nPgs);
+					selected_playground=index-1;
+  					$(".img_house"+index).attr('src','img/town_inverse.png');
+  					$(".house"+index).addClass('active');	
+ 				}
+	}
 }
-
+function deactivateAll(numberPgs)
+{
+	for(i=1;i<numberPgs+1;i++)
+	{
+		if($(".house"+i).hasClass('active'))
+			$(".house"+i).removeClass('active');
+		if(i%2==1)
+		{
+			$(".img_house"+i).attr('src','img/house.png');
+		}
+		else
+			$(".img_house"+i).attr('src','img/town.png');
+	
+	}
+	
+}
+function checkAndForward()
+{
+	if(selected_playground!=null&&$('#txt_crga_groupname').val()!="")
+	{
+		localStorage.setItem('playground',JSON.stringify(JSON.parse(localStorage.getItem('playgrounds'))[selected_playground]));
+		localStorage.setItem('gamename',$('#txt_crga_groupname').val());
+		window.location.href = "modus.html";
+	}
+	else
+	{
+		alert($('#txt_crga_groupname').val());
+	}
+}
 
 //AUTOR: BIBI
 //checks every 5 seconds if the game is already started
 function checkIfStarted()
-{	sendReqCheckStarted(JSON.parse(localStorage.getItem('currentGame'))['gameID'],JSON.parse(localStorage.getItem('currentGame'))['gameName']);
+{	
+	sendReqCheckStarted(JSON.parse(localStorage.getItem('currentGame'))['gameID'],JSON.parse(localStorage.getItem('currentGame'))['gameName']);
 }
 
 //AUTOR: BIBI
 //checks if the game has already started!!
 function checkStarted()
-{	if(parseInt(JSON.parse(localStorage.getItem('currentGame'))['isStarted'])==1)
+{	
+	
+	if(parseInt(JSON.parse(localStorage.getItem('currentGame'))['isStarted'])==1)
 	{	//STOP THE TIMER
 		window.clearInterval(parseInt(localStorage.getItem('interval')));
 		localStorage.removeItem('interval');
 		window.location.href = "game.html";
+	}
+}
+
+function buildPlayerTableOnce()
+{
+	var maxPlayers=JSON.parse(localStorage.getItem('currentGame')).playground.maxPlayers;
+	var table=document.getElementById('playerTable');
+	for(i=0;i<maxPlayers;i++)
+	{
+		overdiv=document.createElement('div');
+		overdiv.setAttribute('id','userElement'+i);
+		overdiv.setAttribute('class','user2');
+			underdiv1 =document.createElement('div');
+			$(underdiv1).attr('id','userName'+i);
+			underdiv2 =document.createElement('div');
+			$(underdiv1).addClass('spieler left');
+			$(underdiv2).addClass('italic right');
+			$(underdiv2).html('Spieler'+(i+1));
+		overdiv.appendChild(underdiv1);
+		overdiv.appendChild(underdiv2);	
+			//underdiv1.setAttribute('class','spieler left');
+		table.appendChild(overdiv);	
+	}
+	localStorage.setItem('interval',window.setInterval(checkIfStarted, 5000));
+}
+//AUTOR: BIBI
+//generates the waiting for user table
+function buildPlayerTable(maxPlayers,users)
+{
+	for(i=0;i<maxPlayers;i++)
+	{			
+		if(users[i])
+			{
+				$('#userElement'+i).addClass('teilnahme');
+				$('#userName'+i).html(users[i]['username']);
+			}
+		
+	}
+	$('#lbl_player_count').html('"'+users.length+'" von "'+maxPlayers+'" Spielern nehmen am Spiel "'+JSON.parse(localStorage.getItem('currentGame'))['gameName']+'" teil.');
+}
+
+function selectMode(mode)
+{
+	
+	//remove invers from everthing
+	if($('#modeZeit').hasClass("invers"))
+		$('#modeZeit').removeClass("invers");
+	
+	if($('#modeWirtschaft').hasClass("invers"))
+		$('#modeWirtschaft').removeClass("invers");
+	
+	if($('#modeMonopol').hasClass("invers"))
+		$('#modeMonopol').removeClass("invers");
+	
+	if(!$('#mode'+mode).hasClass("invers"))
+	{
+		$('#mode'+mode).addClass("invers");
+		selected_mode=mode;
 	}
 }

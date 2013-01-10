@@ -1,7 +1,7 @@
 
 .diceBox {
   float: left;
-  border: 1px solid red;
+  /*border: 1px solid red;*/
 }
 
 .diceCube {
@@ -23,35 +23,35 @@
 .side1  {
   background-image: url(../assets/images/face1.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 
 .side2 {
-  background-image: url(../assets/images/face2.svg);
+  background-image:url(../assets/images/face3.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 
 .side3 {
-  background-image: url(../assets/images/face3.svg);
+  background-image: url(../assets/images/face2.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 
 .side4 {
   background-image: url(../assets/images/face4.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 
 .side5 {
   background-image: url(../assets/images/face5.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }
 
 .side6 {
   background-image: url(../assets/images/face6.svg);
   -webkit-background-size: 100% 100%;
-  -moz-background-size: 100% 100%;
+  background-size: 100% 100%;
 }

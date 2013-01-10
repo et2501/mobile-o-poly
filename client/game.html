@@ -1,33 +1,352 @@
-﻿<html>
+<!DOCTYPE html>
+<html>
 <head>
-	<title> Mobile-o-poly</title>
-    
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>mobile-o-poly // Startseite</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="css/dice.css" />
     <link href="css/leaflet.css" rel="stylesheet" />
-    <link href="css/dice.css" rel="stylesheet" />
     
-    <script type="text/javascript" src="js/jQuery.js"></script>
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	
+</head>
+
+<body>
+<header>
+	<div class="menue_common user border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/mein_profil.png" alt="Mein Profil" class="icon"></a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <li id="usr_name">_user_</li>
+
+          
+  		</ul>
+		
+	</div>
+	<div class="menue_common menue border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/menue.png" alt="Menü" class="icon"> MENU</a>
+		
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+         <li><a href="#">Mein Konto</a></li>
+          <li><a href="#">Pokale/Achievements</a></li>
+           <li><a href="#">aktueller Spielstand</a></li>
+
+          
+  		</ul>
+	</div>	
+	<div class="menue_common logout">
+
+		<a href="#modalLogout" role="button" data-toggle="modal"><img src="img/beitreten.png" alt="Logout" class="icon"> LOGOUT</a>
+	</div>
+		
+	<div id="infos">
+		
+		<div class="menue_common2 zeit " >
+		<img src="img/spielfeld_zeit.png" alt="Zeit" class="icon" ><span id='lbl_time'>00:12</span>
+		</div>
+		
+		<div class="menue_common2 meter" >
+			<img src="img/spielfeld_meter.png" alt="Meter" class="icon" ><span id='lbl_walkedDistance'> 800</span>m
+		</div>	
+		
+		<div class="menue_common2 geld" >
+		<img src="img/spielfeld_kontostand.png " alt="Geld" class="icon" > <span id='lbl_money'>12.000</span>
+		</div>
+		<div class="clearfix"></div>
+		
+		
+		</div>
+
+	
+	
+
+</header>
+<!-- MODALS -->
+<!-- MODAL LOGOUT -->
+<div id="modalLogout" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+    	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    	<h3 id="myModalLabel">Achtung</h3>
+ 	</div>
+ 	<div class="modal-body">
+    	<p class="italic">Sind sie sicher dass sie das Spiel verlassen wollen?</p>
+ 	</div>
+ 	<div class="modal-footer">
+    	<button class="btn links border_right blue" data-dismiss="modal" aria-hidden="true" id='btn_logout'>Logout</button>
+    	<button class="btn btn-primary rechts orange" data-dismiss="modal" >Abbrechen</button>
+    </div>
+</div>
+
+<!-- MODAL Spiel beenden -->
+<div id="modalStopGame" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+    	
+    	<h3 id="myModalLabel">Achtung</h3>
+ 	</div>
+ 	<div class="modal-body">
+    	<p class="italic">Sie müssen das Spiel zuerst beenden</p>
+ 	</div>
+ 	<div class="modal-footer">
+    	<button class="btn links border_right blue" data-dismiss="modal" aria-hidden="true" id='btn_stop'>Beenden</button>
+    	<button class="btn btn-primary rechts orange" data-dismiss="modal" >Abbrechen</button>
+    </div>
+</div>
+<!-- MODAL WUERFELN -->
+<div id="modalWuerfeln" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static" aria-hidden="true">
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay blue_bg">würfeln</h2>
+	</div>
+	<div class="modal-body">
+ 		<button id="btn_rolldice">Jetzt Würfeln</button>
+        <div id="diceHolder"></div>
+	</div>
+	<div class="modal-footer">
+	</div>
+</div>
+<!-- MODAL WUERFELN TEIL 2 -->
+<div id="modalWuerfeln2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay blue_bg">würfeln</h2>
+ 	</div>
+ 	<div class="modal-body">
+		<p>Gewürfelt: <span id='lbl_diceNumber'>7</span></p>
+		<!--<p>Runde: 3</p>-->
+		<div class="overlay_box blue_bg">
+			<p>Bitte gehen Sie zu: <br /><span id='lbl_diceBuilding'>Rathauskirche!</span></p>
+		</div>
+		<div class="overlay_box beige_bg">
+			<p>Koordinaten:<br><span id='lbl_diceCoordinates'> 48° 12' N, 15° 38' O</span></p>
+		</div>			
+ 	</div>
+ 	<div class="modal-footer">
+ 		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="okay" name="beitreten" onClick="$('#modalWuerfeln2').modal('toggle')" />
+		</form>
+ 	</div>
+</div>
+<!-- MODAL KAUFEN -->
+<div id="modalKaufen" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay orange_bg">kaufen</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<div class="center">
+ 			<img src="img/gebaeude/klostergasse4.jpg" class="gebaeude" id='img_gebauede_buy'>
+ 			<p id='lbl_buildingNameBuy'>Klostergasse 4</p>
+ 		</div>	
+	 	<div class="overlay_box orange_bg white">
+			<p >Kaufpreis: <span id='lbl_buyPrice'>100.000.000 </span>ÖS</p>
+			<p >Mietpreis: <span id='lbl_buyFee'>5.000 </span>ÖS</p>
+		</div>		
+ 	</div>
+ 	<div class="modal-footer">
+    <input type="hidden" value="" id='hidden_building_id_buy' />
+		<button class="btn links border_right blue" data-dismiss="modal" aria-hidden="true" id='btn_buyBuilding'>Kaufen</button>
+		<button class="btn btn-primary rechts orange" data-dismiss="modal" id='btn_buyBuilding_cancel'>Abbrechen</button>
+	</div>
+</div>
+<!-- MODAL MIETEN -->
+<div id="modalMieten" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"  aria-hidden="true">
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay blue_bg">mieten</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<div class="center">
+ 			<img src="img/gebaeude/bahnhof.jpg" alt="Bahnhof" class="gebaeude" id='img_gebauede_rent'>
+ 			<p id='lbl_RentBuildingName'>Klostergasse 4</p>
+	 	</div>
+	 	<div class="overlay_box blue_bg white">
+			<p> Mietpreis: <span id='lbl_rentFee'>5.000 </span>ÖS</p>
+		</div>		
+	</div>
+ 	<div class="modal-footer">
+    <input type="hidden" value="" id='hidden_rent_building_id' />
+    <input type="hidden" value="" id='hidden_rent_user_id' />
+ 		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="mieten"  data-dismiss="modal"  name="mieten" id='btn_rentBuilding'/>
+		</form>
+	</div>
+</div>
+<!-- MODAL UPGRADEN -->
+<div id="modalUpgraden" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay blue_bg">upgraden</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<div class="center">
+ 			<img src="img/gebaeude/bahnhof.jpg" alt="Bahnhof" class="gebaeude" id='img_gebauede_upgrade'>
+ 			<p id='lbl_UpgradeBuildingName'>Klostergasse 4</p>
+ 		</div>	
+	 	<div class="overlay_box blue_bg white">
+			<p>alter Mietpreis: <span id='lbl_upgradeFeeBefore'>5.000 </span>ÖS</p>
+            <p>Kosten: <span id='lbl_upgradeCost'>6.000 </span>ÖS</p>
+		</div>
+ 	</div>
+ 	<div class="modal-footer">
+    <input type="hidden" value="" id='hidden_upgrade_building_id' />
+ 		<button class="btn links border_right blue" data-dismiss="modal" aria-hidden="true" id='btn_upgradeBuilding'>upgraden</button>
+ 		<button class="btn btn-primary rechts orange" data-dismiss="modal" id='btn_upgradeBuilding_cancel'>Abbrechen</button>	
+ 	</div>
+ </div>
+<!-- MODAL SPIELSTAND -->	
+<div id="modalSpielstand" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay blue_bg">aktueller spielstand</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<table>
+ 			<tr>
+ 				<th>Name</th>
+ 				<th>Häuser</th>
+ 				<th>km</th>
+ 				<th>ÖS</th>
+ 			</tr>
+ 			<tr>
+ 				<td>Hugo</td>
+ 				<td>2</td>
+ 				<td>20</td>
+ 				<td class="text_right">10.000</td>
+ 			</tr>
+ 			<tr>
+ 				<td>Susi</td>
+ 				<td>10</td>
+ 				<td>12</td>
+ 				<td class="text_right">5.000</td>
+ 			</tr>
+ 			<tr>
+ 				<td>Heinz</td>
+ 				<td>3</td>
+ 				<td>17</td>
+ 				<td class="text_right">100</td>
+ 			</tr>
+ 			<tr>
+ 				<td>Ralf</td>
+ 				<td>5</td>
+ 				<td>15</td>
+ 				<td class="text_right">2.357</td>
+ 			</tr>
+ 		</table>		
+ 	</div>
+ 	<div class="modal-footer">
+ 		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="okay" name="beitreten" />
+		</form>
+	</div>	
+</div>
+<!-- MODAL AKTION -->
+<div id="modalAktion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay orange_bg">aktion</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<div class="center">
+ 			<img src="img/gebaeude/sparkasse.jpg" alt="Sparkasse" class="icon" id='img_card_action'>
+ 		</div>
+        <p id='lbl_card_action_titel'> Titel </p>	
+        <p id='lbl_card_action_text'> Text</p>
+		<p>Sie haben <span id='lbl_card_action_time'>2</span> Sekunden Zeit um <span id='lbl_card_action_amount'></span>ÖS zu erhalten!</p>
+		
+ 	</div>
+ 	<div class="modal-footer" style="padding:0">
+    <input type='hidden' id='hidden_card_action_id' />
+		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="okay" name="beitreten" aria-hidden="true"  id='btn_card_action'/>
+		</form>
+	</div>
+</div>
+<!-- MODAL Card -->
+<div id="modalCard" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay orange_bg">Karte</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<div class="center">
+ 			<img src="img/gebaeude/sparkasse.jpg" alt="Sparkasse" class="icon" id='img_card'>
+ 		</div>	
+        <p id='lbl_card_titel'> Titel </p>
+		<p><span id='lbl_card_text'></span> <span id='lbl_card_amount' ></span></p>
+		
+ 	</div>
+ 	<div class="modal-footer" style="padding:0">
+    <input type='hidden' id='hidden_card_id' />
+		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="okay" name="beitreten" id='btn_card'/>
+		</form>
+	</div>
+</div>
+<!-- MODAL BANKROTT -->
+<div id="modalBankrott" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+    	<h2 id="myModalLabel" class="overlay red_bg">bankrott</h2>
+ 	</div>
+ 	<div class="modal-body">
+		<p>Schade, du bist Bankrott! Du scheidest aus dem Spiel aus.</p>
+		<p>Deine Häuser werden wieder zum Verkauf angeboten. Gehe nun zum:</p>
+	 	<p class="blue text_center" id='lbl_bankrott_building'>Rathausplatz</p>
+	 	<p> und warte auf deine Mitspieler, oder triff dich mit einem anderen Spieler und begleite ihn.</p>
+ 	</div>
+ 	<div class="modal-footer">
+		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="okay" name="beitreten" id='btn_bankrott' />
+		</form>
+	</div>
+</div>		
+<!-- MODAL SPIELENDE -->
+<div id="modalSpielende" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay red_bg">spielende</h2>
+	</div>
+	<div class="modal-body">
+		<p>Gehen Sie auf dem schnellsten Weg zum:</p>
+		<p class="blue text_center">Rathausplatz</p>
+		<p>Dort treffen Sie Ihre Spielkollegen!</p>
+	</div>
+	<div class="modal-footer">
+		<form id="login" class="accordion inner" style="margin:0; padding:0;">
+			<input type="submit"  class="button_login" value="okay" name="beitreten" />
+		</form>
+	</div>
+</div>
+<!-- MODAL SPIELENDE TEIL 2 -->
+<div id="modalSpielende2" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" >
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay red_bg">spielende</h2>
+	</div>
+	<div class="modal-body">
+		<p>Das Spiel ist beendet! Der Gewinner ist:</p><br>
+		<div class="overlay_box red_bg">
+			<p class="white">Hugo</p>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<form id="overlay" class="accordion inner">
+			<input type="submit"  class="button_login" value="weiter zur statistik" name="beitreten" />
+		</form>
+	</div>
+</div>
+
+	<!-- add content here -->
+
+<!-- KARTE -->
+<section id="content">
+	<div id="map"></div>
+</section>
+
+	<script src="js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/jQuery-Validate.js"></script>
     <script type="text/javascript" src="js/sender.js"></script>
     <script type="text/javascript" src="js/leaflet.js"> </script>
     
     <script type="text/javascript" src="js/game_icons.js"></script>
-
     <script type="text/javascript" src="js/game.js"></script>
     
-</head>
-<body>
-	<div id="lbl_menu_nickname"></div><br />
-     <div id="diceHolderUpper"> <div id="diceHolder">
-	</div></div>
-    <input type="button" value="Logout" name="btn_logout" id="btn_logout"/><br />
-    <input type="button" value="Spiel beenden" name="btn_stop" id="btn_stop" hidden="true"/><br /><br />
-    <input type="button" value="roll Dice" name="btn_dice" id="btn_dice"/><br /><br />
-    
-    INGAME!!!!
-    <div id="map" style="width:100%;height:100%;border:0px solid red;"></div>
-    <div id="target"> </div>
-   
+    <script src="js/dice.min.js"></script>
+    <!--<script>window.Dice || document.write('<script src="js/dice.min.js"><\/script>')</script>-->
 
-        <script type="text/javascript" src="js/dice.js"></script>
+    <script type="text/javascript">
+
+</script>    
 </body>
 </html>

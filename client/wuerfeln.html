@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	
+	<title>mobile-o-poly // Startseite</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    
+   <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="js/less.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="http://lamp2.fhstp.ac.at/~lbz/beispiele/ws2012/gps/leaflet.css" />
+    <script src="http://lamp2.fhstp.ac.at/~lbz/beispiele/ws2012/gps/leaflet.js"></script>
+    
+    <link rel="stylesheet" type="text/css" href="css/dice.css">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	
+</head>
+
+<body>
+<header>
+	<div class="menue_common user border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/mein_profil.png" alt="Mein Profil" class="icon"></a>
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <li>Lisa Gringl</li>
+
+          
+  		</ul>
+		
+	</div>
+	<div class="menue_common menue border_right dropdown">
+		<a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/menue.png" alt="Menü" class="icon"> MENü</a>
+		
+		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+         <li><a href="#">Mein Konto</a></li>
+          <li><a href="#">Pokale/Achievements</a></li>
+           <li><a href="#">aktueller Spielstand</a></li>
+
+          
+  		</ul>
+	</div>	
+	<div class="menue_common logout">
+		<a href="#myModal" role="button" data-toggle="modal"><img src="img/beitreten.png" alt="Logout" class="icon"> LOGOUT</a>
+	</div>
+	
+	
+	<div id="infos">
+		
+		<div class="menue_common2 zeit">
+		<img src="img/spielfeld_zeit.png" alt="Zeit" class="icon">00:12
+		</div>
+		
+		<div class="menue_common2 meter">
+			<img src="img/spielfeld_meter.png" alt="Meter" class="icon"> 800m
+		</div>	
+		
+		<div class="menue_common2 geld">
+		<img src="img/spielfeld_kontostand.png " alt="Geld" class="icon"> 12.000
+		</div>
+		<div class="clearfix"></div>
+		
+		
+		</div>
+
+</header>
+	
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-header">
+			<h2 id="myModalLabel" class="overlay blue_bg">würfeln</h2>
+ 		</div>
+ 		<div class="modal-body">
+	 		<button onclick="Dice.animate()">Jetzt Würfeln</button>
+            <div id="diceHolder"></div>
+ 		</div>
+ 		<div class="modal-footer">
+ 		</div>
+ 	</div>
+	<section id="content">
+				
+		
+		<div id="map"></div>
+	</section>
+	<!-- add content here -->
+	<script src="js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="https://raw.github.com/skripted/dice.js/master/src/dice.min.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        // wuerfel
+        var result = Dice.init(14, 1, {
+            animate : true,
+            debug : false, 
+            diceFaces : 6,
+            diceSize: 200,
+            diceCls : { 
+                box : 'diceBox', 
+                cube : 'diceCube',
+                face : 'face',
+                side : 'side'
+            },
+            wrapper : 'diceHolder',
+            xRange : [8, 16],
+            yRange : [8, 16],
+        });
+
+        console.log('Gewürfelt: ' + result);
+
+
+        // geo location
+        var lat=48.204867;
+        var lng=15.626733;
+
+        var map = L.map('map',{zoomControl:false}).setView([lat, lng], 16);
+        var markers=new Array();
+        var cardArray=new Array();
+        var cardMarkers=new Array();
+        var cardCount=32;
+        var firstHalf=false;
+
+        map.zoomControl=false;
+        L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        	maxZoom: 18,
+        }).addTo(map);
+        var coords=[{'lat':48.204867,'long':15.626733},{'lat':48.204499,'long':15.622945},{'lat':48.204444,'long':15.624275},{'lat':48.207826,'long':15.62464},{'lat':48.206774,'long':15.622816},{'lat':48.205433,'long':15.6253},{'lat':48.206146,'long':15.628862},{'lat':48.204567,'long':15.627783},{'lat':48.202387,'long':15.623385},{'lat':48.203077,'long':15.622261},{'lat':48.205529,'long':	15.623205},{'lat':48.204616,'long':15.625477},{'lat':48.203045,'long':15.62502},{'lat':48.205191,'long':15.624136},{'lat':48.206661,'long':15.623556},{'lat':48.206706,'long':15.625505}];
+
+
+        map.locate({setView: true, maxZoom: 16});
+
+</script>
+    
+</body>
+</html>

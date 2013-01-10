@@ -9,7 +9,7 @@ class Card
 {	//Attributes
 	private $title; //string - title of the card
 	private $text; //string - text of the card
-	private $type; //instance of Type - Card Type
+	public $type; //instance of Type - Card Type
 	private $occuranceLocation; //instance of Location - Location of occurence
 	private $destinationLocation; //instance of Location - If required --> Location of the Destination 
 	private $cardID; //string - Card ID
@@ -26,6 +26,15 @@ class Card
 	{
 		return $this->cardID; 
 	}
+	public function setAlreadyTriggered()
+	{
+		$this->alreadyTriggered=1;
+	}
+	public function getAlreadyTriggered()
+	{
+		return $this->alreadyTriggered;
+	}
+	
 	
 	
 	// AUTOR: MiKe
@@ -178,7 +187,7 @@ class Card
 						  
 						  $selCard->destinationLocation=$dest_loc;
 						  
-						  $speed=6; //6km/h
+						  $speed=4; //6km/h
 						  
 						  //man nehme an, man geht mit 6km/h. das wären 6/3.6= 1,666m/s. d.h. wir haben pro s 1,666 meter zu schaffen. 
 						  //--> für 500 meter braucht man dann 500/1.666 --> 300sekunden. 
@@ -213,6 +222,14 @@ class Card
 		
 		$con = null;
 	}
+	public function changeSelectedCardInDB()
+	{
+			$con = db_connect();
+			$statement = $con->prepare('UPDATE selected_card SET already_triggered=? where selected_card_id=?');
+			$statement->execute(array($this->alreadyTriggered,$this->selectedCardID));
+			$con = null;
+	}
+	
 	
 	//AUTOR: BIBI
 	//loads all cards for a game
@@ -274,10 +291,10 @@ class Card
 	//AUTOR: TOM
 	public static function loadSelectedCardFromDB($cardID)
 	{
-		$cards = array();
+		$card=null;
 		$con = db_connect();
 		
-		$statement = $con->prepare('Select * from selected_card inner join card on card = card_id inner join location on location_id = occurance_location where card_id = ?');
+		$statement = $con->prepare('Select * from selected_card inner join card on card = card_id inner join location on location_id = occurance_location where selected_card_id = ?');
 		$statement->execute(array($cardID));
 		$result = $statement;
 		
@@ -320,11 +337,11 @@ class Card
 				$card->destinationLocation = $d_loc;
 			}
 			
-			$cards[] = $card;
+			
 		}
 		
 		$con = null;
-		return $cards;
+		return $card;
 	}
 	public static function GetDistance($lat1, $lon1, $lat2, $lon2)
 	{

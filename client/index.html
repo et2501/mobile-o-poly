@@ -1,51 +1,124 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-	<title> Mobile-o-poly</title>
-    <script type="text/javascript" src="js/jQuery.js"></script>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>mobile-o-poly // Startseite</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    
+    
+	<meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	
+</head>
+
+<body>
+<header>
+	<div id="logo"><img src="img/logo_klein.png" alt="Logo"/></div><h1 id="schriftzug">mobile-o-poly</h1>
+</header>
+	
+	<div class="accordion" id="accordion2">
+		<div class="accordion-group">
+			<div class="accordion-heading dark_brown arrow">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+					Login 
+				</a>	
+		</div>
+		<div id="collapseOne" class="accordion-body collapse in">
+			<div class="accordion-inner">
+			<form id="form_log">
+				<input type="email" placeholder="E-Mail"  id="txt_log_mail" maxlength="25" class="form_blue"/>
+				<input type="password" placeholder="Passwort" id="txt_log_pass" maxlength="45" class="form_orange"/>
+				
+				<input type="button"  class="button_login" value="Einloggen" name="login" id="btn_log_logIn" />
+			
+			</form>
+			</div>
+		</div>
+		</div>
+		<div class="accordion-group">
+		<div class="accordion-heading brown arrow">
+			<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+				Registrieren
+			</a>
+		</div>
+		<div id="collapseTwo" class="accordion-body collapse">
+			<div class="accordion-inner">
+			
+			<form id="form_reg">
+				<input type="email" placeholder="E-Mail"  name="txt_reg_mail" id="txt_reg_mail" maxlength="25" class="form_blue"/>
+				<input type="text" placeholder="Nickname"  name="txt_reg_nickname" id="txt_reg_nickname" maxlength="45" class="form_gelb"/>
+				<input type="password" placeholder="Passwort"  name="txt_reg_pass" id="txt_reg_pass"  maxlength="45" class="form_orange"/>
+				<input type="password" placeholder="Passwort wiederholen" name="txt_reg_pass_rep" id="txt_reg_pass_rep" maxlength="45" class="form_red"/>
+				
+				<input type="button"  class="button_login" value="Registrieren" name="registrieren" id="btn_reg_reg" />
+				
+				
+			
+			</form>
+
+			
+			</div>
+		</div>
+		</div>
+		
+				<div class="accordion-group">
+		<div class="accordion-heading dark_brown">
+		<img src="img/impressum.png" alt="impressum" class="impressum"/>
+		<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseThree">
+		Impressum
+		</a>
+		
+		</div>
+		<div id="collapseThree" class="accordion-body collapse">
+			<div class="accordion-inner nopadding">
+			
+			<section class="text_impressum">
+				<p><b>mobile-o-poly</b><br>
+				Das Real-Life Monopoly Game für Smartphones</p>
+				<p><b>Entwickler</b><br> Fachhochschule St. Pölten im Rahmen der Lehrveranstaltung Mobile Anwendungen</p>
+				<p>
+				Carina Skladal, Projektleitung<br>
+				Thomas Ederer, Lead Developer<br>
+				Lisa Gringl, Lead Designerin<br>
+				Christina Niederer, Projektmanagement</p>
+				<p>Development<br>
+				Bibiana Bayer, Co-Lead<br>
+				Aleksandar Palic<br>
+				Michael Kräftner<br>
+				Marcus Honkisz</p>
+				<p>Design<br>
+				Isabella Enigl<br>
+				Stefanie Größbacher<br>
+				Christina Niederer<br>
+				Aleksandar Palic</p>
+				<p>Georg Neubauer, Testing<br>
+				Jessika Rosemeyer, Marketing<br>
+				Sarah Tecklenburg, Marketing</p>
+				<p><b>Plattform:</b> iOS, Android<br>
+				<b>Lizenz:</b> GNU General Public License<br>
+				<b>Genre:</b> Simulation<br>
+				<b>Spielmodi:</b> Mehrspieler<br>
+				<b>Bedienung:</b> Touch<br>
+				<b>Sprache:</b> Deutsch<br>
+				<b>Version:</b> 1.0<br>
+				<b>USK:</b> 0<br>
+				<b>PEGI:</b> 3+</p>
+			</section>
+			
+
+			
+			</div>
+		</div>
+		</div>
+		
+		</div>
+<!-- add content here -->
+	<script src="js/jquery-1.8.3.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="js/jQuery-Validate.js"></script>
     <script type="text/javascript" src="js/sender.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
-</head>
-<body>
-	<section id="sec_login">
-    	<h2>Mobile-o-poly</h2>
-        <h4>Login</h4>
-        
-        <form id="form_log">
-        E-Mail:<br />
-        <input type="text" name="txt_log_mail" id="txt_log_mail" maxlength="25"/><br /><br />
-        Passwort:<br />
-        <input type="password" name="txt_log_pass" id="txt_log_pass" maxlength="45"/>
-        <br /><br />
-        
-        <input type="button" value="Login" name="btn_log_logIn" id="btn_log_logIn" />
-        <br />
-        <input type="button" value="Register" name="btn_log_reg" id="btn_log_reg" />
-        
-        </form>
-        
-	</section>
-    
-    <section id="sec_register">
-    	<h2>Mobile-o-poly</h2>
-        <h4>Registrierung</h4>
-        
-        <form id="form_reg">
-        E-Mail:<br />
-        <input type="text" name="txt_reg_mail" id="txt_reg_mail" maxlength="25"/><br /><br />
-        Nickname:<br />
-        <input type="text" name="txt_reg_nickname" id="txt_reg_nickname" maxlength="45"/><br /><br />
-        Passwort:<br />
-        <input type="password" name="txt_reg_pass" id="txt_reg_pass" maxlength="45"/><br /><br />
-        Passwort wiederholen:<br />
-        <input type="password" name="txt_reg_pass_rep" id="txt_reg_pass_rep" maxlength="45"/>
-        <br /><br />
- 
-        <input type="button" value="Register" name="btn_reg_reg" id="btn_reg_reg" />
-        <br />
-        <input type="button" value="Abbrechen" name="btn_reg_cancel" id="btn_reg_cancel" />
-        </form>
-    </section>
 </body>
 </html>

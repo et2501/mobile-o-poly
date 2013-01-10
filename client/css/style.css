@@ -1,0 +1,643 @@
+@import url(../fonts/fonts.css);
+
+body {
+    height: 100%;
+    width: 100%;
+    font-size:100%;
+}
+#map {
+    clear: both;
+    height: 100%;
+    position: absolute !important;
+    top: 57px;
+    width: 100%;
+    z-index: 1;
+}
+header {
+    position: relative;
+    z-index: 20;
+}
+.menue_common2 {
+    color: black;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.3em;
+    font-weight: normal;
+    height: 57px;
+}
+.icon_sub {
+    height: 42px;
+    padding: 0.3em 0.2em 0.3em 0.5em;
+}
+.zeit {
+    float: left;
+    width: 33%;
+}
+.meter {
+    float: left;
+    width: 33%;
+}
+.geld {
+    float: right;
+    width: 34%;
+}
+#infos {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+}
+.dropdown-menu li {
+    padding: 0.4em !important;
+}
+.dropdown-menu li:nth-child(2n+1) {
+    background-color: rgba(248, 233, 185, 0.6);
+}
+.abbrechen {
+    border-top: 1px solid #231815;
+}
+.heading {
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 2em;
+    font-weight: normal;
+}
+.button_bottom {
+    background-color: #231815;
+    bottom: 0;
+    height: 57px;
+    left: 0;
+    position: fixed;
+    width: 100%;
+}
+.button_bottom a, .button_bottom_notfixed a {
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 2em;
+    font-weight: normal;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+.button_bottom_notfixed {
+    background-color: #231815;
+    bottom: 0;
+    height: 40px;
+    padding-top: 20px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+.weiter {
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #231815;
+    background-image: url("http://flock-0308.students.fhstp.ac.at/css/../img/logout.png");
+    background-origin: padding-box;
+    background-position: 10% 50%;
+    background-repeat: no-repeat;
+    background-size: 42px 42px;
+}
+
+.pokale{
+ background-attachment: scroll;
+    background-clip: border-box;
+    background-color: #231815;
+    background-image: url("http://flock-0308.students.fhstp.ac.at/css/../img/pokal_2.png");
+    background-origin: padding-box;
+    background-position: 10% 50%;
+    background-repeat: no-repeat;
+    background-size: 42px 42px
+}
+.border {
+    border: 1px solid #F8E9B9;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+.tab-content {
+    padding: 1em !important;
+}
+.fixed_padding {
+    padding-bottom: 65px;
+}
+.icon_padding {
+    margin-left: 50px;
+    padding: 1em;
+}
+.icon_spielfeld {
+    padding: 10px;
+    width: 100px;
+}
+.spielfeld {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 250px;
+}
+.gruppenname {
+    margin: 1em 2%;
+    width: 90%;
+}
+
+.city {
+    position: relative;
+    text-align: center;
+}
+.plain_red {
+    background-image: url("http://flock-0308.students.fhstp.ac.at/css/../img/plain_red.png");
+}
+.player_number {
+    background-image: url("http://flock-0308.students.fhstp.ac.at/css/../img/plain_red.png");
+    background-repeat: no-repeat;
+    background-size: 40px 40px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 2em;
+    font-weight: normal;
+    height: 40px;
+    padding-top: 0.3em;
+    position: absolute;
+    right: 17px;
+    top: 13px;
+    width: 40px;
+}
+#container {
+    min-height: 100%;
+    position: relative;
+}
+#content {
+    padding-bottom: 60px;
+}
+nav-tabs {
+    background-color: #231815 !important;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+html {
+    height: 100%;
+    width: 100%;
+}
+body {
+    background: url("http://flock-0308.students.fhstp.ac.at/css/../img/background.png") repeat scroll 0 0 transparent;
+    font-family: 'museo_slab_500regular';
+    height: 100%;
+    width: 100%;
+}
+nav, h1 {
+    color: #231815;
+    font-family: 'BebasNeueRegular';
+    font-weight: 100;
+}
+h1#schriftzug {
+    font-size: 3em;
+    margin-left: 60px;
+    padding-top: 0.2em;
+}
+p {
+    font-family: 'museo_slab_500regular';
+}
+.italic {
+    font-family: 'museo_slab_500italic';
+}
+.accordion a {
+    color: #F8E9B9;
+    font-family: 'museo_slab_500regular';
+}
+
+.accordion2 a {
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+}
+
+.accordion2 .invers a {
+    color: #231815;
+    font-family: 'BebasNeueRegular';
+} 
+
+.accordion {
+    font-size: 1.2em;
+    font-weight: 100;
+}
+
+.accordion2 {
+    font-size: 1.2em;
+    font-weight: 100;
+    font-size: 1.8em;
+    height: 40px;
+    margin: 0 0 0.1em;
+    padding: 0.3em 1.2em 0.1em 0.6em;
+    
+}
+
+.accordion-heading {
+	width: 100%;
+}
+
+.accordion-heading2 {
+	border-radius: 5px 5px 5px 5px;
+	width: 99.5%;
+	margin-left:0.5%;
+	padding:2% 3% 2% 3%;
+}
+
+.accordion2 img {
+    height: 32px!important;
+    margin: 0 0.5em 0 0;
+}
+
+.orange_bg {
+    background-color: #EB6841 !important;
+}
+.red_bg {
+    background-color: #CC333F !important;
+}
+.blue_bg {
+    background-color: #00A0B0 !important;
+}
+.beige_bg {
+    background-color: #F8E9B9 !important;
+}
+.dark_brown {
+ 	background-color: #231815;   
+}
+
+.arrow {
+	background-color: #231815;
+	background-image: url("../img/arrow.png");
+	background-position:right center;
+    background-repeat:no-repeat;
+    background-size:27px;
+}
+
+.brown {
+    background-color: #35251F;
+}
+.orange {
+    color: #EB6841 !important;
+}
+.blue {
+    color: #00A0B0 !important;
+}
+.white {
+    color: white !important;
+}
+.accordion-inner {
+    padding: 10px 0 0;
+    border:none;
+}
+
+.nopadding {
+	padding:0;
+}
+
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+.text_right {
+    text-align: right;
+}
+.text_center {
+    text-align: center;
+}
+
+.invers {
+	background-color:#F8E9B9!important;
+	color:#231815!important;
+}
+#logo {
+    float: left;
+}
+#logo_big {
+    float: left;
+    height: 20px;
+    margin: 0;
+    width: 100%;
+}
+#logo img {
+    width:60px;
+}
+#logo_big img {
+    margin: 1em 0 0;
+    width: 54px;
+}
+
+.impressum {
+    float: left;
+    height: 26px;
+    margin-top: 5px;
+    padding-left: 0.8em;
+    padding-right: 0.4em;
+}
+.text_impressum {
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    font-size:0.8em;
+}
+
+a:visited, a:hover {
+	text-decoration:none;
+}
+
+input:-moz-placeholder {
+    color: #000000;
+    font-family: 'BebasNeueRegular' !important;
+    font-size: 1.2em;
+    padding-top: 0.3em;
+}
+input[type="text"], input[type="email"] {
+    border-radius: 5px 5px 5px 5px;
+}
+input.form_blue[type="text"], input.form_blue[type="password"], input.form_blue[type="email"] {
+    border-top: 5px solid #00A0B0;
+}
+input.form_orange[type="text"], input.form_orange[type="password"], input.form_orange[type="email"] {
+    border-top: 5px solid #EB6841;
+}
+input.form_gelb[type="text"] {
+    border-top: 5px solid #EDC951;
+}
+input.form_red[type="password"] {
+    border-top: 5px solid #CC333F;
+}
+input[type="submit"] {
+    margin: 1em 0;
+    padding: 0.6em;
+    width: 97%;
+}
+.button {
+    background-color: #231815;
+    border-radius: 5px 5px 5px 5px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.7em;
+}
+input:not([type="submit"]) {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding: 0.3em 0.7em 0.5em;
+    width: 84%;
+}
+input {
+    font-size: 1.3em !important;
+}
+#login input[type="submit"] {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding: 0.5em;
+    width: 100%;
+}
+.button_login {
+    background-color: #231815;
+    border: 0 none;
+    border-radius: 5px 5px 5px 5px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    width:94%!important;
+}
+.border_right {
+    border-right: 1px solid #F8E9B9;
+}
+.border_bottom {
+    border-bottom: 1px solid #F8E9B9;
+}
+.menue_common {
+    background-color: #231815;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.6em;
+    font-weight: normal;
+    height: 57px;
+    position: relative;
+}
+.menue_common a {
+    color: #F8E9B9;
+}
+.icon {
+    height: 42px;
+    padding: 0.3em 0.2em 0.3em 0.5em;
+}
+.icon_klein {
+    height: 36px;
+    padding: 0.3em 0.1em 0.2em 0.2em;
+}
+.user {
+    float: left;
+    margin-left: -2px;
+    width: 20%;
+}
+.menue {
+    float: left;
+    width: 40%;
+}
+.logout {
+    float: right;
+    width: 40%;
+}
+.content {
+    background: url("http://flock-0308.students.fhstp.ac.at/css/../img/background2.jpg") repeat scroll 0 0 transparent;
+    min-height: 100%;
+    width: 100%;
+}
+
+#content p {
+	padding:0 3% 0 3%;
+}
+
+h2 {
+    background: none repeat scroll 0 0 #231815;
+    border-radius: 0 5px 5px 0;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.6em;
+    font-weight: normal;
+    padding: 0 0 0 4%;
+    width: 85%;
+}
+
+h2 img {
+	width:27px;
+}
+.user2 {
+    background-color: #231815;
+    color: #F8E9B9;
+    height: 30px;
+    margin: 0 0 0.3em;
+    padding: 0.8em 1.2em 0.1em;
+    width: 85%;
+}
+.spieler {
+    font-size: 1.4em;
+}
+tr > td {
+    margin-bottom: 2em;
+}
+.teilnahme {
+    background-color: #EB6841;
+    color: #231815;
+}
+.edit {
+    height: 50px;
+    margin: 1.5em 2em 0 1em;
+}
+
+.big {
+    font-size: 1.4em;
+    line-height: 2em;
+}
+.edit img {
+    height: 36px;
+}
+h3 {
+    font-family: 'BebasNeueRegular';
+    font-size: 1.8em;
+    font-weight: normal;
+    margin: 0.5em 0 0 0.5em;
+}
+h3 img {
+    height: 36px;
+    margin: 0 0.3em 0 0;
+}
+table {
+    font-size: 1.5em;
+    margin: 0.5em 0 0.5em 0.5em;
+}
+td {
+    padding: 0.3em;
+}
+td img {
+    height: 32px;
+}
+.nav {
+    background: none repeat scroll 0 0 #231815;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.8em;
+    height: 48px;
+    margin: 0;
+    padding: 0.4em 0 0 1em;
+    width: 100%;
+}
+.abstand {
+    margin: 0 0 0 1em;
+}
+.nav img {
+    height: 36px;
+    margin: 0 1em 0 0;
+}
+.content p {
+	line-height:1.4em;
+    margin: 0 3% 2% 3%;
+}
+.modus {
+    background-color: #231815;
+    border-radius: 5px 5px 5px 5px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.8em;
+    height: 40px;
+    margin: 0 0 0.1em;
+    padding: 0.3em 1.2em 0.1em 0.6em;
+    width: 85%;
+}
+.modus img {
+    height: 32px;
+    margin: 0 0.5em 0 0;
+}
+.modal h3 {
+    margin: 0.5em 0 0 0.5em;
+}
+.modal-header {
+    border-bottom: 0 none;
+}
+.modal-header h3 {
+    color: black !important;
+    text-align: center;
+}
+.modal-body {
+    padding: 0 15px 15px;
+}
+.modal-body p {
+    margin: 0 0 0.5em;
+}
+.modal-body table {
+    font-size: 1.3em;
+}
+.modal-body th {
+    background-color: #EDC951;
+    border: 2px solid white;
+    padding: 0.3em;
+}
+.modal-body td {
+    background-color: #F8E9B9;
+    border: 2px solid white;
+}
+.modal-footer {
+    background-color: white;
+    border-bottom: 0 none;
+    border-top: 0 none;
+    padding: 1% 0 3% 4%;
+    text-align: left;
+}
+.btn {
+    background-color: #231815;
+    background-image: none;
+    border-radius: 5px 5px 5px 5px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 1.5em;
+    padding: 0.5em 1em;
+    text-shadow: none;
+}
+
+.btn2 {
+    background-color: #231815;
+    background-image: none;
+    border-radius: 5px 5px 5px 5px;
+    color: #F8E9B9;
+    font-family: 'BebasNeueRegular';
+    font-size: 0.9em;
+    padding:4% 1% 4% 1%;
+    text-shadow: none;
+}
+
+.rechts {
+    border-radius: 0 5px 5px 0;
+    margin: 0!important;
+    width: 48%;
+}
+.links {
+    border-radius: 5px 0 0 5px;
+    margin: 0 0 0 1%!important;
+    width: 48%;
+    
+}
+#overlay input[type="submit"] {
+    margin-left: 2%;
+    margin-right: 2%;
+    padding: 0.5em;
+    width: 96%;
+}
+#overlay input:not([type="submit"]) {
+    margin-left: 3%;
+    margin-right: 3%;
+    padding: 0.3em 0.7em 0.5em;
+    width: 83%;
+}
+#overlay input {
+    font-size: 1.3em !important;
+}
+.overlay {
+    color: white !important;
+    margin-left: -0.7em;
+}
+.overlay_box {
+    background-color: #231815;
+    margin: 0 0 0.3em;
+    padding: 2% 0 0.5% 3%;
+    width: 97%;
+}
+.gebaeude {
+    height: 120px;
+}

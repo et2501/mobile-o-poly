@@ -149,7 +149,7 @@ class User
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()
 	{	
-		$data = array('money'=>$this->money,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		$data = array('money'=>$this->money,'distanceWalked'=>(int)$this->distanceWalked,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
 		if($this->achievedTrophies!=null)
 		{
 			$trophies=array();
@@ -331,6 +331,8 @@ class User
 		$this->username = $row['username'];
 		$this->money = $row['money'];
 		$this->userRole = $row['role'];
+		
+		$this->distanceWalked=$row['distance_walked'];
 			
 		$loc = new Location();
 		$loc->accu = $row['radius'];

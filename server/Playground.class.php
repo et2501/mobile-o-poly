@@ -26,6 +26,10 @@ class Playground
 	public function getMaxPlayers()
 	{	return $this->maxPlayers;
 	}
+	public function getMoneyToGo()
+	{
+		return $this->moneyToGo;
+	}
 	
 	//AUTOR: BIBI
 	//fetches all Playgrounds out of the database and returns them in an array

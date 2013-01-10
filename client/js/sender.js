@@ -142,6 +142,27 @@ function sendReqLogout(userID, gameID)
 }
 
 //AUTOR: TOM
+//REQUEST FOR LOGOUT
+function sendReqBankrupt(userID, gameID)
+{
+	send_obj=
+	{
+		"type":"bankrupt",
+		"object":{
+			"user":{
+				"userID": userID
+			},
+			"game":{
+				"gameID":gameID
+			}
+		}
+	};
+	
+	send(send_obj);
+	
+}
+
+//AUTOR: TOM
 //REQUEST FOR Global Statistics
 function sendReqGlobalStatistics(userID)
 {
@@ -236,7 +257,7 @@ function sendReqSpeedTicket(userID, gameID)
 
 //AUTOR: TOM
 //REQUEST FOR MoneyToGo 
-function sendReqMoneyToGo(userID, gameID, playgroundID)
+function sendReqMoneyToGo(userID, gameID)
 {
 	send_obj=
 	{
@@ -247,9 +268,6 @@ function sendReqMoneyToGo(userID, gameID, playgroundID)
 			},
 			"game":{
 				"gameID":gameID
-			},
-			"playground":{
-				"playgroundID":playgroundID	
 			}
 		}
 	}
@@ -291,6 +309,31 @@ function sendReqChangeNick(userID, password, newnick)
 		}
 	}
 	send(send_obj);
+}
+
+//AUTOR: MiKe
+//REQUEST FOR UserGotCard
+function sendReqUserGotCard(selectedCardID, gameID, userID)
+{
+	send_obj=
+	{
+		"type":"userGotCard",
+		"object":{
+			"card":{
+				"selectedCardID": selectedCardID
+			},
+			"game":{
+				"gameID": gameID
+			},
+			"user":{
+				"userID": userID
+				}
+		}
+		
+	}
+	console.log(send_obj);
+	send(send_obj);
+	
 }
 
 //AUTOR: MARCUS
@@ -354,6 +397,7 @@ function sendReqRentBuilding(userID, ownerID, gameID, buildingID)
 	}
 	send(send_obj);
 }
+
 //AUTOR: BIBI
 //SEND FUNCTION
 //SENDS THE JSON OBJ TO THE COMMUNICATOR ON THE SERVER AND HANDLES THE RESPONSE DATA
@@ -374,7 +418,7 @@ function send(obj) {
 														
 														localStorage.setItem('user',JSON.stringify(usr_obj));
 														localStorage.setItem('trophytypes',JSON.stringify(data['loggedInUser']['trophies']));
-														window.location.href = "menu.html";
+														window.location.href = "start.html";
 													}
 													else
 														alert(data['loggedInUser']['error']);
@@ -382,14 +426,34 @@ function send(obj) {
 						case 'playground': 				localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
 														listPlaygrounds(data['playgrounds']);
 														break;
-						case 'checkStartedGame':
-						case 'createdGame':	
+						case 'createdGame':
+														if(!data['currentGame']['error'])
+														{	
+															localStorage.setItem('crGa','waiting');
+															localStorage.setItem('asWhat','admin');
+															localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+															
+															setTimeout(window.location.href = "useruebersicht.html",500);
+														}
+														else
+															alert(data['currentGame']['error']);
+														break;
+													
 						case 'attendGame':				if(!data['currentGame']['error'])
+														{	
+															localStorage.setItem('crGa','waiting');
+															localStorage.setItem('asWhat','player');
+															localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
+															
+															setTimeout(window.location.href = "useruebersicht.html",500);
+														}
+														else
+															alert(data['currentGame']['error']);
+														break;
+																				
+						case 'checkStartedGame':		if(!data['currentGame']['error'])
 														{	localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 															buildPlayerTable(data['currentGame']['playground']['maxPlayers'],data['currentGame']['users']);
-															$('#sec_waitForGamers').show();
-															$('#sec_attendGame').hide();
-															$('#sec_createGame_2').hide();
 															
 															if(data['type'] != 'checkStartedGame')
 																localStorage.setItem('interval',window.setInterval(checkIfStarted, 5000));
@@ -454,7 +518,7 @@ function send(obj) {
 															if(!data['currentGame']['error'])
 															{
 																//TODO Irgendwas mit den Statistiken anfangen
-																//console.log(data);
+																console.log(data);
 														  		localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 																localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 															}
@@ -488,24 +552,6 @@ function send(obj) {
 														else
 															alert(data['loggedInUser']['error']);
 														break;
-						case 'BuyBuilding': 			if(data['currentGame'])
-														{
-															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
-														}
-														else
-															//alert(data['loggedInUser']);
-																												
-														break;
-														
-						case 'UpgradeBuilding':			
-														if(data['currentGame'])
-														{
-															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
-														}
-														else
-															//alert(data['loggedInUser']);
-																												
-														break;
 						case 'StopGame': 				
 														if(!data['loggedInUser']['error'])
 														{
@@ -516,7 +562,36 @@ function send(obj) {
 															alert(data['loggedInUser']['error']);
 														break;												
 																																			
+						case 'userGotCard':				
 														
+														if(!data['loggedInUser']['error'])
+														{
+															//console.log("is gegangen");
+														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+														}
+														else
+															console.log(data['loggedInUser']);
+														break;
+						case 'BuyBuilding':
+						case 'UpgradeBuilding':
+						case 'RentBuilding': 			if(data['currentGame'])
+														{
+															localStorage.setItem('currentGame', JSON.stringify(data['currentGame']));
+														}
+														else
+															//alert(data['loggedInUser']);
+																												
+														break;	
+						case 'bankrupt':				if(!data['loggedInUser']['error'])
+														{
+															//console.log("is gegangen");
+															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
+															localStorage.setItem('game', JSON.stringify(data['currentGame']));
+														}
+														else
+															console.log(data['loggedInUser']);
+														break;															
+																						
 						default: 						
 						
 														console.log("sonstiges");

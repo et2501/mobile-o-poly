@@ -13,13 +13,14 @@ $(document).ready(function(e) {
 	//send a request if a user is currently in a game!!
 	sendReqIsUserInGame(user['userID']);
 	
-	$('#lbl_menu_nickname').html(user.username);
+	$('#usr_name').html(user.username);
+	
 	
 	$('#btn_logout').on('click',function()
 		{	localStorage.clear(); //if logout --> delete everything in localStorage
 			window.location.href = "index.html"; //an return to login-screen
 		});
-	
+	/*
 	$('#btn_create_game').on('click',function()
 		{	//set a temporary localStorage var for the createGame.html to know that its in the createGame mode
 			localStorage.setItem('crGa','create');
@@ -31,6 +32,7 @@ $(document).ready(function(e) {
 			localStorage.setItem('crGa','join');
 			window.location.href = "createGame.html";
 		});
+		*/
 });
 
 function forwardTo()
@@ -39,7 +41,7 @@ function forwardTo()
 	{	if(parseInt(game['isStarted'])==1)
 			window.location.href = "game.html";
 		else
-		{	localStorage.setItem('crGa','waiting');
+		{	
 			//search for the user role!!
 			run = true
 			for(i=0;i<JSON.parse(localStorage.getItem('currentGame'))['users'].length&&run;i++)
@@ -49,7 +51,7 @@ function forwardTo()
 				}
 			
 			localStorage.setItem('asWhat',role);
-			window.location.href = "createGame.html";
+			window.location.href = "useruebersicht.html";
 		}
 	}
 }

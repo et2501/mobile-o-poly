@@ -2,17 +2,18 @@
  * Copyright (c) 2013 Aleksandar Palic
  * Released under MIT license 
  * Find me on Twitter: @_skripted
- * Version: 1.2
+ * Version: 1.2.5
  */
 
 var Dice = Dice || (function () {
 
     // main properties
-    var _dices = [],
+    var _dice = [],
+        _diceRotation = [],
         _buildingNum = 0,
         _ignore = 0,
         _args = {
-            animate : true,
+            animate : false,
             debug : false, 
             diceFaces : 6,
             diceSize: 200,
@@ -146,6 +147,8 @@ var Dice = Dice || (function () {
             diceTurns, 
             diceResult;
 
+        resetDiceElements(wrapper);
+
         for (var i = 0; i < _diceNumber; i ++) {
             diceBox = fnCreateElement('div', 'dice_' + i, _args.diceCls.box);
             renderBoxWithCSS(diceBox);
@@ -155,13 +158,40 @@ var Dice = Dice || (function () {
 
             for(var j = 0; j < _args.diceFaces; j ++) {
                 diceFace = fnCreateElement('div', undefined, _args.diceCls.face + ' ' + _args.diceCls.side + (j + 1));
-                renderFaceWithCSS(diceFace);
-                
+                renderFaceWithCSS(diceFace); 
                 diceCube.appendChild(diceFace);
             }
 
             renderFacesWithCSS(diceCube);
-            
+            _dice.push({ div : diceCube });
+
+            diceBox.appendChild(diceCube);
+            wrapper.appendChild(diceBox);
+        }
+    }
+
+    /**
+     * @method createDiceElements
+     * @param {Element} wrapper
+     */
+    function resetDiceElements (wrapper) {
+        while (wrapper.firstChild) {
+            wrapper.removeChild(wrapper.firstChild);
+        }
+        _dice = [];
+    }
+
+    /**
+     * @method generateDiceRotation
+     */
+    function generateDiceRotation () {
+        var mainResult = 0,
+            diceTurns,
+            diceResult;
+
+        _diceRotation = [];
+
+        for(var i = 0; i < _diceNumber; i ++) {
             diceTurns = getDiceTurns();
             diceResult = getDiceResult(diceTurns[0], diceTurns[1]);
             mainResult += diceResult;
@@ -173,10 +203,7 @@ var Dice = Dice || (function () {
                 mainResult += diceResult;
             }
 
-            _dices.push({ div : diceCube, turns : diceTurns, result : diceResult });
-
-            diceBox.appendChild(diceCube);
-            wrapper.appendChild(diceBox);
+            _diceRotation.push({ turns : diceTurns, result : diceResult });
         }
     }
     
@@ -186,9 +213,9 @@ var Dice = Dice || (function () {
      */
     function renderBoxWithCSS (diceBox) {
         diceBox.style['-webkit-perspective'] = _args.diceSize / 2 * 3;
-        diceBox.style['-moz-perspective'] = _args.diceSize / 2 * 3;
+        diceBox.style['perspective'] = _args.diceSize / 2 * 3;
         diceBox.style['-webkit-perspective-origin'] = '50%' + _args.diceSize / 2 + 'px';
-        diceBox.style['-moz-perspective-origin'] = '50%' + _args.diceSize / 2 + 'px';
+        diceBox.style['perspective-origin'] = '50%' + _args.diceSize / 2 + 'px';
         diceBox.style['width'] = _args.diceSize + 'px';
         diceBox.style['height'] = _args.diceSize + 'px';
     }
@@ -227,13 +254,17 @@ var Dice = Dice || (function () {
 
     /**
      * @method animateDiceElements
+     * @return {Function} getAnimatedResult()
      */
     function animateDiceElements (callback) {
-        for (var dice in _dices) {
-            _dices[dice].div.style[_cssProp] = 'rotateX(' + _dices[dice].turns[0] * 90 + 'deg) ' + 
-                ' rotateY(' + _dices[dice].turns[1] * 90 + 'deg)';
+        generateDiceRotation();
+        
+        for (var dice in _dice) {
+            _dice[dice].div.style[_cssProp] = 'rotateX(' + _diceRotation[dice].turns[0] * 90 + 'deg) ' + 
+                ' rotateY(' + _diceRotation[dice].turns[1] * 90 + 'deg)';
         }
-        if (callback) callback();
+        if(callback) callback();
+        return getAnimatedResult();
     }
 
     /**
@@ -243,15 +274,15 @@ var Dice = Dice || (function () {
     function getAnimatedResult () {
         var result = 0;
 
-        for (var dice in _dices) {
-            result += _dices[dice].result;
+        for (var dice in _diceRotation) {
+            result += _diceRotation[dice].result;
         }
         fnDebug('Result for all Dices', result);
         return result;
     }
 
     /**
-     * @method fnCreateElement
+     * @method getDefaultResult
      * @return {Number} result
      */
     function getDefaultResult () {
@@ -268,12 +299,11 @@ var Dice = Dice || (function () {
      * @return {Number} result
      */
     function startEngine () {
-        var result = _ignore;
+        var result = undefined;
 
         if (_args.animate) {
             createDiceElements();
-            _animationPrepared = true;
-            result = getAnimatedResult();
+            _diceElementsPrepared = true;
         }
         else result = getDefaultResult();
 
@@ -303,9 +333,10 @@ var Dice = Dice || (function () {
         },
         /**
          * @method animate
+         * @param {Function} callback
          */
         animate : function (callback) {
-            if(_animationPrepared) animateDiceElements(callback);
+            if(_diceElementsPrepared) return animateDiceElements(callback);
         }
     }
 

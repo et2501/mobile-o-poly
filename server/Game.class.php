@@ -23,7 +23,10 @@ class Game
 	private $attendingUsers=array(); //User List - all users who are in the game
 	
 	//GETTERS and SETTERS if required
-	
+	public function getPlayground()
+	{
+		return $this->playground;
+	}
 	//AUTOR: BIBI
 	//creates a new game and stores it in the databases
 	public function createNewGame($pg,$name,$mode,$timeToPlay,$master)

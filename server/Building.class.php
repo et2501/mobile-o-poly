@@ -63,12 +63,12 @@ class Building
 	{
 	}
 	
-	//AUTOR: MARCUS
+	//AUTOR: TOM
 	public function upgradeBuilding()
 	{
 		if($this->upgradeLevel<=4)
 		{
-			$this->upgradeLevel+1;
+			$this->upgradeLevel+=1;
 		}
 		if($this->upgradeLevel==1)
 		{
@@ -89,12 +89,21 @@ class Building
 		$this->updateBuildingToDB();
 	}
 	
-	//AUTOR: MARCUS
+	//AUTOR: TOM
 	public function updateBuildingToDB()
 	{	$con = db_connect();
 	
-		$statement = $con->prepare('UPDATE selected_building SET game=?, buy_value=?, fee=?, number=?, level=?, owner=? where selected_building_id=?');
-		$statement->execute(array($this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel, $this->owner->getUserID(),$this->buildingID));
+		if($this->owner)
+		{
+			$statement = $con->prepare('UPDATE selected_building SET game=?, buy_value=?, fee=?, number=?, level=?, owner=? where selected_building_id=?');
+			$statement->execute(array($this->gameID,$this->buyValue,$this->fee,$this->number,$this->upgradeLevel, $this->owner->getUserID(),$this->buildingID));
+		}
+		else
+		{
+			$statement = $con->prepare('UPDATE selected_building SET game=?, buy_value=?, fee=?, number=?, owner=?, level=? where selected_building_id=?');
+			$statement->execute(array($this->gameID,$this->buyValue,$this->fee,$this->number,null,$this->upgradeLevel, $this->buildingID));
+
+		}
 		
 		$con = null;
 	}
@@ -203,6 +212,51 @@ class Building
 		$con = null;
 		return $buildings;
 	}
+	public function resetBuilding()
+	{
+		$this->owner=null;
+		$this->fee=$this->buyValue*0.1;
+		$this->upgradeLevel=0;
+	
+		$this->updateBuildingToDB();
+	}
+	
+	public static function loadSelectedBuildingsFromUserInGame($user,$gameID)
+	{	$buildings = array();
+		$con = db_connect();
+	
+		$statement = $con->prepare('Select * from selected_building inner join building on building_id = building inner join location on location_id = location where game = ? AND owner=?');
+		$statement->execute(array($gameID,$user));
+		$result = $statement;
+	
+		while($row = $result->fetch(PDO::FETCH_ASSOC))
+		{	$build = new Building();
+			$build->buildingID = $row['selected_building_id'];
+			$build->name = $row['name'];
+			$build->picture = $row['picture'];
+			
+			$loc = new Location();
+			$loc->accu = $row['radius'];
+			$loc->lat = $row['lat'];
+			$loc->lon = $row['lon'];
+			$build->location = $loc;
+			
+			$build->buyValue = $row['buy_value'];
+			$build->fee = $row['fee'];
+			$build->gameID = $row['game'];
+			$build->number = $row['number'];
+			$build->upgradeLevel = $row['level'];
+			
+			if($row['owner'])
+				$build->owner = User::loadFromDB($row['owner'],'game');
+			
+			$buildings[] = $build;
+		}
+	
+		$con = null;
+		return $buildings;
+	}
+	
 	
 	//AUTOR: BIBI
 	//gets all building of a specified playground
