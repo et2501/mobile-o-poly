@@ -104,7 +104,8 @@ class Card
 			}
 				
 			if($ok)
-			{	$selCard = new Card();
+			{	
+				$selCard = new Card();
 				$selCard->alreadyTriggered = false;
 				$selCard->amount = $row[$rnd]['amount'];
 				$selCard->cardID = $row[$rnd]['card_id'];
@@ -117,7 +118,6 @@ class Card
 				
 				//Occurance location & destination location
 				//autor: tom
-				$distanceOK=false;
 				$occ_loc = new Location();
 				$newlat=0.0;
 				$newlong=0.0;
@@ -127,29 +127,22 @@ class Card
   				{
 	  				$building1=$buildingList[rand(0,count($buildingList)-1)];
 	  				$building2=$buildingList[rand(0,count($buildingList)-1)];
-	  
 	  			
 					$distanceOK=true;
 					
-					//console.log(">0.5");
 					$newlat=($building1->location->lat+$building2->location->lat)/2+(rand(-100,100)/250000);
 					$newlong=($building1->location->lon+$building2->location->lon)/2+(rand(-100,100)/250000);
 					
-		  
 					for($x=0;$x<count($buildingList);$x++)
 					{
-					  $distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->location->lat,$buildingList[$x]->location->lon);
-				
-					  if($distanceBTCB<($radiusCards+20)) //20+$radiusCards
-					  {
-					
-					  $distanceOK=false;
-					  break;
-					  }
-					
+						$distanceBTCB=Card::GetDistance($newlat,$newlong,$buildingList[$x]->location->lat,$buildingList[$x]->location->lon);
+				  
+						if($distanceBTCB<($radiusCards+20)) //20+$radiusCards
+						{
+						  $distanceOK=false;
+						  break;
+						}
 					}
-		
-		
 		
 					if($distanceOK)
 					{
@@ -172,10 +165,9 @@ class Card
 						$occ_loc->lon = $newlong;
 						$occ_loc->saveToDB();
 						
-						
 						if($selCard->type->typeID==15)
 						{
-							$distance=rand(150,300);
+						  $distance=rand(150,300);
 						  $destPoint=Card::getPointAtDistance($newlat,$newlong,$distance,rand(0,360));
 						  
 						  $dest_loc=new Location();
@@ -193,6 +185,7 @@ class Card
 						  //--> für 500 meter braucht man dann 500/1.666 --> 300sekunden. 
 						  $selCard->timeToGo = floor($distance/($speed/3.6));
 						}
+						
 					  }
 					}
 				}

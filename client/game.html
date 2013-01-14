@@ -30,7 +30,7 @@
 		<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
          <li><a href="#">Mein Konto</a></li>
           <li><a href="#">Pokale/Achievements</a></li>
-           <li><a href="#">aktueller Spielstand</a></li>
+           <li><a href="#modalSpielstand" role="button" data-toggle="modal">aktueller Spielstand</a></li>
 
           
   		</ul>
@@ -98,10 +98,10 @@
 		<h2 id="myModalLabel" class="overlay blue_bg">würfeln</h2>
 	</div>
 	<div class="modal-body">
- 		<button id="btn_rolldice">Jetzt Würfeln</button>
         <div id="diceHolder"></div>
 	</div>
 	<div class="modal-footer">
+		<button id="btn_rolldice" class="button_login">Jetzt Würfeln</button>
 	</div>
 </div>
 <!-- MODAL WUERFELN TEIL 2 -->
@@ -195,42 +195,14 @@
 		<h2 id="myModalLabel" class="overlay blue_bg">aktueller spielstand</h2>
  	</div>
  	<div class="modal-body">
- 		<table>
- 			<tr>
- 				<th>Name</th>
- 				<th>Häuser</th>
- 				<th>km</th>
- 				<th>ÖS</th>
- 			</tr>
- 			<tr>
- 				<td>Hugo</td>
- 				<td>2</td>
- 				<td>20</td>
- 				<td class="text_right">10.000</td>
- 			</tr>
- 			<tr>
- 				<td>Susi</td>
- 				<td>10</td>
- 				<td>12</td>
- 				<td class="text_right">5.000</td>
- 			</tr>
- 			<tr>
- 				<td>Heinz</td>
- 				<td>3</td>
- 				<td>17</td>
- 				<td class="text_right">100</td>
- 			</tr>
- 			<tr>
- 				<td>Ralf</td>
- 				<td>5</td>
- 				<td>15</td>
- 				<td class="text_right">2.357</td>
- 			</tr>
+ 		<table id='table_spielstand'>
+ 			
+ 			
  		</table>		
  	</div>
  	<div class="modal-footer">
  		<form id="login" class="accordion inner">
-			<input type="button"  class="button_login" value="okay" name="beitreten" />
+			<input type="button"  class="button_login" data-dismiss="modal"  value="okay" name="beitreten" />
 		</form>
 	</div>	
 </div>
@@ -299,12 +271,12 @@
 	</div>
 	<div class="modal-body">
 		<p>Gehen Sie auf dem schnellsten Weg zum:</p>
-		<p class="blue text_center">Rathausplatz</p>
+		<p class="blue text_center" id='lbl_spielende_building'>Rathausplatz</p>
 		<p>Dort treffen Sie Ihre Spielkollegen!</p>
 	</div>
 	<div class="modal-footer">
 		<form id="login" class="accordion inner" style="margin:0; padding:0;">
-			<input type="submit"  class="button_login" value="okay" name="beitreten" />
+			<input type="button"  class="button_login" value="okay" data-dismiss="modal" name="beitreten" id='btn_spielende'/>
 		</form>
 	</div>
 </div>
@@ -316,12 +288,12 @@
 	<div class="modal-body">
 		<p>Das Spiel ist beendet! Der Gewinner ist:</p><br>
 		<div class="overlay_box red_bg">
-			<p class="white">Hugo</p>
+			<p class="white" id='lbl_ende_winner'>Hugo</p>
 		</div>
 	</div>
 	<div class="modal-footer">
 		<form id="overlay" class="accordion inner">
-			<input type="submit"  class="button_login" value="weiter zur statistik" name="beitreten" />
+			<input type="button"  class="button_login" value="Weiter" data-dismiss="modal"  name="beitreten" id='btn_spielende2'/>
 		</form>
 	</div>
 </div>
@@ -343,8 +315,6 @@
     <script type="text/javascript" src="js/game.js"></script>
     
     <script src="js/dice.min.js"></script>
-    <!--<script>window.Dice || document.write('<script src="js/dice.min.js"><\/script>')</script>-->
-
     <script type="text/javascript">
 
 </script>    

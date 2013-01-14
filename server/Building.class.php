@@ -61,6 +61,12 @@ class Building
 	//AUTOR: MARCUS
 	public function rentBuilding($User)
 	{
+		$User->money = $User->money - $this->fee;
+		
+		$this->owner->money = $this->owner->money + $this->fee;
+		
+		$User->changeUserInGameInDB($this->gameID);
+		
 	}
 	
 	//AUTOR: TOM
@@ -319,7 +325,7 @@ class Building
 			$loc->accu = $row['radius'];
 			$loc->lat = $row['lat'];
 			$loc->lon = $row['lon'];
-			//$build->location = $loc;
+			$build->location = $loc;
 			
 		}
 		

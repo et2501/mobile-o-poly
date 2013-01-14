@@ -501,14 +501,10 @@ function send(obj) {
 														else
 															alert(data['currentGame']['error']);
 														break;
-						case 'UpdateLog':				
-														if(!data['log']=='log')
-														{
+						case 'updateLog':				
 														  //TODO Irgendwas mit dem Log anfangen
-														  console.log(data);
-														}
-														else
-															alert('error log');
+														  localStorage.setItem('logs',JSON.stringify(data['log']));
+														  //console.log(data);
 														break;
 						case 'updateAll':				//TODO
 														//console.log("updateAll eingetroffen");

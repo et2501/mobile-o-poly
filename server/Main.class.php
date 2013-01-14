@@ -198,13 +198,15 @@ class Main
 													$logData=array();
 													foreach($loglist as $log)
 														$logData[] = $log->generateArray();
+														
+													$data = array('type'=>'updateLog','log'=>$logData);	
 												}
 												else
 												{
 													$data = array('type'=>'updateLog','log'=>'error');
 													//TODO has to be implemented
 												}
-												$data = array('type'=>'updateLog','log'=>$logData);
+												
 												break;
 			//AUTOR: TOM									
 			case 'logout':						

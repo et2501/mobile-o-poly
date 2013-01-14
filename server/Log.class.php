@@ -21,6 +21,7 @@ class Log
 	public $location; //Location
 	public $icon; //string
 	public $game; //instance of Game
+	public $textID;
 	
 	//GETTERS and SETTERS (Setters if needed?)
 	
@@ -50,11 +51,11 @@ class Log
 	//RETURN VALUE: array
 	public function generateArray()
 	{	
-		$data = array('logID'=>$this->logID,'text'=>$this->Text,'timestamp'=>$this->timestamp);
+		$data = array('logID'=>$this->logID,'text'=>$this->Text,'timestamp'=>$this->timestamp, 'textid'=>$this->textID);
 		if($this->user!=null)
 			$data['user'] = $this->user->generateArray();
 		if($this->building!=null)
-			$data['building'] = $this->building->generateArray();
+			$data['building'] = $this->building->generateArray('normal');
 		if($this->card!=null)
 			$data['card']=$this->card->generateArray();
 		if($this->location!=null)
@@ -77,7 +78,7 @@ class Log
 		if($gameID!=null)
 		{
 				
-			$statement = $con->prepare('Select building, user, card, custom_field.text as fieldtext, icon, logger_id, timestamp, game, radius, lat, lon from logger left join location on logger.location=location.location_id left join custom_field on logger.text=custom_field.custom_field_id where game= ? ORDER BY timestamp DESC');
+			$statement = $con->prepare('Select building, user, card, custom_field_id, custom_field.text as fieldtext, icon, logger_id, timestamp, game, radius, lat, lon from logger left join location on logger.location=location.location_id left join custom_field on logger.text=custom_field.custom_field_id where game= ? ORDER BY timestamp DESC');
 			$statement->execute(array($gameID));
 			$result = $statement;
 			
@@ -86,20 +87,33 @@ class Log
 				//We need: User, Building, Game, Card, location, 
 				//We don't use the game in this context, because it would overload the json.
 				$logger=new Log();
-				$logger->building=Building::loadSelectedBuildingFromDB($row['building']);
-				$logger->user=User::loadFromDB($row['user'],'game');
-				$logger->card=Card::loadSelectedCardFromDB($row['card']);
+				if($row['building'])
+					$logger->building=Building::loadSelectedBuildingFromDB($row['building']);
+	
+				if($row['user'])	
+					$logger->user=User::loadFromDB($row['user'],'game');
+	
+				if($row['card'])
+					$logger->card=Card::loadSelectedCardFromDB($row['card']);
+	
+				
 				$logger->Text=$row['fieldtext'];
+				$logger->textID=$row['custom_field_id'];
 				$logger->icon=$row['icon'];
 				$logger->logID=$row['logger_id'];
 				$logger->timestamp=$row['timestamp'];
-				$logger->game=$row['game'];
 				
-				$loc = new Location();
-				$loc->accu = $row['radius'];
-				$loc->lat = $row['lat'];
-				$loc->lon = $row['lon'];
-				$logger->location = $loc;
+				if($row['game'])
+					$logger->game=$row['game'];
+				
+				if($row['lat'])
+				{
+				  $loc = new Location();
+				  $loc->accu = $row['radius'];
+				  $loc->lat = $row['lat'];
+				  $loc->lon = $row['lon'];
+				  $logger->location = $loc;
+				}
 				
 				$ret[] = $logger;
 			}

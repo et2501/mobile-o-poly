@@ -30,6 +30,7 @@ $(document).ready(function(e) {
 	  var counterActionCard;
 	  var time;
 	  var lastDice=0;
+	  var logs;
 	  
 	  var destinations;
 	  if(!localStorage.getItem('destinations'))
@@ -73,7 +74,7 @@ $(document).ready(function(e) {
 				animate : true,
 				debug : true, 
 				diceFaces : 6,
-				diceSize: 200,  // px
+				diceSize: 100,  // px
 				diceCls : {     // class names
 					box : 'diceBox', 
 					cube : 'diceCube',
@@ -160,7 +161,7 @@ $(document).ready(function(e) {
 		{	
 			if(user.userRole=="admin"&&currentGame.finished==null)
 			{
-				$('#modalLogout').modal({show:false});
+				hideAllModals();
 				$('#modalStopGame').modal('toggle');
 			}
 			else
@@ -183,7 +184,7 @@ $(document).ready(function(e) {
 			  
 			  //Was kommt jetzt????
 			  gameStopped=true;
-			  $('#modalStopGame').modal({show:false});
+			 hideAllModals();
 				$('#modalLogout').modal('toggle');
 			  //localStorage.removeItem('currentGame');
 			  //localStorage.removeItem('playground');
@@ -201,13 +202,15 @@ $(document).ready(function(e) {
 			}
 		  	//user = JSON.parse(localStorage.getItem('user'));
 		  		
-			//$('#modalKaufen').modal('toggle');	 		
+			//$('#modalKaufen').modal('toggle');	
+			hideAllModals(); 		
 			$('#modalWuerfeln').modal('toggle');
 	  });
 	  $('#btn_buyBuilding_cancel').on('click',function(){
 	  		destinations[destinations.length]={'location':{'lat':0, 'long':0, 'accu':0},'object':null};
 			localStorage.setItem('destinations',JSON.stringify(destinations));	
-			//$('#modalKaufen').modal('toggle');	 		
+			//$('#modalKaufen').modal('toggle');	
+			hideAllModals(); 		
 			$('#modalWuerfeln').modal('toggle');
 	  });
 	  
@@ -216,7 +219,8 @@ $(document).ready(function(e) {
 			sendReqRentBuilding(user.userID, $('#hidden_rent_user_id').val(), currentGame.gameID, $('#hidden_building_id_buy').val());
 		  	destinations[destinations.length]={'location':{'lat':0, 'long':0, 'accu':0},'object':null};
 			localStorage.setItem('destinations',JSON.stringify(destinations));	
-			//$('#modalKaufen').modal('toggle');	 		
+			//$('#modalKaufen').modal('toggle');
+			hideAllModals();	 		
 			$('#modalWuerfeln').modal('toggle');
 	  });
 	  
@@ -228,23 +232,34 @@ $(document).ready(function(e) {
 				updateBuildingMarkers();
 			}
 			//sendReqUpgradeBuilding(user.userID, currentGame.gameID, building.buildingID);
+			hideAllModals();
 			$('#modalWuerfeln').modal('toggle');
 	  });
 	  $('#btn_upgradeBuilding_cancel').on('click',function(){
 		  //sendReqUpgradeBuilding(user.userID, currentGame.gameID, building.buildingID);
+		  hideAllModals();
 		  $('#modalWuerfeln').modal('toggle');
 	  });
 	  $('#btn_card').on('click',function(){
 		  sendReqUserGotCard($('#hidden_card_action_id').val(), currentGame.gameID, user.userID, playground.playgroundID);
+		  hideAllModals();
 	  });
 	  
 	  $('#btn_card_action').on('click',function(){
 		  //starte counter, 
 		  //
-		  $('#modalAktion').modal('toggle');
+		  
 		  time=$('#lbl_card_action_time').html();
 		  
 		  counterActionCard=window.setInterval(updateCounter,1000);	  
+		  hideAllModals();
+	  });
+	  $('#btn_spielende2').on('click',function(){
+	  		hideAllModals();
+			$('#modalSpielende').modal('toggle');
+	  });
+	  $('#btn_spielende').on('click',function(){
+	  		hideAllModals();
 	  });
 	  
 	  
@@ -324,19 +339,109 @@ $(document).ready(function(e) {
 			updateHUD();
 			updateBuildingmarkers();
 			updatePlayermarkers();
+			buildScoreTable();
 			//The userRole is only available after the first updateAll!
 			
 			if(currentGame.finished!=null)
 			{
 			  //Was kommt jetzt????
-			  alert("Spiel beendet!");
-			  window.clearInterval(updateInterval);			//The updateAll loop is cleared
-			  navigator.geolocation.clearWatch(watchId);	//the geolocation watchposition is cleared. 
-			  //localStorage.removeItem('currentGame');		//
-			  //localStorage.removeItem('playground');		//
+			  //console.log(destinations.length);
+			  
+				  if(destinations[destinations.length-1].object!='gameEnded')
+				  {
+					hideAllModals();
+					currentGame.buildings[0].name;
+					destinations=[{
+						  'location':{
+						  'lat':currentGame.buildings[0].location.lat, 'long':currentGame.buildings[0].location.long, 'accu':currentGame.buildings[0].location.accu
+						  },
+						  'object':'gameEnded'
+					}];	 
+					localStorage.setItem('destinations',JSON.stringify(destinations));
+					//window.clearInterval(updateInterval);			//The updateAll loop is cleared
+					 console.log("spiel beendet");
+					$('#lbl_spielende_building').html(currentGame.buildings[0].name);
+					$('#modalSpielende2').modal({show:true});
+					//localStorage.removeItem('currentGame');		//
+					//localStorage.removeItem('playground');		//
+				  }
+			  
 			}
-		},5000);  
-		
+		},5000); 
+	  var logLoop=window.setInterval(function(){
+		  	sendReqUpdateLog(currentGame.gameID); 
+			logs=JSON.parse(localStorage.getItem('logs'));
+			
+			for(logEntry in logs)
+			{
+				if(logs[logEntry].textid==11)
+				{
+					$('#lbl_ende_winner').html(logs[logEntry].user.username);
+				}
+				else
+				{
+					//irgendwas mit den logs tun
+					//console.log(logs[logEntry]);
+				}
+			}
+		  },2000);
+	  function buildScoreTable()
+	  {
+		  /*
+		  <tr>
+ 					<th>Name</th>
+ 					<th>km</th>
+ 					<th>ÖS</th>
+ 				</tr>
+ 				<tr>
+ 					<td>Hugo</td>
+ 					<td>20</td>
+ 					<td class="text_right">10.000</td>
+ 				</tr>
+		  */
+		  while(document.getElementById('table_spielstand').hasChildNodes())
+		  {
+			  document.getElementById('table_spielstand').removeChild(document.getElementById('table_spielstand').firstChild);
+		  }
+		  
+		  var row=document.createElement('tr');
+		  var headerName=document.createElement('th');
+		  	headerName.innerHTML='Name';
+		 var headerM=document.createElement('th');
+		  	headerM.innerHTML='m';
+		  var headerOes=document.createElement('th');
+		  	headerOes.innerHTML='ÖS';
+			row.appendChild(headerName);
+			row.appendChild(headerM);
+			row.appendChild(headerOes);
+			document.getElementById('table_spielstand').appendChild(row);
+			
+			
+		  for(vuser in currentGame.users)
+		  {
+			 var row=document.createElement('tr');
+			 var tName=document.createElement('td');
+		  		tName.innerHTML=currentGame.users[vuser].username;
+		 	 var tM=document.createElement('td');
+		  		tM.innerHTML=currentGame.users[vuser].distanceWalked;
+		 	 var tOes=document.createElement('td');
+		  		tOes.innerHTML=currentGame.users[vuser].money;
+			
+			row.appendChild(tName);
+			row.appendChild(tM);
+			row.appendChild(tOes);
+			
+			document.getElementById('table_spielstand').appendChild(row);
+		  }
+	  }
+	  function hideAllModals()
+	  {
+		  var modals=['Logout','StopGame','Wuerfeln','Wuerfeln2','Kaufen','Mieten','Upgraden','Spielstand','Aktion','Card','Bankrott','Spielende','Spielende2'];
+		  for(i=0; i<modals.length;i++)
+		  {
+			  $('#modal'+modals[i]).modal({show:false});
+		  }
+	  }
 	  //AUTOR: TOM
 	  //check for cards or buildings in range
 	  function checkPositionEvents(lat,lon)
@@ -574,9 +679,11 @@ $(document).ready(function(e) {
 	  //check if the user can get money for walking a specific distance
 	  function checkwalkedDistanceEvent()
 	  {
+		  //console.log(walkedDistanceSinceMoney);
 		  if(walkedDistanceSinceMoney>500)
 		  {
 			  walkedDistanceSinceMoney=0;
+			  //console.log("requestedMoneyToGo");
 			  sendReqMoneyToGo(user.userID, currentGame.gameID);
 		  }
 	  }
@@ -790,13 +897,13 @@ $(document).ready(function(e) {
 		  currentGame.buildings[0].name;
 		  destinations=[{
 	  				'location':{
-					'lat':currentGame.buildings[0].lat, 'long':currentGame.buildings[0].long, 'accu':currentGame.buildings[0].accu
+					'lat':currentGame.buildings[0].location.lat, 'long':currentGame.buildings[0].location.long, 'accu':currentGame.buildings[0].location.accu
 					},
 					'object':'bankrupt'
 	  		}];	 
 		  localStorage.setItem('destinations',JSON.stringify(destinations));
 		  //window.clearInterval(updateInterval);			//The updateAll loop is cleared
-		  navigator.geolocation.clearWatch(watchId);	//the geolocation watchposition is cleared. 
+		  //navigator.geolocation.clearWatch(watchId);	//the geolocation watchposition is cleared. 
 		  console.log("bankrott");
 		  $('#lbl_bankrott_building').html(currentGame.buildings[0].name);
 		  $('#modalBankrott').modal({show:true});
@@ -823,12 +930,15 @@ $(document).ready(function(e) {
 					checkwalkedDistanceEvent();
 				}
 				
-			  checkForSpeedingTicket(debuglat,debuglon,0,debugtime);				//debug 		  
+				
+				
+			  //checkForSpeedingTicket(debuglat,debuglon,0,debugtime);				//debug 		  
 			  lastKnownPosition={'lat':debuglat, 'long':debuglon, 'accu':0};		//
 			  lastPositionUpdate=debugtime;										//
 			  checkPositionEvents(lastKnownPosition.lat,lastKnownPosition.long);	//
 			}
-		},2000);  
+			
+		},5000);  
 	  }
 	  
 	  

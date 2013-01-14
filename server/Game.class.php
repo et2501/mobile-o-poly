@@ -127,6 +127,7 @@ class Game
 		$con = null;
 	}
 	
+		
 	//AUTOR: BIBI
 	//generates an array of this instance
 	//RETURN VALUE: array
@@ -134,6 +135,142 @@ class Game
 	{	$buildings = array();
 		$cards = array();
 		$users = array();
+		$debugs=null;
+		
+		
+		
+		if($this->finished==null)
+		{
+			switch ($this->mode)
+			{
+			case 1:
+					//Monopol
+					$startbuilding=$this->buildingList[0];
+					$foundWinner=true;
+					$startowner=null;
+					if($startbuilding->owner!=null)
+					{
+					  $startowner=$startbuilding->owner->getUserID();
+					}
+					foreach($this->buildingList as $build)
+					{
+						if($startowner!=null)
+						{
+					  		if($startowner!=$build->owner->getUserID())
+							{
+								$foundWinner=false;
+							}
+						}
+						else
+						{
+							$foundWinner=false;
+						}
+									
+					}
+					$buildings[] = $build->generateArray('game');
+					
+					if($foundWinner)
+					{
+						$date = new DateTime();
+						$this->finished=$date;
+						$this->stopGame();
+						
+						
+						//log eintrag für gewinner
+						
+						$logentry=new Log();
+						$logentry->user=$startowner;
+						$logentry->Text='11';
+						$logentry->game=$this;
+						$logentry->saveToDB();
+						
+					}
+					
+					break;
+			case 2: 
+					//Wirtschaft
+					//The player, who has more money than everyone else combined wins
+					$foundWinner=false;
+					$winner=null;
+					//doppelt verschachtelte for-schleife: 
+					foreach($this->attendingUsers as $outerUser)
+					{	
+						if(!$foundWinner)
+						{
+						  $user->money;
+						  $sumMoney=0;
+						  foreach($this->attendingUsers as $innerUser)
+						  {
+							  if($outerUser->getUserID()!=$innerUser->getUserID())
+							  {
+								  if(count($this->attendingUsers==2))
+								  	$sumMoney+=$innerUser->money*3;
+								  
+								  else
+								  	$sumMoney+=$innerUser->money;
+							  }
+						  
+						  }
+						  if($outerUser->money>$sumMoney)
+						  {
+							  $foundWinner=true;
+							  $winner=$outerUser;
+						  }
+						}
+						
+					}
+					if($foundWinner)
+					{
+						$date = new DateTime();
+						$this->finished=$date;
+						$this->stopGame();						
+						
+						$logentry=new Log();
+						$logentry->user=$winner;
+						$logentry->Text='11';
+						$logentry->game=$this;
+						$logentry->saveToDB();
+					}	
+					break;
+			case 3: 
+					//Zeit
+					$date = new DateTime();
+					$enddate=new DateTime($this->creationDate);
+					
+					$enddate->modify('+ '.$this->timeToPlay.' minutes');
+					if($enddate->getTimestamp()<$date->getTimestamp())
+					{
+						//check who won and add it to the log with log 11
+						
+						$this->finished=$date;
+						$this->stopGame();
+						
+						//noch rausfinden, wer gewonnen hat und den log speichern!
+						//eine for schleife
+						$winner=$this->attendingUsers[0];
+						
+						foreach($this->attendingUsers as $user)
+						{
+							if($user->money>$winner->money)
+							{
+								$winner=$user;
+							}
+						}
+						
+						$logentry=new Log();
+						$logentry->user=$winner;
+						$logentry->Text='11';
+						$logentry->game=$this;
+						$logentry->saveToDB();
+						
+						
+						
+					}
+					break;
+			default: 
+					break;
+		}
+		}
 	
 		foreach($this->buildingList as $build)
 			$buildings[] = $build->generateArray('game');
@@ -144,7 +281,7 @@ class Game
 		foreach($this->attendingUsers as $user)
 			$users[] = $user->generateArray();
 		
-		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('mode_id'=>$this->mode,'name'=>Game::getModeName($this->mode)),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards);
+		$data = array('gameID'=>$this->gameID,'gameName'=>$this->gameName,'creationDate'=>$this->creationDate,'isStarted'=>$this->isStarted,'finished'=>$this->finished,'timeToPlay'=>$this->timeToPlay,'mode'=>array('mode_id'=>$this->mode,'name'=>Game::getModeName($this->mode)),'playground'=>$this->playground->generateArray(false),'buildings'=>$buildings,'users'=>$users,'cards'=>$cards,'debug'=>$debug);
 		return $data;
 	}
 	
@@ -154,7 +291,7 @@ class Game
 	public function saveToDB()
 	{	$con = db_connect();
 	
-		if($this->mode=='Zeit')
+		if($this->mode=='3')
 		{	$statement = $con->prepare('Insert into game (name,creation_date,playground,finished,mode,time_to_play,is_started) values (?,?,?,?,?,?,?)');
 			$statement->execute(array($this->gameName,$this->creationDate,$this->playground->getID(),$this->finished,$this->mode,$this->timeToPlay,$this->isStarted));
 		}
