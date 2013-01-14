@@ -317,6 +317,10 @@ $(document).ready(function(e) {
 	  //interval for the updateAll - loop
 	 var updateInterval=window.setInterval(function()
 	  	{
+			if(typeof user.distanceWalked=='undefined')
+			{
+				user.distanceWalked=0;
+			}
 			if(!lastKnownPosition)
 			{	//If the lastknownPosition is not set, a update all with no coordinates is dispatched.
 				console.log("updateall: "+user.userID+" "+user.distanceWalked); 
@@ -324,6 +328,7 @@ $(document).ready(function(e) {
 			}
 			else
 			{
+				
 				console.log("updateall: "+user.userID+" "+user.distanceWalked); 
 				sendRequpdateAll(user.userID, lastKnownPosition.lat,lastKnownPosition.long, lastKnownPosition.accu, user.distanceWalked, currentGame.gameID);
 			}
@@ -440,6 +445,7 @@ $(document).ready(function(e) {
 		  for(i=0; i<modals.length;i++)
 		  {
 			  $('#modal'+modals[i]).modal({show:false});
+			  $('#modal'+modals[i]).hide();
 		  }
 	  }
 	  //AUTOR: TOM

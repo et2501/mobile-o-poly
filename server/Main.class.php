@@ -116,7 +116,7 @@ class Main
 												if(!is_numeric($ret))
 													$data = array('type'=>'user','loggedInUser'=>array('error'=>$ret));
 												else
-													$data = array('type'=>'user','loggedInUser'=>array('password'=>$obj['password'],'username'=>($obj['username']!=null?$obj['username']:User::getNickname($ret)),'userID'=>$ret,'trophies'=>Main::getTrophies()));
+													$data = array('type'=>'user','loggedInUser'=>array('email'=>$obj['email'],'password'=>$obj['password'],'username'=>($obj['username']!=null?$obj['username']:User::getNickname($ret)),'userID'=>$ret,'trophies'=>Main::getTrophies()));
 												
 												break;
 			//AUTOR: BIBI

@@ -11,7 +11,7 @@ class Card
 	private $text; //string - text of the card
 	public $type; //instance of Type - Card Type
 	private $occuranceLocation; //instance of Location - Location of occurence
-	private $destinationLocation; //instance of Location - If required --> Location of the Destination 
+	private $destinationLocation=null; //instance of Location - If required --> Location of the Destination 
 	private $cardID; //string - Card ID
 	private $alreadyTriggered;	//bool - was the card already in use or not?
 	private $timeToGo; //int - time to go to a specified location
@@ -140,7 +140,6 @@ class Card
 						if($distanceBTCB<($radiusCards+20)) //20+$radiusCards
 						{
 						  $distanceOK=false;
-						  break;
 						}
 					}
 		
@@ -153,7 +152,6 @@ class Card
 							if($distanceBTCard<$radiusCards*2)
 							{
 								$distanceOK=false;
-								break;
 							}
 						}
 					  //console.log("card: "+i+" "+newlat+" "+newlong);
@@ -184,6 +182,27 @@ class Card
 						  //man nehme an, man geht mit 6km/h. das wären 6/3.6= 1,666m/s. d.h. wir haben pro s 1,666 meter zu schaffen. 
 						  //--> für 500 meter braucht man dann 500/1.666 --> 300sekunden. 
 						  $selCard->timeToGo = floor($distance/($speed/3.6));
+						}
+						else
+						{
+						  $distance=rand(150,300);
+						  $destPoint=Card::getPointAtDistance($newlat,$newlong,$distance,rand(0,360));
+						  
+						  $dest_loc=new Location();
+						  $dest_loc->accu=$radiusCards*2.77; //ergibt 50
+						  $dest_loc->lat=$destPoint[0];
+						  $dest_loc->lon=$destPoint[1];
+						  
+						  //$dest_loc->saveToDB();
+						  
+						  //$selCard->destinationLocation=$dest_loc;
+						  
+						  //$speed=4; //6km/h
+						  
+						  //man nehme an, man geht mit 6km/h. das wären 6/3.6= 1,666m/s. d.h. wir haben pro s 1,666 meter zu schaffen. 
+						  //--> für 500 meter braucht man dann 500/1.666 --> 300sekunden. 
+						 // $selCard->timeToGo = floor($distance/($speed/3.6));
+							
 						}
 						
 					  }

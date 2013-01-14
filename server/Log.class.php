@@ -87,13 +87,13 @@ class Log
 				//We need: User, Building, Game, Card, location, 
 				//We don't use the game in this context, because it would overload the json.
 				$logger=new Log();
-				if($row['building'])
+				if($row['building']!=null)
 					$logger->building=Building::loadSelectedBuildingFromDB($row['building']);
 	
-				if($row['user'])	
-					$logger->user=User::loadFromDB($row['user'],'game');
+				if($row['user']!=null)	
+					$logger->user=User::loadFromDB($row['user'],'normal');
 	
-				if($row['card'])
+				if($row['card']!=null)
 					$logger->card=Card::loadSelectedCardFromDB($row['card']);
 	
 				

@@ -101,7 +101,6 @@ class Game
 		
 		//save change to db
 		$con = db_connect();
-		
 		$statement = $con->prepare('Update game set is_started = true where game_id = ?');	
 		$statement->execute(array($this->gameID));
 			
@@ -139,7 +138,7 @@ class Game
 		
 		
 		
-		if($this->finished==null)
+		if($this->finished==null&&$this->isStarted==true)
 		{
 			switch ($this->mode)
 			{

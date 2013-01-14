@@ -111,20 +111,8 @@ class User
 	//AUTOR: MiKe
 	public function userGotCard($game, $card, $moneyToGo){
 		
-		
-		
-		
-		console.log($moneyToGo);
-		
-		//$moneyToGo = $playground->getMoneyToGo();	
-		
-							
-		
-		
-		
-		
+		/*
 		$amount = $card->getAmount();
-		
 		
 		//sofortiger Zuschuss
 		if($card->type=='12'){
@@ -134,11 +122,10 @@ class User
 		//sofortiger Abzug
 		else if($card->type=='15'){
 													
-			$this->money -= $moneyToGo * $amount;
-													
+			$this->money -= $moneyToGo * $amount;				
 		}	
 		
-		$this->saveUserToDB();
+		$this->saveUserToDB();*/
 		
 	}
 	
@@ -149,13 +136,15 @@ class User
 	//RETURN VALUE: Array Object of this instance
 	public function generateArray()
 	{	
-		$data = array('money'=>$this->money,'distanceWalked'=>(int)$this->distanceWalked,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color,'lastKnownPosition'=>$this->lastKnownPosition->generateArray());
+		$data = array('email'=>$this->email, 'money'=>$this->money,'distanceWalked'=>(int)$this->distanceWalked,'userRole'=>$this->userRole,'username'=>$this->username,'userID'=>$this->userID,'color'=>$this->color);
+		if($this->lastKnownPosition!=null)
+			$data['lastKnownPosition']=$this->lastKnownPosition->generateArray();
+		
 		if($this->achievedTrophies!=null)
 		{
 			$trophies=array();
 			foreach($this->achievedTrophies as $trophy)
-			$trophies[] = $trophy->generateArray();
-			
+				$trophies[] = $trophy->generateArray();
 			
 			$data['trophy']=$trophies;
 		}
@@ -331,6 +320,7 @@ class User
 		$this->username = $row['username'];
 		$this->money = $row['money'];
 		$this->userRole = $row['role'];
+		$this->email=$row['email'];
 		
 		$this->distanceWalked=$row['distance_walked'];
 			
