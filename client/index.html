@@ -28,7 +28,7 @@
 		<div id="collapseOne" class="accordion-body collapse in">
 			<div class="accordion-inner">
 			<form id="form_log">
-				<input type="email" placeholder="E-Mail"  id="txt_log_mail" maxlength="25" class="form_blue"/>
+				<input type="email" placeholder="E-Mail"  id="txt_log_mail" maxlength="50" class="form_blue"/>
 				<input type="password" placeholder="Passwort" id="txt_log_pass" maxlength="45" class="form_orange"/>
 				
 				<input type="button"  class="button_login" value="Einloggen" name="login" id="btn_log_logIn" />
@@ -114,6 +114,21 @@
 		</div>
 		
 		</div>
+        
+<div id="modalAlert" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"  aria-hidden="true">
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay red_bg">fehler</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<p> <span id='lbl_error'>Es ist ein Fehler aufgetreten! </span> :'(</p>	
+	</div>
+ 	<div class="modal-footer">
+ 		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="OK =("  data-dismiss="modal"  name="OK" id='btn_error'/>
+		</form>
+	</div>
+</div>
+        
 <!-- add content here -->
 	<script src="js/jquery-1.8.3.min.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js" type="text/javascript"></script>

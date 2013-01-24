@@ -239,7 +239,7 @@ class Main
 												}
 												break;
 			case 'updateAll': 					
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												//new last known position, 
 												//then complete user inkl trophies, currentgame, complete log,
 												if($currentuser instanceof User)
@@ -253,7 +253,7 @@ class Main
 													$currentuser->distanceWalked=$obj['user']['distanceWalked'];
 													//money wird hier nicht verändert, damit der user nicht "schummeln" kann. Aber wer würd das schon machen ;) 
 													
-													$currentuser->changeUserInGameInDB($obj['game']['gameID']);
+													$currentuser->changeUserUpdateAll($obj['game']['gameID']);
 													$currentuser->getAchievedTrophies();
 													$currentgame= Game::loadFromDB('',$obj['game']['gameID']);
 													if($currentgame instanceof Game)
@@ -270,7 +270,7 @@ class Main
 												
 												break;
 			case 'SpeedTicket':					
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game', $obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
 												  $currentuser->gotSpeedingTicket();
@@ -281,7 +281,7 @@ class Main
 													$data = array('type'=>'SpeedTicket','loggedInUser'=>array('error'=>$currentuser));
 												break;
 			case 'MoneyToGo':														
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{	
 													$game = Game::loadFromDB('',$obj['game']['gameID']);
@@ -324,7 +324,7 @@ class Main
 												break;
 			//AUTOR: Tom									
 			case 'BuyBuilding':					
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
 												
@@ -334,7 +334,7 @@ class Main
 														{
 															if($building->owner==null)
 															{
-																$building->buyBuilding($currentuser);
+																$currentuser=$building->buyBuilding($currentuser);
 																$game = Game::loadFromDB('',$obj['game']['gameID']);
 																if($game instanceof Game)
 																{
@@ -372,7 +372,7 @@ class Main
 												
 												break;
 			case 'UpgradeBuilding':					
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
 												
@@ -431,10 +431,10 @@ class Main
 												
 												break;											
 			case 'RentBuilding':					
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
-													$ownerUser=User::loadFromDB($obj['building']['ownerID'],'game');
+													$ownerUser=User::loadFromDB($obj['building']['ownerID'],'game',$obj['game']['gameID']);
 													if($ownerUser instanceof User)
 													{
 													$building = Building::loadSelectedBuildingFromDB($obj['building']['buildingID']);
@@ -488,7 +488,7 @@ class Main
 																																						
 			case 'StopGame':														
 												
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 													if($currentuser instanceof User)
 													{
 														if($currentuser->getUserRole()=='admin')
@@ -522,7 +522,7 @@ class Main
 													
 													
 												break;
-				case 'userGotCard':				$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+				case 'userGotCard':				$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
 												$game = Game::loadFromDB('',$obj['game']['gameID']);
@@ -594,7 +594,7 @@ class Main
 				
 												break;	
 				case 'bankrupt': 				
-												$currentuser=User::loadFromDB($obj['user']['userID'],'game');
+												$currentuser=User::loadFromDB($obj['user']['userID'],'game',$obj['game']['gameID']);
 												if($currentuser instanceof User)
 												{
 													$game = Game::loadFromDB('',$obj['game']['gameID']);

@@ -58,28 +58,7 @@
 				
 	<h2><img src="img/2.png" alt="Schritt 2: Spielfeld auswählen"> Spielfeld auswählen</h2>
 	<p>Bitte wählen Sie ein Spielfeld aus. Die Zahl in den Kreisen steht für die maximale Anzahl der Spieler.</p>
-	<div class="spielfeld">
-		<!--<div class="city left house1">
-			<div class="player_number"><span class="number">6</span></div>
-			<img src="img/house.png" alt="House" class="icon_spielfeld img_house1"/> 
-			<p>Graz</p>
-		</div>
-		<div class="city left house2">
-		    <div class="player_number"><span class="number">7</span></div>
-			<img src="img/town.png" alt="House" class="icon_spielfeld img_house2 "/> 
-			<p>St.Pölten</p>
-		</div>
-		<div class="city left house3">
-		    <div class="player_number"><span class="number">8</span></div>
-			<img src="img/house.png" alt="House" class="icon_spielfeld left img_house3"/>
-			<p>Linz</p>
-		</div> 
-		<div class="city left house4">
-		    <div class="player_number"><span class="number">3</span></div>
-			<img src="img/town.png" alt="House" class="icon_spielfeld left img_house3"/> 
-		<p>Wien</p>
-		</div>-->
-	</div>	
+	<div class="spielfeld">	</div>	
 			
 	</form>	
 	
@@ -121,7 +100,20 @@
 	<button class="btn btn-primary rechts orange" data-dismiss="modal" aria-hidden="true">Abbrechen</button>
   </div>
 </div>
-    
+
+<div id="modalAlert" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static"  aria-hidden="true">
+	<div class="modal-header">
+		<h2 id="myModalLabel" class="overlay red_bg">fehler</h2>
+ 	</div>
+ 	<div class="modal-body">
+ 		<p> <span id='lbl_error'>Es ist ein Fehler aufgetreten! </span> :'(</p>	
+	</div>
+ 	<div class="modal-footer">
+ 		<form id="login" class="accordion inner">
+			<input type="button"  class="button_login" value="OK =("  data-dismiss="modal"  name="OK" id='btn_error'/>
+		</form>
+	</div>
+</div>    
    
 </body>
 </html>

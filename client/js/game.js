@@ -345,6 +345,7 @@ $(document).ready(function(e) {
 			updateBuildingmarkers();
 			updatePlayermarkers();
 			buildScoreTable();
+			$("html, body").animate({ scrollTop: 0 }, "slow");
 			//The userRole is only available after the first updateAll!
 			
 			if(currentGame.finished!=null)
@@ -374,8 +375,8 @@ $(document).ready(function(e) {
 			}
 		},5000); 
 	  var logLoop=window.setInterval(function(){
-		  	sendReqUpdateLog(currentGame.gameID); 
-			logs=JSON.parse(localStorage.getItem('logs'));
+		  	//sendReqUpdateLog(currentGame.gameID); 
+			//logs=JSON.parse(localStorage.getItem('logs'));
 			
 			for(logEntry in logs)
 			{
@@ -389,7 +390,7 @@ $(document).ready(function(e) {
 					//console.log(logs[logEntry]);
 				}
 			}
-		  },2000);
+		  },5000);
 	  function buildScoreTable()
 	  {
 		  /*

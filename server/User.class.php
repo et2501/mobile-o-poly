@@ -26,7 +26,7 @@ class User
 	//			 $type - either "normal" for the normal User Object from the user table 
 	//			 		 or "game" for the complete user_in_game object
 	//RETURN VALUE: finished User object
-	public static function loadFromDB($userID,$type)
+	public static function loadFromDB($userID,$type,$gameID=null)
 	{	$usr = new User();
 		
 		$con = db_connect();
@@ -44,9 +44,17 @@ class User
 		}
 		if($type=='game')
 		{	
-			
+			if($gameID==null)
+			{
 			$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location WHERE user_id =? AND game NOT IN ( SELECT game FROM logger WHERE text =13 AND user=?)');
 			$statement->execute(array($userID,$userID));
+			}
+			else
+			{
+				$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location WHERE user_id =? AND game=?');
+				$statement->execute(array($userID,$gameID));
+			}
+			
 			$result = $statement;
 			
 			$row = $result->fetch(PDO::FETCH_ASSOC);
@@ -95,8 +103,18 @@ class User
 	{
 		$con = db_connect();
 		
-		$statement = $con->prepare('update user_in_game set money=?, distance_walked=?, last_known_location=? where user=? AND game=?');
-		$statement->execute(array($this->money,$this->distanceWalked,$this->lastKnownPosition->locationID, $this->userID, $gameID));
+		$statement = $con->prepare('update user_in_game set money=? where user=? AND game=?');
+		$statement->execute(array($this->money,$this->userID, $gameID));
+		
+		$con = null;
+		
+	}
+	public function changeUserUpdateAll($gameID)
+	{
+		$con = db_connect();
+		
+		$statement = $con->prepare('update user_in_game set distance_walked=?, last_known_location=? where user=? AND game=?');
+		$statement->execute(array($this->distanceWalked,$this->lastKnownPosition->locationID, $this->userID, $gameID));
 		
 		$con = null;
 	}

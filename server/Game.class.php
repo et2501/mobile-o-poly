@@ -21,6 +21,7 @@ class Game
 	private $timeToPlay; //int - time to play in seconds (if required)
 	private $gameID; //int - id of this game
 	private $attendingUsers=array(); //User List - all users who are in the game
+	private $winner;
 	
 	//GETTERS and SETTERS if required
 	public function getPlayground()
@@ -116,6 +117,26 @@ class Game
 		//save change to db
 		$con = db_connect();
 		
+		//log eintrag für gewinner
+		//wenn noch kein gewinner gesetzt ist, soll noch einer aufgrund seines geldes ermittelt werden
+		//
+		if($this->winner==null)
+		{
+			$this->winner=$this->attendingUsers[0];
+			 foreach($this->attendingUsers as $innerUser)
+			 {
+					if($innerUser->money>$this->winner->money)
+					  $this->winner=$innerUser;			
+			}
+			
+		}
+		
+		$logentry=new Log();
+		$logentry->user=$this->winner;
+		$logentry->Text='11';
+		$logentry->game=$this;
+		$logentry->saveToDB();
+		
 		$date = new DateTime();
 		$date = date('Y-m-d H:i:s',$date->getTimestamp());
 		
@@ -170,18 +191,10 @@ class Game
 					
 					if($foundWinner)
 					{
+						$this->winner=$startowner;
 						$date = new DateTime();
 						$this->finished=$date;
 						$this->stopGame();
-						
-						
-						//log eintrag für gewinner
-						
-						$logentry=new Log();
-						$logentry->user=$startowner;
-						$logentry->Text='11';
-						$logentry->game=$this;
-						$logentry->saveToDB();
 						
 					}
 					
@@ -196,7 +209,7 @@ class Game
 					{	
 						if(!$foundWinner)
 						{
-						  $user->money;
+						  //$user->money;
 						  $sumMoney=0;
 						  foreach($this->attendingUsers as $innerUser)
 						  {
@@ -213,7 +226,7 @@ class Game
 						  if($outerUser->money>$sumMoney)
 						  {
 							  $foundWinner=true;
-							  $winner=$outerUser;
+							  $this->winner=$outerUser;
 						  }
 						}
 						
@@ -224,11 +237,6 @@ class Game
 						$this->finished=$date;
 						$this->stopGame();						
 						
-						$logentry=new Log();
-						$logentry->user=$winner;
-						$logentry->Text='11';
-						$logentry->game=$this;
-						$logentry->saveToDB();
 					}	
 					break;
 			case 3: 
@@ -241,8 +249,6 @@ class Game
 					{
 						//check who won and add it to the log with log 11
 						
-						$this->finished=$date;
-						$this->stopGame();
 						
 						//noch rausfinden, wer gewonnen hat und den log speichern!
 						//eine for schleife
@@ -252,17 +258,12 @@ class Game
 						{
 							if($user->money>$winner->money)
 							{
-								$winner=$user;
+								$this->winner=$user;
 							}
-						}
+						}	
 						
-						$logentry=new Log();
-						$logentry->user=$winner;
-						$logentry->Text='11';
-						$logentry->game=$this;
-						$logentry->saveToDB();
-						
-						
+						$this->finished=$date;
+						$this->stopGame();
 						
 					}
 					break;

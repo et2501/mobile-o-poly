@@ -43,7 +43,7 @@ class Building
 		return $this->fee;
 	}
 	
-	//AUTOR: MARCUS
+	//AUTOR: tom
 	public function buyBuilding($User)
 	{
 		
@@ -209,8 +209,8 @@ class Building
 			$build->number = $row['number'];
 			$build->upgradeLevel = $row['level'];
 			
-			if($row['owner'])
-				$build->owner = User::loadFromDB($row['owner'],'game');
+			if($row['owner']!=null)
+				$build->owner = User::loadFromDB($row['owner'],'game',$row['game']);
 			
 			$buildings[] = $build;
 		}
@@ -254,7 +254,7 @@ class Building
 			$build->upgradeLevel = $row['level'];
 			
 			if($row['owner'])
-				$build->owner = User::loadFromDB($row['owner'],'game');
+				$build->owner = User::loadFromDB($row['owner'],'game',$build->gameID);
 			
 			$buildings[] = $build;
 		}
@@ -311,16 +311,16 @@ class Building
 			$build->name = $row['name'];
 			$build->picture = $row['picture'];
 			$build->number=$row['number'];
-			if($row['owner']!=null)
-			{
-			$build->owner=User::loadFromDB($row['owner'],'game');
-			}
+			
 			$build->fee=$row['fee'];
 			$build->buyValue=$row['buy_value'];
 			$build->upgradeLevel=$row['level'];
 			$build->gameID=$row['game'];
 			
-			
+			if($row['owner']!=null)
+			{
+			$build->owner=User::loadFromDB($row['owner'],'game',$build->gameID);
+			}
 			$loc = new Location();
 			$loc->accu = $row['radius'];
 			$loc->lat = $row['lat'];

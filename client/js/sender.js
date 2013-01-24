@@ -421,7 +421,7 @@ function send(obj) {
 														window.location.href = "start.html";
 													}
 													else
-														alert(data['loggedInUser']['error']);
+														showerrormessage(data['loggedInUser']['error']);
 				  										break;
 						case 'playground': 				localStorage.setItem('playgrounds',JSON.stringify(data['playgrounds']));
 														listPlaygrounds(data['playgrounds']);
@@ -436,7 +436,7 @@ function send(obj) {
 															setTimeout(window.location.href = "useruebersicht.html",500);
 														}
 														else
-															alert(data['currentGame']['error']);
+															showerrormessage(data['currentGame']['error']);
 														break;
 													
 						case 'attendGame':				if(!data['currentGame']['error'])
@@ -448,7 +448,7 @@ function send(obj) {
 															setTimeout(window.location.href = "useruebersicht.html",500);
 														}
 														else
-															alert(data['currentGame']['error']);
+															showerrormessage(data['currentGame']['error']);
 														break;
 																				
 						case 'checkStartedGame':		if(!data['currentGame']['error'])
@@ -462,7 +462,7 @@ function send(obj) {
 															
 				  										}
 														else
-															alert(data['currentGame']['error']);
+															showerrormessage(data['currentGame']['error']);
 														break;
 														
 						case 'userGame':				if(!data['currentGame']['error'])
@@ -479,7 +479,7 @@ function send(obj) {
 														setTimeout(window.location.href = "index.html",500); //an return to login-screen
 														}
 														else
-															alert(data['success']['error']);
+															showerrormessage(data['success']['error']);
 														break;
 														
 													
@@ -490,7 +490,7 @@ function send(obj) {
 														  console.log(data);
 				  										}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 														break;
 														
 						case 'loadGameStatistics':		if(!data['currentGame']['error'])
@@ -499,7 +499,7 @@ function send(obj) {
 														  console.log(data);
 														}
 														else
-															alert(data['currentGame']['error']);
+															showerrormessage(data['currentGame']['error']);
 														break;
 						case 'updateLog':				
 														  //TODO Irgendwas mit dem Log anfangen
@@ -519,10 +519,10 @@ function send(obj) {
 																localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 															}
 															else
-															alert(data['currentGame']['error']);
+															showerrormessage(data['currentGame']['error']);
 				  										}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 																												
 														break;
 						case 'SpeedTicket':				
@@ -531,14 +531,14 @@ function send(obj) {
 														  localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 														}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 														break;
 						case 'MoneyToGo':				if(!data['loggedInUser']['error'])
 														{
 															localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 														}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 														break;	
 						case 'changeNick': 				//check for error
 														if(!data['loggedInUser']['error'])
@@ -546,7 +546,7 @@ function send(obj) {
 														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 														}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 														break;
 						case 'StopGame': 				
 														if(!data['loggedInUser']['error'])
@@ -555,7 +555,7 @@ function send(obj) {
 														localStorage.setItem('currentGame',JSON.stringify(data['currentGame']));
 														}
 														else
-															alert(data['loggedInUser']['error']);
+															showerrormessage(data['loggedInUser']['error']);
 														break;												
 																																			
 						case 'userGotCard':				
@@ -566,7 +566,7 @@ function send(obj) {
 														localStorage.setItem('user', JSON.stringify(data['loggedInUser']));
 														}
 														else
-															console.log(data['loggedInUser']);
+															showerrormessage(data['loggedInUser']);
 														break;
 						case 'BuyBuilding':
 						case 'UpgradeBuilding':
@@ -585,7 +585,7 @@ function send(obj) {
 															localStorage.setItem('game', JSON.stringify(data['currentGame']));
 														}
 														else
-															console.log(data['loggedInUser']);
+															showerrormessage(data['loggedInUser']);
 														break;															
 																						
 						default: 						
@@ -596,7 +596,58 @@ function send(obj) {
 				  }
 		},
 		error : function(xhr, type) { 
-				alert("schas!");
+				showerrormessage("x");
 		}  
 	});
+}
+
+function showerrormessage(msg)
+{
+	switch(msg)
+	{
+		case 'e100':
+				$('#lbl_error').html('Verdinbung zur Datenbank verloren');
+				break;
+		case 'e999':
+				$('#lbl_error').html('Funktion nicht unterstützt');
+				break;
+		case 'e101':
+				$('#lbl_error').html('E-Mail Adresse bereits vergeben');
+				break;
+		case 'e102':
+		case 'e103':
+				$('#lbl_error').html('E-Mail Adresse oder Passwort inkorrekt');
+				break;
+		case 'e108':
+				$('#lbl_error').html('Kein laufendes Spiel für diesen User');
+				break;
+		case 'e109':
+				$('#lbl_error').html('User hat sich ausgelogged und kann deshalb nicht ins selbe Spiel zurück');
+				break;
+		case 'e104':
+				$('#lbl_error').html('Spiel existiert nicht');
+				break;
+		case 'e105':
+				$('#lbl_error').html('Spiel bereits gestartet');
+				break;
+		case 'e106':
+				$('#lbl_error').html('Spiel voll');
+				break;
+		case 'e111':
+				$('#lbl_error').html('Spiel bereits beendet');
+				break;
+		case 'e107':
+				$('#lbl_error').html('Spielname im Moment vergeben');
+				break;
+		case 'e110':
+				$('#lbl_error').html('User hat nicht ausreichend Berechtigung');
+				break;
+		case 'x':
+				$('#lbl_error').html('Verbindungsproblem');
+				break;
+		default:
+				$('#lbl_error').html('Ups, da ist etwas schief gelaufen, der letzte Zug wird nicht gewertet. Das kann dein Glück oder dein Pech sein ;) ');
+				break;
+	}
+	$('#modalAlert').modal({show:true});
 }
