@@ -219,6 +219,7 @@ class Main
 												  $logentry->game=Game::loadFromDB('',$obj['game']['gameID']);
 												  if($logentry->game instanceof Game)
 												  {
+													  $logentry->user->logoutFromGame($logentry->game->getGameID());
 													  
 													  $BuildingList=Building::loadSelectedBuildingsFromUserInGame($logentry->user->getUserID(),$logentry->game->getGameID());
 													  foreach($BuildingList as $building)

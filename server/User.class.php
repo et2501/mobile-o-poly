@@ -16,6 +16,7 @@ class User
 	private $username; //string
 	private $userID; //int
 	public $distanceWalked; //int
+	private $loggedOut;
 	private $achievedTrophies = array(); //TrophyList
 	
 	//GETTERS and SETTERS if needed
@@ -46,17 +47,17 @@ class User
 		{	
 			if($gameID==null)
 			{
-			$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location WHERE user_id =? AND game NOT IN ( SELECT game FROM logger WHERE text =13 AND user=?)');
+				
+			$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location INNER JOIN game on game=game_id WHERE user_id =? AND loggedout IS NULL AND is_started=true ');
 			$statement->execute(array($userID,$userID));
 			}
 			else
 			{
-				$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location WHERE user_id =? AND game=?');
+				$statement = $con->prepare('SELECT * FROM user_in_game INNER JOIN user ON user_id = user LEFT JOIN location ON location_id = last_known_location INNER JOIN game on game=game_id WHERE user_id =? AND game=? AND loggedout IS NULL AND is_started=true');
 				$statement->execute(array($userID,$gameID));
 			}
 			
 			$result = $statement;
-			
 			$row = $result->fetch(PDO::FETCH_ASSOC);
 	
 			if($row)
@@ -86,6 +87,23 @@ class User
 	public function getUserRole()
 	{
 		return $this->userRole;
+	}
+	public function getLoggedOut()
+	{
+		return $this->loggedOut;
+	}
+	public function logoutFromGame($gameID)
+	{
+		$con = db_connect();
+		
+		$date = new DateTime();
+		$this->loggedOut = date('Y-m-d H:i:s',$date->getTimestamp());
+		
+		$statement = $con->prepare('update user_in_game set loggedout=? where user=? AND game=?');
+		$statement->execute(array($this->loggedOut,$this->userID, $gameID));
+		
+		$con = null;
+		
 	}
 	
 	

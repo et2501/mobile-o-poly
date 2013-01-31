@@ -176,10 +176,11 @@ class Game
 					{
 						if($startowner!=null)
 						{
-					  		if($startowner!=$build->owner->getUserID())
-							{
-								$foundWinner=false;
-							}
+							if($build->owner instanceof User)
+									if($startowner!=$build->owner->getUserID())
+									{
+										$foundWinner=false;
+									}
 						}
 						else
 						{

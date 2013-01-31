@@ -114,11 +114,13 @@ $(document).ready(function(e) {
 			destinations[destinations.length]={'location':{'lat':destinationBuilding.location.lat, 'long':destinationBuilding.location.long, 'accu':destinationBuilding.location.accu},'object':destinationBuilding};	 		
 		   localStorage.setItem('destinations',JSON.stringify(destinations));
 		   setTimeout(function(){
+			   
 			 $('#modalWuerfeln').modal('toggle');
 			 $('#lbl_diceBuilding').html(destinationBuilding.name);
 			 $('#lbl_diceNumber').html(result);
 			 $('#lbl_diceCoordinates').html(destinationBuilding.location.lat+'N, '+destinationBuilding.location.long+'O');
 			 $('#btn_rolldice').removeAttr('disabled');
+			 hideAllModals();
 			 $('#modalWuerfeln2').modal('toggle');
 			 
 		   },3500);
@@ -128,6 +130,7 @@ $(document).ready(function(e) {
    //$('#modalWuerfeln').modal({backdrop:'static'});
    if(destinations[destinations.length-1].object==null)
    {
+	   hideAllModals();
    		$('#modalWuerfeln').modal('toggle');
    }
 	  
@@ -212,6 +215,14 @@ $(document).ready(function(e) {
 			//$('#modalKaufen').modal('toggle');	
 			hideAllModals(); 		
 			$('#modalWuerfeln').modal('toggle');
+	  });
+	  $('#btn_message').on('click',function(){
+	  		destinations[destinations.length]={'location':{'lat':0, 'long':0, 'accu':0},'object':null};
+			localStorage.setItem('destinations',JSON.stringify(destinations));	
+			//$('#modalKaufen').modal('toggle');	
+			hideAllModals(); 		
+			$('#modalWuerfeln').modal('toggle');
+	  
 	  });
 	  
 	  $('#btn_rentBuilding').on('click',function(){
@@ -337,7 +348,10 @@ $(document).ready(function(e) {
 			//the user and game object are renewed after the UpdateAllRequest
 			var oldDistance=user.distanceWalked;
 			user = JSON.parse(localStorage.getItem('user'));
-			user.distanceWalked=oldDistance;
+			
+			if(!isNaN(oldDistance))
+				user.distanceWalked=oldDistance;
+				
 	 		currentGame=JSON.parse(localStorage.getItem('currentGame'));
 	  		
 	  		//
@@ -355,7 +369,7 @@ $(document).ready(function(e) {
 			  
 				  if(destinations[destinations.length-1].object!='gameEnded')
 				  {
-					hideAllModals();
+					
 					currentGame.buildings[0].name;
 					destinations=[{
 						  'location':{
@@ -367,6 +381,7 @@ $(document).ready(function(e) {
 					//window.clearInterval(updateInterval);			//The updateAll loop is cleared
 					 console.log("spiel beendet");
 					$('#lbl_spielende_building').html(currentGame.buildings[0].name);
+					hideAllModals();
 					$('#modalSpielende2').modal({show:true});
 					//localStorage.removeItem('currentGame');		//
 					//localStorage.removeItem('playground');		//
@@ -384,27 +399,15 @@ $(document).ready(function(e) {
 				{
 					$('#lbl_ende_winner').html(logs[logEntry].user.username);
 				}
-				else
-				{
+				
 					//irgendwas mit den logs tun
 					//console.log(logs[logEntry]);
-				}
+				
 			}
 		  },5000);
 	  function buildScoreTable()
 	  {
-		  /*
-		  <tr>
- 					<th>Name</th>
- 					<th>km</th>
- 					<th>ÖS</th>
- 				</tr>
- 				<tr>
- 					<td>Hugo</td>
- 					<td>20</td>
- 					<td class="text_right">10.000</td>
- 				</tr>
-		  */
+		 
 		  while(document.getElementById('table_spielstand').hasChildNodes())
 		  {
 			  document.getElementById('table_spielstand').removeChild(document.getElementById('table_spielstand').firstChild);
@@ -442,7 +445,7 @@ $(document).ready(function(e) {
 	  }
 	  function hideAllModals()
 	  {
-		  var modals=['Logout','StopGame','Wuerfeln','Wuerfeln2','Kaufen','Mieten','Upgraden','Spielstand','Aktion','Card','Bankrott','Spielende','Spielende2'];
+		  var modals=['Logout','StopGame','Wuerfeln','Wuerfeln2','Kaufen','Mieten','Upgraden','Spielstand','Aktion','Card','Bankrott','Spielende','Spielende2','Message'];
 		  for(i=0; i<modals.length;i++)
 		  {
 			  $('#modal'+modals[i]).modal({show:false});
@@ -782,6 +785,7 @@ $(document).ready(function(e) {
 					  $('#lbl_card_amount').html(card.amount*playground.moneyToGo);
 					  $('#hidden_card_id').html(card.cardID);
 					  $('#img_card').attr('src','img/'+card.type.iconURL);
+					  hideAllModals();
 					  $('#modalCard').modal({show:true});
 					  
 					  
@@ -799,6 +803,7 @@ $(document).ready(function(e) {
 					  $('#lbl_card_action_time').html(card.timeToGo);
 					  $('#lbl_card_action_amount').html(card.amount*playground.moneyToGo);
 					  $('#hidden_card_id').html(card.cardID);
+					  hideAllModals();
 					  $('#modalAktion').modal({show:true});
 					  //speichere destination, 
 					  
@@ -840,6 +845,7 @@ $(document).ready(function(e) {
 				$('#lbl_buyFee').html(building.fee);
 				$('#lbl_buyPrice').html(building.buyValue);
 				$('#hidden_building_id_buy').val(building.buildingID);
+				hideAllModals();
 		  		$('#modalKaufen').modal({show:true});
 		  	}
 			else
@@ -847,7 +853,9 @@ $(document).ready(function(e) {
 				//meldung ausgeben. 
 				destinations[destinations.length]={'location':{'lat':0, 'long':0, 'accu':0},'object':null};
 				localStorage.setItem('destinations',JSON.stringify(destinations));
-				$('#modalWuerfeln').modal('trigger');
+				$('#lbl_message').html('Sie haben leider zu wenig Geld für dieses Gebäude');
+				hideAllModals();
+				$('#modalMessage').modal({show:true});
 			}
 		  	
 		  }
@@ -867,6 +875,7 @@ $(document).ready(function(e) {
 					  $('#hidden_upgrade_building_id').val(building.buildingID);
 					  destinations[destinations.length]={'location':{'lat':0, 'long':0, 'accu':0},'object':null};
 					  localStorage.setItem('destinations',JSON.stringify(destinations));
+					  hideAllModals();
 					  $('#modalUpgraden').modal({show:true});
 				  }
 			  }
@@ -880,6 +889,7 @@ $(document).ready(function(e) {
 					  
 					  $('#hidden_rent_building_id').val(building.buildingID);
 					  $('#hidden_rent_user_id').val(building.owner.userID);
+					  hideAllModals();
 					  $('#modalMieten').modal({show:true});
 					  
 				  }
@@ -913,6 +923,7 @@ $(document).ready(function(e) {
 		  //navigator.geolocation.clearWatch(watchId);	//the geolocation watchposition is cleared. 
 		  console.log("bankrott");
 		  $('#lbl_bankrott_building').html(currentGame.buildings[0].name);
+		  hideAllModals();
 		  $('#modalBankrott').modal({show:true});
 	  }
 	  
