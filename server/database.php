@@ -1,12 +1,12 @@
 <?php
-//AUTOR: BIBI
-//database connection
 
-//connect to mysql and selects database
+// file updated by skripted - 02.02.13
+require_once('config.php');
+
 function db_connect()
-{	try{
-		$db = new PDO('mysql:host=mysql5;dbname=db_flock-0308_1', "flock-0308", "7wH4FWxL");
-		return $db;
+{	
+    try{
+		return new PDO('mysql:host=' . DBHOST . ';dbname=' . DBNAME, DBUSER, DBPASS);
 	} 
 	catch(PDOException $e) {
 		return "Could not Connect to Server!";
